@@ -60,24 +60,28 @@ ActionController.prototype.pushUndoCommand = function( undoCommandObject )
 
 ActionController.prototype.doCommand = function( commandObject )
 {
-	commandFactory( commandObject );
 	var undoCommand  =  this.generateUndoCommmand( commandObject );
+	commandFactory( commandObject );
 	return true;
 }
 
 
 /****** command factyory test *********/
-
-function commandFactorrry()
+var dragResourceFunctions = new Array();
+dragResourceFunctions[executionTypeEnum.CMEX_EDITION] = function( commandObject )
 {
-	var commandMatrix = new Array();
-	
-	commandObject[CMD_DRAG] = new Array();
-	
-	commandObject[CMD_DRAG][CMEX_EDITION] = function( commandObject )
-	{
-		//TODO
-	}
+	var interfaceResource = commandObject.argObject.resource;
+	var x = commandObject.argObject.x;
+	var y = commandObject.argObject.y;
+	interfaceResource.setX(x);
+	interfaceResource.setY(y);
+}
+
+
+function CommandFunctionFactory()
+{
+	this.commandMatrix = new Array();
+	this.commandMatrix[commandTypeEnum.CMD_DRAG] = dragResourceFunctions;
 }
 
 function dragCommandFactory( commandObject )
@@ -97,7 +101,6 @@ function dragCommandFactory( commandObject )
 		
 		default:
 		{
-						alert("bleh");
 			/* nothing to do */
 		};
 	}
@@ -106,6 +109,16 @@ function dragCommandFactory( commandObject )
 function commandFactory( commandObject )
 {
 	var code = commandObject.getCode();
+	var mode = commandObject.getMode();
+	var functionFactory = new CommandFunctionFactory();
+	if( typeof functionFactory.commandMatrix[code] != 'undefined' )
+	{
+		if( typeof functionFactory.commandMatrix[code][mode] != 'undefined' )
+		{
+			functionFactory.commandMatrix[code][mode]( commandObject );
+		}
+	}
+	/*var code = commandObject.getCode();
 	var mode = commandObject.getMode();
 	switch( code )
 	{
@@ -117,5 +130,5 @@ function commandFactory( commandObject )
 		{
 			
 		}
-	}
+	}*/
 }
