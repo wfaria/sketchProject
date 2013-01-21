@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>QUnit Interface Resource Object Test Page</title>
+  <link rel="stylesheet" href="../css/qunit.css">
+</head>
+<body>
+  <div id="qunit"> </div>
+  <script src="../src/qunit.js"></script>
+  <script src="../src/interfaceResource.js"></script>
+  
+  <script>
+	module("Basic test");
+	var x = 30;
+	var y = 10;
+	var iR1 = new InterfaceResource( x,y,0,100, 50, "Interface", 0, 0 );
+	test
+	(
+		"InterfaceResource object basic tests", function()
+		{
+			ok( iR1.toString()==("Interface at position ("+x+","+y+")"), "toString() OK");
+			ok( iR1.getId()==("0"), "getId() OK");
+			ok( iR1.getX()==x, "getX() OK");
+			ok( iR1.getY()==y, "getY() OK");
+		}
+		
+	);	
+  </script>
+</body>
+</html>

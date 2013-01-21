@@ -1,0 +1,69 @@
+<html>
+
+	<head>
+	
+    <script src="src/mediatorObject.js"></script>
+	<link rel="stylesheet" href="file.css">
+
+	</head>
+	
+	<body>
+		<h1> Mediator </h1>
+		<script>
+			var mediator = new Mediator( "batata" );
+			
+			
+			mediator.subscribe( "Status Bar", true,
+				function() 
+				{
+					var count = 0;
+					return	{
+						onButtonClicked: function()
+						{
+							window.status = "The button has been clicked " +count+ " times.";
+							count++;
+						},
+						onKeyPressed: function( keyCode )
+						{
+							window.status = "The key which code " +keyCode+ " has been pressed.";
+						}
+					};
+				}() 
+			);
+			
+			mediator.subscribe( "Alert", true,
+				function() 
+				{
+					var count = 0;
+					return	{
+						onButtonClicked: function()
+						{
+							alert( "BEEP BOOP Alert: The button has been clicked " +count+ " times." );
+							count--;
+						},
+						onKeyPressed: function( keyCode )
+						{
+							alert( "The key which code " +keyCode+ " has been pressed. BEEP BOOP" );
+						}
+					};
+				}() 
+			);
+			
+			function KeyCheck( e ) 
+			{
+				var KeyID = (window.event) ? event.keyCode : e.keyCode;
+				mediator.publish( "KeyPressed", [KeyID ]);
+			}
+			
+			document.onkeyup = KeyCheck; 
+			
+			
+			
+			
+		</script>
+		
+		<button type="button" onclick='mediator.publish( "ButtonClicked" )'>Click Me!</button>
+		<button type="button" onclick='mediator.removeComponent( "Status Bar" )'>Remove Status Bar subscription!</button>
+	</body>
+	
+</html>

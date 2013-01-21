@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Action Controller Object Test Page</title>
+  <link rel="stylesheet" href="../css/qunit.css">
+</head>
+<body>
+  <div id="qunit"> </div>
+  <script src="../src/libs/qunit.js"></script>
+  <script src="../src/interfaceResource.js"></script>
+  <script src="../src/sketch.js"></script>
+  <script src="../src/utils.js"></script>
+  <script src="../src/actionController.js"></script>
+  
+  <script>
+  	module("Action Controller Basic test");
+  	test
+  	( 
+  		"Action Controller manipulation", function()
+  		{
+  			var actionController = new ActionController();
+  			//TODO:
+  			ok( actionController.generateUndoCommmand(null) == null, "TODO");
+  		}
+  	);
+  	
+  	module("Command undo with only one command type")
+  	test
+  	( 
+  		"Drag Command", function()
+  		{
+  			var x = 30;
+			var y = 10;
+			var btn1 = new InterfaceResource( x,y,0,100, 50, "Button", 0, 0 );
+  			var actionController = new ActionController();
+  			var dragCommand = new DragResourceCommand( executionTypeEnum.CMEX_EDITION, btn1, x+x, y+y );
+  			//TODO:
+  			ok( btn1.getX() == x, "In the start the button's X position is " + btn1.getX() );
+  			ok( actionController.doCommand(dragCommand) == true, "Dragging this object");
+  			ok( btn1.getX() == x+x, "After this the button's X position is " + btn1.getX() );
+  		}
+  	);
+  </script>
+</body>
+</html>

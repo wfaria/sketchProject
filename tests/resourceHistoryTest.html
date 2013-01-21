@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>QUnit Interface Resource History Object Test Page</title>
+  <link rel="stylesheet" href="../css/qunit.css">
+</head>
+<body>
+  <div id="qunit"> </div>
+  <script src="../src/libs/qunit.js"></script>
+  <script src="../src/interfaceResource.js"></script>
+  <script src="../src/sketch.js"></script>
+  
+  <script>
+	module("Basic test");
+	test
+	(
+		"Testing single Resource History object", function()
+		{
+			var x = 30;
+			var y = 10;
+			var btn1 = new InterfaceResource( x,y,0,100, 50, "Button", 0, 0 );
+			var resourceHistory1 = new ResourceHistory( btn1 );
+			ok( resourceHistory1.getHistoryLength() == 1, "getHistoryLength() OK" );
+			ok( resourceHistory1.getId() == 0, "getId() OK" );
+		}
+		
+	);	
+	module("Manipulation functions");
+	test
+	(
+		"Clone testing", function()
+		{
+			var x = 30;
+			var y = 10;
+			var version = 0;
+			var btn1 = new ButtonResource( x,y,0,100, 50, "Button", 0, version );
+			var resourceHistory1 = new ResourceHistory( btn1 );
+			ok( resourceHistory1.getHistoryLength() == 1, "Start length == 1 OK" );
+			ok( (resourceHistory1.cloneVersion(42,42) == null), "Trying to clone an unexistent object returns null" );
+			ok( (resourceHistory1.cloneVersion( version, version+1) != null), "Trying to clone an existent object returns its clone" );
+			ok( resourceHistory1.getHistoryLength() == 2, "Length changed to 2" );
+			
+			var btn2 = resourceHistory1.cloneVersion(version, version + 1 );
+			ok( btn2.getId() == resourceHistory1.getResourceFromVersion( version + 1 ).getId(), 
+				"Checking the id from the clonned element");
+			ok( btn2.getVersion() == resourceHistory1.getResourceFromVersion( version + 1 ).getVersion(), 
+				"Checking the version from the clonned element");
+			btn2.setX(2*x);
+			ok( btn2.getX() != btn1.getX(), "Checking if some change in the clonned element does not reflectt on the original one" );
+			
+			var btn3 = resourceHistory1.cloneVersion( version+1, version + 2 );
+			ok( resourceHistory1.getHistoryLength() == 3, "Length changed to 3" );
+			ok( btn3.getX() != btn1.getX(), "The element from the version 0 is different from the version 2" );
+			ok( btn3.getX() == btn2.getX(), "The element from the version 1 is equal from the version 2" );
+		}
+	);
+	
+	test
+	(
+		"Remotion testing", function()
+		{
+			var x = 30;
+			var y = 20;
+			var version = 0;
+			var dlt1 = new DeletedResource( x,y,0,100, 50, "Deleted", 0, version );
+			var resourceHistory1 = new ResourceHistory( dlt1 );
+			ok( resourceHistory1.getHistoryLength() == 1, "Start length == 1 OK" );
+			ok( resourceHistory1.cloneVersion(version, version + 1 )!= null, "Trying to clone an existent object returns its clone");
+			ok( resourceHistory1.getHistoryLength() == 2, "History length changed to 2" );
+			var dlt2 = resourceHistory1.getResourceFromVersion( version + 1 );
+			ok( resourceHistory1.removeVersion(version).getVersion() != dlt2.getVersion(),
+			"Removing an element from an oldier version");
+			ok( resourceHistory1.getHistoryLength() == 1, "History length changed to 1" );
+			ok( resourceHistory1.removeVersion(version+3) == null,	"Trying to remove a version that does not exist return null");
+			ok( resourceHistory1.getHistoryLength() == 1, "And the length == 1 keeps the same" );
+		}
+	);
+	
+	test
+	(
+		"Deletion testing", function()
+		{
+			var x = 30;
+			var y = 10;
+			var version = 0;
+			var btn1 = new ButtonResource( x,y,0,100, 50, "Button", 0, version );
+			var resourceHistory1 = new ResourceHistory( btn1 );
+			ok( resourceHistory1.getHistoryLength() == 1, "Start length == 1 OK" );
+			ok( (resourceHistory1.cloneVersion( version, version+1) != null), "Trying to clone an existent object returns its clone" );
+			ok( resourceHistory1.getHistoryLength() == 2, "Length changed to 2" );
+			ok( (resourceHistory1.deleteVersion( version ).getResourceType() == resourceTypeEnum.IR_DELETED),
+			"Deleting a version from the timeline returns a deleted resource");
+			ok( resourceHistory1.getHistoryLength() == 2, "The length continues 2" );
+			ok( (resourceHistory1.getResourceFromVersion( version ).getResourceType() == resourceTypeEnum.IR_DELETED),
+			"Now the resource from the deleted version is a deleted resource");
+		}
+	);
+	
+	test
+	(
+		"Version search testing", function()
+		{
+			var x = 30;
+			var y = 10;
+			var version = 1;
+			var version1 = 4;
+			var version2 = 7;
+			var version3 = 8;
+			var btn1 = new ButtonResource( x,y,0,100, 50, "Button", 0, version );
+			var resourceHistory1 = new ResourceHistory( btn1 );
+			
+			ok( resourceHistory1.getHistoryLength() == 1, "Start length == 1 OK" );
+			ok( (resourceHistory1.cloneVersion( version, version1 ) != null), 
+				"Clonning from version " +version+ " to version " + version1 );
+			ok( (resourceHistory1.cloneVersion( version1, version2 ) != null), 
+				"Clonning from version " +version1+ " to version " + version2 );
+			ok( (resourceHistory1.cloneVersion( version2, version3 ) != null), 
+				"Clonning from version " +version2+ " to version " + version3 );
+				
+			ok( resourceHistory1.getResourceBeforeVersion( version -1 ) == null,
+				"Trying to get a resource which is a version older than all elements from history returns null ");
+				
+			ok( resourceHistory1.getResourceBeforeVersion( version + 2 ).getVersion() == version,
+				"Trying to get a resource before the version "+ (version + 2) +" returns the version " + version );
+				
+			ok( resourceHistory1.getResourceBeforeVersion( version1 + 2 ).getVersion() == version1,
+				"Trying to get a resource before the version "+ (version1 + 2) +" returns the version " + version1 );
+			
+			ok( resourceHistory1.getResourceBeforeVersion( version2 ).getVersion() == version2,
+				"Trying to get a resource before the version "+ (version2) +" returns the version " + version2 );	
+				
+			ok( resourceHistory1.getResourceBeforeVersion( version3 ).getVersion() == version3,
+				"Trying to get a resource before the version "+ (version3) +" returns the version " + version3 );
+				
+			ok( resourceHistory1.getResourceBeforeVersion( version3*30 ).getVersion() == version3,
+				"Trying to get a version newer than all, version "+ (version3*30) +" returns the version " + version3 );
+		}
+	);
+	/*
+	resourceHistory1.cloneVersion( 0, 2 );
+	resourceHistory1.cloneVersion( 0, 2 );
+	resourceHistory1.cloneVersion( 0, 3 );
+	resourceHistory1.removeVersion(3);
+	*/
+  </script>
+</body>
+</html>

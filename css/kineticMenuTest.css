@@ -1,0 +1,135 @@
+
+/*used by kineticjs*/
+#container {
+	background-color: #222;
+	display: inline-block;
+	width: 610px;
+	height: 610px;
+	border: 1px dotted #666666;
+}
+
+
+body
+{
+  background-color: #CCCCFF;
+}
+
+h1
+{
+	color:blue;
+	text-align:center;
+}
+
+.selectionmenu
+{
+	background-color: #6699CC;
+	float:left;
+	width: 100px;
+	min-height: 50%;
+}
+
+.newlinebutton
+{
+	clear:both;
+}
+
+.abutton {
+  outline: none;
+  display: block;
+  padding: 5px 5px;
+  /*width:20px;
+  height:20px;*/
+  margin:2px;
+  float:left;
+  text-align: center;
+  border: 1px solid #ddd;
+  border-bottom: 1px solid #aaa;
+  border-right: 1px solid #aaa;
+  background-color: #A3A696;
+  background-position: left top;
+  font-size: 14px;
+  text-shadow: 1px 1px 1px #fff;
+  font-weight: bold;
+  line-height: 1.5em;
+  margin-bottom: 6px;
+  display:inline-block;
+   -webkit-transition:background-color 0.3s ease-in;  
+   -moz-transition:background-color 0.3s ease-in;  
+   -o-transition:background-color 0.3s ease-in;  
+   transition:background-color 0.3s ease-in;  
+}
+
+.abutton:hover {
+  border: 1px solid #A3A696;
+  text-decoration: none;
+  background-color: #CCCC99;
+  background-position: left -78px;
+}
+
+.abutton:active {
+  color: #999999;
+  background-color: #666666;
+  background-position: left -38px;
+}
+
+.round {
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+}
+
+.main
+{
+	background-color: #333333;
+	width:1024px;
+}
+
+.buttonGroup
+{
+	border: 1px dotted #666666;
+	display:inline-block;	
+	padding: 2px 2px;
+}
+
+.divpopup
+{
+	visibility: hidden; /* Come�a invisivel, algum script deve habilit�-lo */
+}
+
+
+#menu_frame
+ {
+ text-align:center;
+ color:red;
+ background-color: #c0c4df;
+ height: 400px;
+ width: 400px;
+ }
+ 
+ /* To make the modal popups appear and disappear */
+ .black_overlay{
+	display: none;
+	position: absolute;
+	top: 0%;
+	left: 0%;
+	width: 100%;
+	height: 100%;
+	background-color: black;
+	z-index:1001;
+	-moz-opacity: 0.8;
+	opacity:.80;
+	filter: alpha(opacity=80);
+}
+ 
+.white_content {
+	display: none;
+	position: absolute;
+	top: 25%;
+	left: 25%;
+	width: 50%;
+	height: 50%;
+	padding: 16px;
+	border: 16px solid orange;
+	background-color: white;
+	z-index:1002;
+	overflow: auto;
+}

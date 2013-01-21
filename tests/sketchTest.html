@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>QUnit Sketch and Screen Objects Test Page</title>
+  <link rel="stylesheet" href="../css/qunit.css">
+</head>
+<body>
+  <div id="qunit"> </div>
+  <script src="../src/libs/qunit.js"></script>
+  <script src="../src/interfaceResource.js"></script>
+  <script src="../src/sketch.js"></script>
+  
+  <script>
+	module("Sketch Basic test");
+	test
+	(
+		"Creating and manipulating sketch", function()
+		{
+			var sketchName = "test";
+			var sketchAuthor = "tester";
+			var sketchObj = new Sketch( sketchName, sketchAuthor );
+			ok( sketchObj.getMaxId() == 0, "getMaxId() OK" );
+			sketchObj.increaseMaxId();
+			ok( sketchObj.getMaxId() == 1, "getMaxId() OK after calling increaseMaxId() " );
+			var screenIterator = sketchObj.getScreenIterator();
+			ok( screenIterator.getLength() == 1, "The sketch project start with one default screen"  );
+			ok( screenIterator.hasNext() == true, "The sketch project start with one default screen, so there is a next element" );
+			ok( screenIterator.next() != null, "The command next get one screen and move the iterator" );
+			ok( screenIterator.hasNext() != true, "Now there are no more elements in the iterator" );
+		}
+		
+	);	
+	module("Sketch and Screen test");
+	
+	test
+	(
+		"Manipulating screens inside a sketch project", function()
+		{
+			var sketchName = "test";
+			var sketchAuthor = "tester";
+			var screenName =  "Test Screen";
+			var sketchObj = new Sketch( sketchName, sketchAuthor );
+			var screenObj = new Screen( screenName );
+			ok( sketchObj.getScreenIterator().getLength() == 1, "The sketch project start with one default screen"  );
+			ok( sketchObj.getCurrentScreen().getName() == "Default Screen", "The first screen is the current screen at the start"  );
+			ok( sketchObj.getScreen( screenName ) == null, "Trying to find a screen by a name that does not exist return null" );
+			ok( sketchObj.deleteScreen( screenName ) == null, "Trying to delete a screen by a name that does not exist return null" );
+			sketchObj.addScreen( screenObj );
+			var screenIterator = sketchObj.getScreenIterator(); // always create a new iterator after changing the project
+			ok( screenIterator.getLength() == 2, "After add a new screen the length of the iterator increases"  );
+			ok( screenIterator.next().getName() == "Default Screen", "The first screen has a default name"  );
+			ok( screenIterator.next().getName() == screenName, "The second screen has the name that we defined"  );
+			ok( sketchObj.getScreen( screenName ).getName() == screenName, "Get the second screen by its name" );
+			ok( sketchObj.getScreen( screenName ) == sketchObj.setScreen( screenName ), 
+				"Changing the current screen to the seconds returns the screen itself" );
+			ok(	sketchObj.addScreen( screenObj ) == false, "Can not insert two screen with the same name" );
+			
+			screenIterator = sketchObj.getScreenIterator(); // always create a new iterator after changing the project
+			ok( screenIterator.getLength() == 2, "The length of the new iterator continues 2"  );
+			ok( sketchObj.deleteScreen( screenName ).getName() == screenName, 
+				"Trying to delete a screen by a name that exists returns the screen itself" );
+				
+			screenIterator = sketchObj.getScreenIterator(); // always create a new iterator after changing the project
+			ok( sketchObj.getScreenIterator().getLength() == 1, "Now the sketch project has only one screen"  );
+			ok( sketchObj.getScreen( screenName ) == null, "Trying to find a screen by a name that does not exist return null" );
+			ok( sketchObj.getCurrentScreen() == null, "Trying to get the current screen returns null because it has been deleted"  );
+			ok( sketchObj.setScreen( "Default Screen" ).getName() == "Default Screen", "Setting the sketch's current screen to the default one" );
+			ok( sketchObj.getCurrentScreen() != null, "Now it is possible to get a valid screen object as the current screen"  );
+			
+		}
+		
+	);	
+  </script>
+</body>
+</html>
