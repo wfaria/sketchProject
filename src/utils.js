@@ -10,10 +10,10 @@ Stack.prototype.push = function( elem )
 
 Stack.prototype.pop = function()
 {
-	this.elements.pop();
+	return this.elements.pop();
 }
 
 Stack.prototype.isEmpty = function()
 {
-	return this.elements.length == 0;
+	return (this.elements.length == 0);
 }

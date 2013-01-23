@@ -49,22 +49,41 @@ function ActionController()
 
 ActionController.prototype.generateUndoCommmand = function( commandObject )
 {
-	// TODO:
-	return null;
+	var undoObject = undoFactory( commandObject )
+	return undoObject;
 }
 
 ActionController.prototype.pushUndoCommand = function( undoCommandObject )
 {
-	undoStack.push( undoCommandObject );
+	this.undoStack.push( undoCommandObject );
 }
 
 ActionController.prototype.doCommand = function( commandObject )
 {
+	if( commandObject == null ) return false;
 	var undoCommand  =  this.generateUndoCommmand( commandObject );
+	if( undoCommand != null )
+	{
+		this.pushUndoCommand( undoCommand );
+	}
 	commandFactory( commandObject );
 	return true;
 }
 
+ActionController.prototype.undo = function()
+{
+	if( !this.undoStack.isEmpty() )
+	{
+		var undoObject = this.undoStack.pop();
+		alert( undoObject ); 
+		commandFactory( undoObject ); //TODO: Throw command to the redo stack
+		return undoObject;
+	}
+	else
+	{
+		return null;
+	}
+}
 
 /****** command factyory test *********/
 var dragResourceFunctions = new Array();
@@ -77,11 +96,22 @@ dragResourceFunctions[executionTypeEnum.CMEX_EDITION] = function( commandObject 
 	interfaceResource.setY(y);
 }
 
+var dragResourceUndoFunctions = new Array();
+dragResourceUndoFunctions[executionTypeEnum.CMEX_EDITION] = function( commandObject )
+{
+	var interfaceResource = commandObject.argObject.resource;
+	var x = commandObject.argObject.x;
+	var y = commandObject.argObject.y;
+	return new DragResourceCommand( executionTypeEnum.CMEX_EDITION, interfaceResource, x, y );
+}
 
 function CommandFunctionFactory()
 {
 	this.commandMatrix = new Array();
 	this.commandMatrix[commandTypeEnum.CMD_DRAG] = dragResourceFunctions;
+	
+	this.undoMatrix = new Array();
+	this.undoMatrix[commandTypeEnum.CMD_DRAG] = dragResourceUndoFunctions;
 }
 
 function dragCommandFactory( commandObject )
@@ -106,6 +136,20 @@ function dragCommandFactory( commandObject )
 	}
 }
 
+function undoFactory( commandObject )
+{
+	var code = commandObject.getCode();
+	var mode = commandObject.getMode();
+	var functionFactory = new CommandFunctionFactory();
+	if( typeof functionFactory.undoMatrix[code] != 'undefined' )
+	{
+		if( typeof functionFactory.undoMatrix[code][mode] != 'undefined' )
+		{
+			return functionFactory.undoMatrix[code][mode]( commandObject );
+		}
+	}
+}
+
 function commandFactory( commandObject )
 {
 	var code = commandObject.getCode();
@@ -116,8 +160,10 @@ function commandFactory( commandObject )
 		if( typeof functionFactory.commandMatrix[code][mode] != 'undefined' )
 		{
 			functionFactory.commandMatrix[code][mode]( commandObject );
+			return true;
 		}
 	}
+	return false;
 	/*var code = commandObject.getCode();
 	var mode = commandObject.getMode();
 	switch( code )

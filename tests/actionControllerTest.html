@@ -21,7 +21,7 @@
   		{
   			var actionController = new ActionController();
   			//TODO:
-  			ok( actionController.generateUndoCommmand(null) == null, "TODO");
+  			ok( actionController.generateUndoCommmand(null) == false, "TODO");
   		}
   	);
   	
@@ -39,6 +39,8 @@
   			ok( btn1.getX() == x, "In the start the button's X position is " + btn1.getX() );
   			ok( actionController.doCommand(dragCommand) == true, "Dragging this object");
   			ok( btn1.getX() == x+x, "After this the button's X position is " + btn1.getX() );
+  			ok( actionController.undo() != null , "Undo the last action");
+  			ok( btn1.getX() == x, "And the button is  back to the start X position " + btn1.getX() );
   		}
   	);
   </script>
