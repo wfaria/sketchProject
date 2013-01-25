@@ -30,6 +30,8 @@
   	( 
   		"Drag Command", function()
   		{
+  			var i = 0;
+  			var n = 10;
   			var x = 30;
 			var y = 10;
 			var btn1 = new InterfaceResource( x,y,0,100, 50, "Button", 0, 0 );
@@ -41,8 +43,27 @@
   			ok( btn1.getX() == x+x, "After this the button's X position is " + btn1.getX() );
   			ok( actionController.undo() != null , "Undo the last action");
   			ok( btn1.getX() == x, "And the button is  back to the start X position " + btn1.getX() );
+  			
+  			// Moving the object with n commands, at the end it will be on (x+n*n,y+n*n) position in units
+  			for( i = 1; i <= n; i ++ )
+  			{
+  				dragCommand = new DragResourceCommand( executionTypeEnum.CMEX_EDITION, btn1, x+i*n, y+i*n );
+  				actionController.doCommand(dragCommand);
+  			}
+  			ok( btn1.getX() == x+n*n, "After moving "+n+" times the button's X position is " + (x+n*n) );
+  			ok( actionController.undo() != null , "Undo the last action");
+  			ok( btn1.getX() == x+n*(n-1), "After undo 1 times the button's X position is " + (x+n*(n-1)) );
+  			for( i = 0; i < n-1; i ++ )
+  			{
+				if( actionController.undo() == null )
+					break;
+  			}
+  			ok( i == n-1, "All the "+(n-1)+" commands have been undone");
+  			ok( btn1.getX() == x, "And the button is  back to the start X position " + x );
+  			ok( actionController.undo() == null , "There are no more commands to be undone");
   		}
   	);
+  	
   </script>
 </body>
 </html>

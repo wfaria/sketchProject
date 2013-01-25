@@ -25,6 +25,11 @@ Command.prototype.setArgs = function( objects )
 	this.argObject = objects;
 }
 
+Command.prototype.toString = function()
+{
+	return "Command code: " + this.commandCode  + ", mode: " + this.executionMode;
+}
+
 function DragResourceCommand( executionMode, resourceObj, toX, toY )
 {
 	Command.call(this);
@@ -40,6 +45,18 @@ function DragResourceCommand( executionMode, resourceObj, toX, toY )
 }
 DragResourceCommand.prototype = new Command;
 DragResourceCommand.prototype.constructor = Command;
+
+DragResourceCommand.prototype.toString = function()
+{
+	var interfaceResource = this.argObject.resource;
+	var x = this.argObject.x;
+	var y = this.argObject.y;
+	return 		"Drag Resource " + Command.prototype.toString.call( this ) + "\n" +
+		"Parameters:\n" +  interfaceResource.toString() + "\n" +
+		"x: " + x + ",y: " + y;
+
+}
+
 
 function ActionController()
 {
@@ -75,7 +92,6 @@ ActionController.prototype.undo = function()
 	if( !this.undoStack.isEmpty() )
 	{
 		var undoObject = this.undoStack.pop();
-		alert( undoObject ); 
 		commandFactory( undoObject ); //TODO: Throw command to the redo stack
 		return undoObject;
 	}
@@ -100,8 +116,8 @@ var dragResourceUndoFunctions = new Array();
 dragResourceUndoFunctions[executionTypeEnum.CMEX_EDITION] = function( commandObject )
 {
 	var interfaceResource = commandObject.argObject.resource;
-	var x = commandObject.argObject.x;
-	var y = commandObject.argObject.y;
+	var x = interfaceResource.getX();
+	var y = interfaceResource.getY();
 	return new DragResourceCommand( executionTypeEnum.CMEX_EDITION, interfaceResource, x, y );
 }
 
