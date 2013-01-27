@@ -14,7 +14,7 @@
   <script src="../src/actionController.js"></script>
   
   <script>
-  	module("Action Controller Basic test");
+  	/*module("Action Controller Basic test");
   	test
   	( 
   		"Action Controller manipulation", function()
@@ -24,7 +24,7 @@
   			ok( actionController.generateUndoCommmand(null) == false, "TODO");
   		}
   	);
-  	
+  	*/
   	module("Command undo with only one command type")
   	test
   	( 
@@ -37,12 +37,19 @@
 			var btn1 = new InterfaceResource( x,y,0,100, 50, "Button", 0, 0 );
   			var actionController = new ActionController();
   			var dragCommand = new DragResourceCommand( executionTypeEnum.CMEX_EDITION, btn1, x+x, y+y );
+  			ok( actionController.undo() == null , "Nothing to be undone");
+  			ok( actionController.redo() == null , "Nothing to be redone");
+  			
   			//TODO:
   			ok( btn1.getX() == x, "In the start the button's X position is " + btn1.getX() );
   			ok( actionController.doCommand(dragCommand) == true, "Dragging this object");
   			ok( btn1.getX() == x+x, "After this the button's X position is " + btn1.getX() );
   			ok( actionController.undo() != null , "Undo the last action");
   			ok( btn1.getX() == x, "And the button is  back to the start X position " + btn1.getX() );
+  			ok( actionController.redo() != null , "Redo the undone action");
+  			ok( btn1.getX() == x+x, "After the redo the button's X position is " + btn1.getX() );
+  			ok( actionController.undo() != null , "Undo the redo action");
+  			ok( btn1.getX() == x, "And the button is  back to the start X position " + btn1.getX() + " again" );
   			
   			// Moving the object with n commands, at the end it will be on (x+n*n,y+n*n) position in units
   			for( i = 1; i <= n; i ++ )
@@ -60,6 +67,12 @@
   			}
   			ok( i == n-1, "All the "+(n-1)+" commands have been undone");
   			ok( btn1.getX() == x, "And the button is  back to the start X position " + x );
+  			ok( actionController.redo() != null , "Redo the undone action");
+  			ok( actionController.redo() != null , "Redo the undone action again");
+  			ok( btn1.getX() == x+2*n, "After the redo the button's X position is " + (x+2*n) );
+  			ok( actionController.undo() != null , "Undo the redo action");
+  			ok( actionController.undo() != null , "Undo the redo action again");
+  			ok( btn1.getX() == x, "After this button is  back to the start X position " + btn1.getX() + " again" );
   			ok( actionController.undo() == null , "There are no more commands to be undone");
   		}
   	);

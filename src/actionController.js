@@ -61,7 +61,7 @@ DragResourceCommand.prototype.toString = function()
 function ActionController()
 {
 	this.undoStack = new Stack();
-	this.doStack = new Stack();
+	this.redoStack = new Stack();
 }
 
 ActionController.prototype.generateUndoCommmand = function( commandObject )
@@ -73,6 +73,11 @@ ActionController.prototype.generateUndoCommmand = function( commandObject )
 ActionController.prototype.pushUndoCommand = function( undoCommandObject )
 {
 	this.undoStack.push( undoCommandObject );
+}
+
+ActionController.prototype.pushRedoCommand = function( undoCommandObject )
+{
+	this.redoStack.push( undoCommandObject );
 }
 
 ActionController.prototype.doCommand = function( commandObject )
@@ -92,14 +97,47 @@ ActionController.prototype.undo = function()
 	if( !this.undoStack.isEmpty() )
 	{
 		var undoObject = this.undoStack.pop();
-		commandFactory( undoObject ); //TODO: Throw command to the redo stack
-		return undoObject;
+		var redoObject = this.generateUndoCommmand( undoObject );
+		if( redoObject != null )
+		{
+			this.pushRedoCommand( redoObject );
+			commandFactory( undoObject ); 
+			return undoObject;
+		}
+		else
+		{
+			return null;
+		}
 	}
 	else
 	{
 		return null;
 	}
 }
+
+ActionController.prototype.redo = function()
+{
+	if( !this.redoStack.isEmpty() )
+	{
+		var redoObject = this.redoStack.pop();
+		var undoObject = this.generateUndoCommmand( redoObject );
+		if( undoObject != null )
+		{
+			this.pushUndoCommand( undoObject );
+			commandFactory( redoObject ); 
+			return redoObject;
+		}
+		else
+		{
+			return null;
+		}
+	}
+	else
+	{
+		return null;
+	}
+}
+
 
 /****** command factyory test *********/
 var dragResourceFunctions = new Array();
@@ -130,9 +168,10 @@ function CommandFunctionFactory()
 	this.undoMatrix[commandTypeEnum.CMD_DRAG] = dragResourceUndoFunctions;
 }
 
+/*
 function dragCommandFactory( commandObject )
 {
-	//TODO: Acho que não é garantido que o objeto sempre será este, tentar pegá-lo pelo ID sempre
+	//TODO: Remove this code after
 	var interfaceResource = commandObject.argObject.resource;
 	var x = commandObject.argObject.x;
 	var y = commandObject.argObject.y;
@@ -147,11 +186,13 @@ function dragCommandFactory( commandObject )
 		
 		default:
 		{
-			/* nothing to do */
+			/* nothing to do 
 		};
 	}
 }
+*/
 
+// This one creates a command to be executed
 function undoFactory( commandObject )
 {
 	var code = commandObject.getCode();
@@ -164,8 +205,10 @@ function undoFactory( commandObject )
 			return functionFactory.undoMatrix[code][mode]( commandObject );
 		}
 	}
+	return null;
 }
 
+// This one executes a command
 function commandFactory( commandObject )
 {
 	var code = commandObject.getCode();
@@ -180,17 +223,4 @@ function commandFactory( commandObject )
 		}
 	}
 	return false;
-	/*var code = commandObject.getCode();
-	var mode = commandObject.getMode();
-	switch( code )
-	{
-		case( commandTypeEnum.CMD_DRAG ):
-		{
-			dragCommandFactory( commandObject );
-		};
-		default:
-		{
-			
-		}
-	}*/
 }
