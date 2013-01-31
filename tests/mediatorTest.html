@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Mediator Pattern Object Test Page</title>
+  <link rel="stylesheet" href="../css/qunit.css">
+</head>
+<body>
+  <div id="qunit"> </div>
+  <script src="../src/libs/qunit.js"></script>
+  <script src="../src/mediatorObject.js"></script>
+  <script src="../src/interfaceResource.js"></script>
+  <script src="../src/sketch.js"></script>
+  <script src="../src/utils.js"></script>
+  <script src="../src/actionController.js"></script>
+  
+  <script>
+
+  	module("Mediator test");
+  	test
+  	( 
+  		"Simple test", function()
+  		{
+  			var mediator = new Mediator( "test" );
+  			ok( mediator.toString() == "Mediator with ID: test", "toString() test" );
+  		}
+  	);
+  	
+  	module("Mediator calling function without arguments")
+ 
+  	test
+	( 
+  		"Simple test", function()
+  		{
+  			var mediator = new Mediator( "test" );
+  			var compName = "AlertScreen";
+  			mediator.subscribe( compName, true, 
+	  			function() // Do this way if you want to create a closure to the component
+	  			{	
+	  				return	{ // The real object (mediator component) with callback functions
+	  					x: 0,
+	  					y: 0,
+	  					onMoveX: function()
+	  					{
+	  						this.x = this.x + 1; // MUST use "this" prefix here
+	  					},
+	  					onMoveY: function()
+	  					{
+	  						this.y = this.y + 1;
+	  					}
+	  				};
+	  			}()
+
+  			); //end mediator.subscribe( compName, true, ...
+  			var component = mediator.getComponent( compName );
+  			ok( component != null, "The mediator object has a component called " + compName);
+  			ok( typeof mediator.getComponent( compName+"AA" )  == 'undefined', 
+  				"The mediator object has not a component called " + compName+"AA" );
+  			ok( component.x == 0 && component.y == 0, "The counters from the component are 0 at the start" );
+  			ok( mediator.publish( "MoveX") > 0, 
+  				"Someone publish to the mediator that the MoveX event occured and someone received this message");
+  			ok( component.x == 1 && component.y == 0, "Now the component's X counter has been increase in 1 unit" );
+  			ok( mediator.publish( "MoveY") > 0, 
+  				"Someone publish to the mediator that the MoveY event occured and someone received this message");
+  			ok( component.x == 1 && component.y == 1, "Now the component's Y counter has been increase in 1 unit too" );
+  			ok( mediator.publish( "MoveX") > 0, 
+  				"Someone publish to the mediator that the MoveX event occured and someone received this message");
+  			ok( component.x == 2 && component.y == 1, "Now the component's X counter has been increase in 1 unit again" );
+  			
+  			mediator.removeComponent( compName );
+  			ok( mediator.publish( "MoveX") == 0 && mediator.publish( "MoveY") == 0, 
+  				"After removing the component from the mediator, there is no object to receive the published message" );
+  			
+
+  		}
+	); //end test
+ 
+  </script>
+</body>
+</html>
