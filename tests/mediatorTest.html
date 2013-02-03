@@ -74,6 +74,107 @@
 
   		}
 	); //end test
+	
+	module("Mediator calling function with multiple arguments and a thousand components")
+	{
+	  	test
+  		( 
+
+	  		"Simple test", function()
+	  		{
+	  			
+	  			var mediator = new Mediator( "test" );
+	  			var compNamePlus = "AlertScreen1";
+	  			var compNameMinus = "AlertScreen2";
+	  			var minusQnt = 1000;
+	  			ok( mediator.toString() == "Mediator with ID: test", "toString() test" );
+	  			
+	  			
+		  		mediator.subscribe( compNamePlus, true, 
+				function() // Do this way if you want to create a closure to the component
+				{	
+					return	{ // The real object (mediator component) with callback functions
+						x: 0,
+						y: 0,
+						onSetX: function( x )
+						{
+							this.x = x;
+						},
+						onMoveX: function( xPos, xStringCount )
+						{
+							this.x = this.x + xPos + xStringCount.length ; // MUST use "this" prefix here
+						},
+						onMoveY: function( yPos, yStringCount )
+						{
+							this.y = this.y + yPos + yStringCount.length;
+						}
+					};
+				}()
+		
+				); //end mediator.subscribe( compNamePlus, true, ...
+					
+				for( var i = 0; i < minusQnt; i++ )
+				{
+			  		mediator.subscribe( compNameMinus+i, true, 
+					function() // Do this way if you want to create a closure to the component
+					{	
+						return	{ // The real object (mediator component) with callback functions
+							x: 0,
+							y: 0,
+							onSetX: function( x )
+							{
+								this.x = x;
+							},
+							onMoveX: function( xPos, xStringCount )
+							{
+								this.x = this.x - xPos - xStringCount.length ; // MUST use "this" prefix here
+							},
+							onMoveY: function( yPos, yStringCount )
+							{
+								this.y = this.y - yPos - yStringCount.length;
+							}
+						};
+					}()
+			
+					); //end mediator.subscribe( compNameMinus+i, true, ...
+				} // end for( var i = 0; i < minusQnt; i++ )
+				
+				
+				var component = mediator.getComponent( compNamePlus );
+				ok( typeof component != 'undefined', "The mediator object has a component called " + compNamePlus );
+				ok( component.x == 0 && component.y == 0, "The counters from the "+compNamePlus+" component are 0 at the start" );
+				ok( mediator.publish( "MoveX", [1,"a"]) ==  minusQnt+1, 
+  				"Someone publish to the mediator that the MoveX event occured and "+(minusQnt+1)+" components received this message");
+  				ok( component.x == 2, "Now the x counter from the "+compNamePlus+" component is 2" );
+  				var testMinusComponentName = compNameMinus+(minusQnt/2);
+  				
+  				var componentMinus = mediator.getComponent( testMinusComponentName );
+  				ok( typeof componentMinus != 'undefined', "The mediator object has a component called " + testMinusComponentName );
+  				ok( componentMinus.x == -2, "Now the x counter from the "+testMinusComponentName+" component is -2" );
+  				
+  				ok( mediator.publish( "MoveX", [2,"four"]) ==  minusQnt+1, 
+  				"Someone publish again to the mediator that the MoveX event occured and "+(minusQnt+1)+" components received this message");
+  				ok( component.x == 8, "Now the x counter from the "+compNamePlus+" component is 8" );
+  				var allElementsCorrect = true;
+  				for( var i = 0; i < minusQnt; i++ )
+  				{
+  					allElementsCorrect = allElementsCorrect && mediator.getComponent( compNameMinus+i ).x == -8;
+  				}
+  				ok( allElementsCorrect == true , "Now the x counter from all the other components are -8" );
+  				
+  				
+  				ok( mediator.publish( "SetX", [0]) ==  minusQnt+1, 
+  				"Someone publish again to the mediator that the SetX event occured and "+(minusQnt+1)+" components received this message");
+  				
+  				ok( component.x == 0, "Now the x counter from the "+compNamePlus+" component is 0" );
+  				ok( componentMinus.x == 0, "Now the x counter from the "+testMinusComponentName+" component is 0" );
+
+	  		}
+  		); //end test
+  		
+
+
+	}
  
   </script>
 </body>

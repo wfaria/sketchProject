@@ -51,7 +51,7 @@ Mediator.prototype.publish = function(event, args, source) {
 		if (typeof this.components[c]["on" + event] == "function") {
 			try {
 				//this.debugAlert("Mediator calling " + event + " on " + c); // using this because of the try-catch scope
-				source = source || this.components[c];
+				source = /*source ||*/ this.components[c]; // TODO: What the "or" does here?
 				this.components[c]["on" + event].apply(source, args);
 				reachCount++;
 			} catch (err) {
