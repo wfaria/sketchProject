@@ -15,7 +15,8 @@
   <script src="../src/actionController.js"></script>
   
   <script>
-
+	/* To make the errors explict, the functions that uses exceptions (Mediator.subscribe and Mediator.publish) 
+	 * are not surrounded by try-catch  */
   	module("Mediator test");
   	test
   	( 
@@ -172,7 +173,83 @@
 	  		}
   		); //end test
   		
+  		
+  		module( "Error handling");
+ 	
+	  	test
+  		( 
 
+	  		"Simple test", function()
+	  		{
+	  			var mediator = new Mediator( "test" );
+	  			var compNamePlus = "AlertScreen1";
+	  			ok( mediator.toString() == "Mediator with ID: test", "toString() test" );
+	  			
+	  			mediator.subscribe( compNamePlus, true, 
+				function() // Do this way if you want to create a closure to the component
+				{	
+					return	{ // The real object (mediator component) with callback functions
+						x: 0,
+						y: 0,
+						onSetX: function( x )
+						{
+							this.x = x;
+						},
+						onMoveX: function( xPos, xStringCount )
+						{
+							this.x = this.x + xPos + xStringCount.length ; // MUST use "this" prefix here
+						},
+						onMoveY: function( yPos, yStringCount )
+						{
+							this.y = this.y + yPos + yStringCount.length;
+						}
+					};
+				}()
+		
+				); //end mediator.subscribe( compNamePlus, true, ...
+					
+					
+				try
+				{
+					mediator.publish( "MoveX", [2]);
+				}
+				catch(err)
+				{
+					ok( 1==1, "Redundant test to show that Mediator.publish() throws an exception when it lacks a paramater ");
+				}
+				
+				try
+				{
+					mediator.subscribe( compNamePlus, false, 
+					function() // Do this way if you want to create a closure to the component
+					{	
+						return	{ // The real object (mediator component) with callback functions
+							x: 0,
+							y: 0,
+							onSetX: function( x )
+							{
+								this.x = x;
+							},
+							onMoveX: function( xPos, xStringCount )
+							{
+								this.x = this.x + xPos + xStringCount.length ; // MUST use "this" prefix here
+							},
+							onMoveY: function( yPos, yStringCount )
+							{
+								this.y = this.y + yPos + yStringCount.length;
+							}
+						};
+					}()
+		
+				); //end mediator.subscribe( compNamePlus, true, ...
+				}
+				catch(err)
+				{
+					ok( 1==1, 
+						"Redundant test to show that Mediator.subscribe() throws an exception when it trying to overwrite an unsubstitutable component");
+				}
+			}
+	  	); //end test
 
 	}
  

@@ -6,7 +6,7 @@ Source:
 - http://www.oodesign.com/mediator-pattern.html
 ***/
 
-//TODO: Anonymous function to control global variables
+//TODO: Remove throw exception if the program become too slow because of the mediator
 
 /*** Mediator base-prototype and other objects definition ***/
 // look more at http://phrogz.net/JS/classes/OOPinJS2.html
@@ -28,7 +28,8 @@ Mediator.prototype.constructor = Mediator;
 Mediator.prototype.toString = function() { return "Mediator with ID: " + this.id; }
 
 Mediator.prototype.debugAlert = function(text) {
-	alert( text );
+	//alert( text );
+	console.log( text );
 }
 		
 /**
@@ -47,17 +48,20 @@ Mediator.prototype.publish = function(event, args, source) {
 	// Checking publish arguments
 	args = args || [];
 	//debugAlert(["Mediator received", event, args].join(' '));
-	for (var c in this.components) {
-		if (typeof this.components[c]["on" + event] == "function") {
-			try {
-				//this.debugAlert("Mediator calling " + event + " on " + c); // using this because of the try-catch scope
-				source = /*source ||*/ this.components[c]; // TODO: What the "or" does here?
-				this.components[c]["on" + event].apply(source, args);
-				reachCount++;
-			} catch (err) {
-				this.debugAlert(["Mediator error.", event, args, source, err].join(' '));
+	try {
+		for (var c in this.components) {
+			if (typeof this.components[c]["on" + event] == "function") {
+					//this.debugAlert("Mediator calling " + event + " on " + c); // using this because of the try-catch scope
+					source = /*source ||*/ this.components[c]; // TODO: What the "or" does here?
+					this.components[c]["on" + event].apply(source, args);
+					reachCount++;
+				
 			}
 		}
+	} catch (err) {
+				var errMsg = ["Mediator error.", event, args, source, err].join(' ');
+				this.debugAlert(errMsg);
+				throw new Error(errMsg);
 	}
 	return reachCount;
 }
@@ -73,8 +77,9 @@ Mediator.prototype.publish = function(event, args, source) {
 Mediator.prototype.subscribe = function(name, replaceDuplicate, component ) {
 	if (name in this.components) {
 		if (replaceDuplicate) {
-			removeComponent(name);
+			this.removeComponent(name);
 		} else {
+			console.log( 'Mediator name conflict: ' + name );
 			throw new Error('Mediator name conflict: ' + name);
 		}
 	}
