@@ -31,55 +31,74 @@ function GraphicController( containerDOMID )
 	}
 	
 	graphicControllerGlobals.styleChangers[ graphicControllerGlobals.stylesEnum.DEFAULT ] = new KineticStyleChanger();
+	graphicControllerGlobals.styleChangers[ graphicControllerGlobals.stylesEnum.ANDROID ] = new KineticStyleChanger();
+	graphicControllerGlobals.styleChangers[ graphicControllerGlobals.stylesEnum.WINDOWS8 ] = new KineticStyleChanger();
+	graphicControllerGlobals.styleChangers[ graphicControllerGlobals.stylesEnum.LINUX ] = new KineticStyleChanger();
 }
 
 GraphicController.prototype.constructor = GraphicController;
 
-
-GraphicController.prototype.createGraphicObject = function ( interfaceResource )
+GraphicController.prototype.renderScreen = function ( screenObject )
 {
-	var kineticShape = defaultKineticFactory( interfaceResource );
+	
 }
 
 
-function defaultKineticFactory( interfaceResource )
+GraphicController.prototype.addInterfaceResource = function ( interfaceResource )
 {
-	switch( interfaceResource.getResourceType )
+	var kineticShape = this.createGraphicObject( interfaceResource );
+	this.layers[ interfaceResource.getZ() ].add( kineticShape );
+	this.layers[ interfaceResource.getZ() ].draw();
+}
+
+GraphicController.prototype.createGraphicObject = function ( interfaceResource )
+{
+	var kineticShape = this.defaultKineticFactory( interfaceResource );
+	kineticShape = this.extendKineticShape( interfaceResource, kineticShape );
+	return kineticShape;
+}
+
+
+GraphicController.prototype.defaultKineticFactory = function( interfaceResource )
+{
+	switch( interfaceResource.getResourceType() )
 	{
 		case( resourceTypeEnum.IR_BUTTON ):
 		{
-			var kinectGroup = new Kinetic.Group(  { x:interfaceResource.getX(), y:interfaceResource.getY(), draggable:true, id:"_button_"+id_count, name:interfaceResource.getName() });
+			var kinectGroup = new Kinetic.Group(  { x:interfaceResource.getX(), y:interfaceResource.getY(), draggable:true, id:"_button", name:interfaceResource.getName() });
 
 			var square1 = new Kinetic.Rect({
-			  fill: "yellow",
-			  stroke: "black",
-			  strokeWidth: 4,
+			  fill: "#669933",
+			  stroke: "#003333",
+			  strokeWidth: 2,
 			  name: "_EXTERN_SQUARE",
 			  //draggable: true,
+			  dragOnTop: false,
 			  width: interfaceResource.getWidth(),
 			  height: interfaceResource.getHeight()
 			});
 			var square2 = new Kinetic.Rect({
-			  fill: "blue",
-			  stroke: "black",
-			  strokeWidth: 4,
+			  fill: "#99CC66",
+			  /*stroke: "black",
+			  strokeWidth: 4,*/
 			  //draggable: true,
+			  dragOnTop: false,
 			  name: "_INTERN_SQUARE",
-			  x:5,
-			  y:5,
-			  width: 0.9*interfaceResource.getWidth(),
-			  height: 0.9*interfaceResource.getHeight()
+			  x:0.1*interfaceResource.getWidth(),
+			  y:0.1*interfaceResource.getHeight(),
+			  width: 0.8*interfaceResource.getWidth(),
+			  height: 0.8*interfaceResource.getHeight()
 			});
 			
 			var simpleText = new Kinetic.Text({
-			  x: 25,
-			  y: 15,
-			  name: "_TEXT",
-			  text: interfaceResource.getName(),
-			  fontSize: 12,
-			  fontFamily: 'Calibri',
-			  textFill: 'black'
-			});
+			 	x:0.5*interfaceResource.getWidth(),
+			  	y:0.5*interfaceResource.getHeight(),
+		        text: interfaceResource.getName(),
+		        fontSize: 30,
+		        fontFamily: 'Calibri',
+		        fill: 'black',
+		        align: 'center'
+		      });
 			
 			kinectGroup.add( square1 );
 			kinectGroup.add( square2 );
@@ -87,10 +106,27 @@ function defaultKineticFactory( interfaceResource )
 			return kinectGroup;
 			break;
 		}
+		default:
+		{
+			alert("OOHHIIHI");
+			break;
+		}
 	}
 }
 
-
+GraphicController.prototype.extendKineticShape = function( interfaceResource, kineticShape )
+{
+	var extendedKineticShape;
+	switch( interfaceResource.getResourceType() )
+	{
+		case( resourceTypeEnum.IR_BUTTON ):
+		{
+			extendedKineticShape = graphicControllerGlobals.styleChangers[ graphicControllerGlobals.currentStyle ].modifyButton( kineticShape );
+		}
+	}
+	
+	return extendedKineticShape;
+}
 
 function KineticStyleChanger()
 {
