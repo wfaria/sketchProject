@@ -1,6 +1,5 @@
-function Component( baseObject, bindingFunction )
+function Component( baseObject )
 {
-	this.bindingFunc = bindingFunction;
 	this.base = baseObject;
 	this.funcArray = new Array();
 }
@@ -65,29 +64,42 @@ function bindGenericComponent( kineticShape, componentObj )
 	kineticShape.on( "mouseover",
 		function( evt )
 		{
-			componentObj.callFunction( "mouseOver", [] );
+			componentObj.callFunction( "mouseover", [] );
 		}
 	);
 	
 	kineticShape.on( "dragmove",
 		function( evt )
 		{
-			componentObj.callFunction( "dragMove", [] );
+			componentObj.callFunction( "dragmove", [] );
 		}
 	);
 	
 	kineticShape.on( "dblclick",
 		function( evt )
 		{
-			componentObj.callFunction( "dblClick", [kineticShape] );
+			componentObj.callFunction( "dblclick", [kineticShape] );
 		}
 	);
 }
 
+/**
+ * Create a generic component for a simple Kinetic shape.
+ * This kinetic shape must be a simple image or a draggable kinetic group.
+ * This function will associate the component functions with the kinetic events automatically.
+ *
+ * @param {?} baseObj - A specific object that will be used as the function caller.
+ */
 function GenericKineticComponent( baseObj )
 {
-	var baseObj = { i :137, count : "a" };
-	Component.call( this , baseObj, bindGenericComponent );
+	Component.call( this , baseObj );
 	this.addFunction( "dragmove", dragMove );
-	this.addFunction( "dblclick", dblclick );
+	this.addFunction( "dblclick", dblClick );
+	this.addFunction( "mouseover", mouseOver );
+	this.addFunction( "mouseout", mouseOut );
+	
+	bindGenericComponent( baseObj.kineticShape, this );
 }
+
+GenericKineticComponent.prototype = new Component;
+GenericKineticComponent.prototype.constructor = GenericKineticComponent;

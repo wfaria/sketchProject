@@ -38,17 +38,41 @@ function GraphicController( containerDOMID )
 
 GraphicController.prototype.constructor = GraphicController;
 
-GraphicController.prototype.renderScreen = function ( screenObject )
+GraphicController.prototype.renderScreen = function ( sketchObject )
 {
-	
+	var currentScreen = sketchObject.getCurrentScreen();
+	if( currentScreen == null )
+		return;
+	var resources = currentScreen.getResources();
+	var length = resources.length();
+	var i;
+	for ( i = 0;  i < length; i++ )
+	{
+		interfaceResource = resources[i].getResourceBeforeVersion();
+		this.addInterfaceResource( interfaceResource );
+	}
 }
 
 
 GraphicController.prototype.addInterfaceResource = function ( interfaceResource )
 {
-	var kineticShape = this.createGraphicObject( interfaceResource );
-	this.layers[ interfaceResource.getZ() ].add( kineticShape );
+	var ks = this.createGraphicObject( interfaceResource );
+	this.layers[ interfaceResource.getZ() ].add( ks );
 	this.layers[ interfaceResource.getZ() ].draw();
+	
+	if( interfaceResource.getResourceType() == resourceTypeEnum.IR_BUTTON )
+	{
+		var componentBaseObj = { 
+			layer : 		this.layers[ interfaceResource.getZ() ],
+			kineticShape : 	ks
+		};
+	
+		new GenericKineticComponent( componentBaseObj );
+	}
+	else
+	{
+		alert("ERRO");
+	}
 }
 
 GraphicController.prototype.createGraphicObject = function ( interfaceResource )
@@ -108,7 +132,7 @@ GraphicController.prototype.defaultKineticFactory = function( interfaceResource 
 		}
 		default:
 		{
-			alert("OOHHIIHI");
+			alert("ERRO");
 			break;
 		}
 	}

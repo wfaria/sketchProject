@@ -168,6 +168,11 @@ function Screen( name )
 	this.lastAccessedResource = null;
 }
 
+Screen.prototype.getResources = function()
+{
+	return this.resourceHistories;
+}
+
 Screen.prototype.getName = function()
 {
 	return this.name;
