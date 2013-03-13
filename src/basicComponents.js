@@ -48,7 +48,6 @@ function dblClick( kineticShape )
 {
 	var layer = kineticShape.getLayer();
 	kineticShape.remove();
-	alert( this.i++ );
     layer.draw();
 }
 
@@ -68,10 +67,10 @@ function bindGenericComponent( kineticShape, componentObj )
 		}
 	);
 	
-	kineticShape.on( "dragmove",
+	kineticShape.on( "mouseout",
 		function( evt )
 		{
-			componentObj.callFunction( "dragmove", [] );
+			componentObj.callFunction( "mouseout", [] );
 		}
 	);
 	

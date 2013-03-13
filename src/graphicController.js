@@ -38,8 +38,15 @@ function GraphicController( containerDOMID )
 
 GraphicController.prototype.constructor = GraphicController;
 
+/**
+ * This function will draw all elements from the current screen of a sketch project.
+ *
+ * @param {!Object} sketchObject - An object which represents the sketch project.
+ */
 GraphicController.prototype.renderScreen = function ( sketchObject )
 {
+	if( this.stage != null )
+		this.stage.remove();
 	var currentScreen = sketchObject.getCurrentScreen();
 	if( currentScreen == null )
 		return;
@@ -95,7 +102,7 @@ GraphicController.prototype.defaultKineticFactory = function( interfaceResource 
 			  fill: "#669933",
 			  stroke: "#003333",
 			  strokeWidth: 2,
-			  name: "_EXTERN_SQUARE",
+			  name: "_MAIN_ELEMENT",
 			  //draggable: true,
 			  dragOnTop: false,
 			  width: interfaceResource.getWidth(),
@@ -115,6 +122,8 @@ GraphicController.prototype.defaultKineticFactory = function( interfaceResource 
 			});
 			
 			var simpleText = new Kinetic.Text({
+				name: "_TEXT",
+				dragOnTop: false,
 			 	x:0.5*interfaceResource.getWidth(),
 			  	y:0.5*interfaceResource.getHeight(),
 		        text: interfaceResource.getName(),
@@ -123,6 +132,11 @@ GraphicController.prototype.defaultKineticFactory = function( interfaceResource 
 		        fill: 'black',
 		        align: 'center'
 		      });
+		      
+		   	simpleText.setOffset({
+		        x: simpleText.getWidth() / 2,
+		        y: simpleText.getHeight() / 2
+		     });
 			
 			kinectGroup.add( square1 );
 			kinectGroup.add( square2 );
