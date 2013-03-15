@@ -61,17 +61,18 @@ GraphicController.prototype.renderScreen = function ( sketchObject )
 }
 
 
-GraphicController.prototype.addInterfaceResource = function ( interfaceResource )
+GraphicController.prototype.addInterfaceResource = function ( interfaceRes )
 {
-	var ks = this.createGraphicObject( interfaceResource );
-	this.layers[ interfaceResource.getZ() ].add( ks );
-	this.layers[ interfaceResource.getZ() ].draw();
+	var ks = this.createGraphicObject( interfaceRes );
+	this.layers[ interfaceRes.getZ() ].add( ks );
+	this.layers[ interfaceRes.getZ() ].draw();
 	
-	if( interfaceResource.getResourceType() == resourceTypeEnum.IR_BUTTON )
+	if( interfaceRes.getResourceType() == resourceTypeEnum.IR_BUTTON )
 	{
 		var componentBaseObj = { 
-			layer : 		this.layers[ interfaceResource.getZ() ],
-			kineticShape : 	ks
+			layer : 		this.layers[ interfaceRes.getZ() ],
+			kineticShape : 	ks,
+			interfaceResource: interfaceRes
 		};
 	
 		new GenericKineticComponent( componentBaseObj );
