@@ -16,3 +16,8 @@ generalGlobals.openProject = function()
 {
 	manager = new GeneralManager();
 }
+
+generalGlobals.newProject = function()
+{
+	manager = new GeneralManager();
+}
