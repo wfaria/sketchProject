@@ -2,10 +2,15 @@
 	<head>
 		<title>QUnit Graphic Controller Object Test Page</title>
 		
-		<script src="../src/Model/interfaceResource.js"></script>
+		<script src="../src/Libs/utils.js"></script>
 		<script src="../src/Libs/kinetic-v4.3.2.js"></script>	
+		<script src="../src/Model/interfaceResource.js"></script>
+		<script src="../src/Model/sketch.js"></script>
+		<script src="../src/Editor/mediatorObject.js"></script>
+		<script src="../src/Action/actionController.js"></script>
 		<script src="../src/Action/basicComponents.js"></script>	
 		<script src="../src/Graphic/graphicController.js"></script>
+		<script src="../src/Editor/generalManager.js"></script>
 		
 		    <style>
       body {
@@ -23,6 +28,8 @@
 		<div id="container"></div>
 
 		<script>
+			generalGlobals.newProject( "testUser", "testProject" );
+		
 			var gc = new GraphicController( "container" );
 			var x = 0;
 			var y = 0;

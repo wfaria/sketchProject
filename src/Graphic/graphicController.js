@@ -5,7 +5,7 @@ graphicControllerGlobals.MAX_DEPTH = 15;
 graphicControllerGlobals.CANVAS_WIDTH = 800;
 graphicControllerGlobals.CANVAS_HEIGHT = 600;
 graphicControllerGlobals.stylesEnum = { DEFAULT : 0, ANDROID : 1, WINDOWS8: 2, LINUX: 3 };
-graphicControllerGlobals.currentStyle = graphicControllerGlobals.stylesEnum.DEFAULT;
+graphicControllerGlobals.currentStyle = graphicControllerGlobals.stylesEnum.ANDROID;
 graphicControllerGlobals.styleChangers = {};
 
 
@@ -31,7 +31,7 @@ function GraphicController( containerDOMID )
 	}
 	
 	graphicControllerGlobals.styleChangers[ graphicControllerGlobals.stylesEnum.DEFAULT ] = new KineticStyleChanger();
-	graphicControllerGlobals.styleChangers[ graphicControllerGlobals.stylesEnum.ANDROID ] = new KineticStyleChanger();
+	graphicControllerGlobals.styleChangers[ graphicControllerGlobals.stylesEnum.ANDROID ] = new AndroidStyleChanger();
 	graphicControllerGlobals.styleChangers[ graphicControllerGlobals.stylesEnum.WINDOWS8 ] = new KineticStyleChanger();
 	graphicControllerGlobals.styleChangers[ graphicControllerGlobals.stylesEnum.LINUX ] = new KineticStyleChanger();
 }
@@ -182,6 +182,30 @@ KineticStyleChanger.prototype.modifyButton = function ( kineticShape )
 
 KineticStyleChanger.prototype.modifyWindow = function ( kineticShape )
 {
+	return kineticShape;
+}
+
+
+/**
+ * The AndroidStyleChanger object, it can change the following kinetic elements to have an Android outfit
+ * @constructor
+ * */
+function AndroidStyleChanger()
+{
+}
+AndroidStyleChanger.prototype = new KineticStyleChanger
+AndroidStyleChanger.prototype.constructor = AndroidStyleChanger;
+
+
+AndroidStyleChanger.prototype.modifyButton = function ( kineticShape )
+{
+	var externSquare = kineticShape.get( "._MAIN_ELEMENT" )[0]; 
+	var internSquare = kineticShape.get( "._INTERN_SQUARE" )[0]; 
+	var text = kineticShape.get( "._TEXT" )[0]; 
+	externSquare.setFill( "#666666" );
+	externSquare.setStroke( "#99CCFF" );
+	internSquare.setFill( "#666666" );
+	text.setFill( "#FFFFFF" );
 	return kineticShape;
 }
 

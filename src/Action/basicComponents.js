@@ -26,9 +26,15 @@ function componentKineticPrepare( componentObject, kineticShape )
     // TODO: Define how the components function will work and finish this function
 }
 
-/***********************************************************/
+/*********************************************************/
 
 /* GenericKineticComponent component */
+function click()
+{
+	alert("plim " + this.interfaceResource.getName() );
+	generalGlobals.manager.graphicMediator.publish( "kineticClick", [this.kineticShape, this.interfaceResource] );
+}
+
 function mouseOver() 
 {
 	document.body.style.cursor = "pointer";
@@ -53,6 +59,12 @@ function dblClick( kineticShape )
 
 function bindGenericComponent( kineticShape, componentObj )
 {
+	kineticShape.on( "click",
+		function( evt )
+		{
+			componentObj.callFunction( "click", [] );
+		}
+	);
 	kineticShape.on( "dragmove",
 		function( evt )
 		{
@@ -94,6 +106,7 @@ function GenericKineticComponent( baseObj )
 	Component.call( this , baseObj );
 	this.addFunction( "dragmove", dragMove );
 	this.addFunction( "dblclick", dblClick );
+	this.addFunction( "click", click );
 	this.addFunction( "mouseover", mouseOver );
 	this.addFunction( "mouseout", mouseOut );
 	
