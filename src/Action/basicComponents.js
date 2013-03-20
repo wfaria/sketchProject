@@ -1,3 +1,5 @@
+var componentGlobals = {};
+
 function Component( baseObject )
 {
 	this.base = baseObject;
@@ -31,7 +33,7 @@ function componentKineticPrepare( componentObject, kineticShape )
 /* GenericKineticComponent component */
 function click()
 {
-	alert("plim " + this.interfaceResource.getName() );
+	window.status = "Click over " + this.interfaceResource.getName() ;
 	generalGlobals.manager.graphicMediator.publish( "kineticClick", [this.kineticShape, this.interfaceResource] );
 }
 

@@ -5,7 +5,7 @@ graphicControllerGlobals.MAX_DEPTH = 15;
 graphicControllerGlobals.CANVAS_WIDTH = 800;
 graphicControllerGlobals.CANVAS_HEIGHT = 600;
 graphicControllerGlobals.stylesEnum = { DEFAULT : 0, ANDROID : 1, WINDOWS8: 2, LINUX: 3 };
-graphicControllerGlobals.currentStyle = graphicControllerGlobals.stylesEnum.ANDROID;
+graphicControllerGlobals.currentStyle = graphicControllerGlobals.stylesEnum.DEFAULT;
 graphicControllerGlobals.styleChangers = {};
 
 
