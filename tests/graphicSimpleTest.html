@@ -2,6 +2,8 @@
 	<head>
 		<title>QUnit Graphic Controller Object Test Page</title>
 		
+	  	<div id="qunit"> </div>
+  		<script src="../src/libs/qunit.js"></script>
 		<script src="../src/Libs/utils.js"></script>
 		<script src="../src/Libs/kinetic-v4.3.2.js"></script>	
 		<script src="../src/Model/interfaceResource.js"></script>
@@ -36,6 +38,18 @@
 			var br = new ButtonResource( x,y,0,200, 160, "Button", 0, 0 );
 			
 			gc.addInterfaceResource( br );
+			
+			
+			
+			  	module("Mediator test");
+			  	test
+			  	( 
+			  		"Simple test", function()
+			  		{
+			  			var mediator = new Mediator( "test" );
+			  			ok( mediator.toString() == "Mediator with ID: test", "toString() test" );
+			  		}
+			  	);
 		</script>
 	</body>
 	
