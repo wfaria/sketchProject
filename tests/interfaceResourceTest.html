@@ -7,8 +7,8 @@
 </head>
 <body>
   <div id="qunit"> </div>
-  <script src="../src/qunit.js"></script>
-  <script src="../src/interfaceResource.js"></script>
+  <script src="../src/Libs/qunit.js"></script>
+  <script src="../src/Model/interfaceResource.js"></script>
   
   <script>
 	module("Basic test");
@@ -19,7 +19,7 @@
 	(
 		"InterfaceResource object basic tests", function()
 		{
-			ok( iR1.toString()==("Interface at position ("+x+","+y+")"), "toString() OK");
+			ok( iR1.toString()==("Interface at position ("+x+","+y+") created at the version " + 0 ), "toString() OK");
 			ok( iR1.getId()==("0"), "getId() OK");
 			ok( iR1.getX()==x, "getX() OK");
 			ok( iR1.getY()==y, "getY() OK");
