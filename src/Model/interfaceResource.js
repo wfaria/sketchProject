@@ -109,10 +109,45 @@ GroupResource.prototype.getChildren = function( )
 	return this.childrenObjects;
 }
 
+GroupResource.prototype.findChildRecursive = function( idNum )
+{
+	var length = this.childrenObjects.length;
+	var res;
+	var obj;
+	for( var i = 0; i < length; i++ )
+	{
+		res = this.childrenObjects[i];
+		if( res.getId() == idNum )
+		{
+			return res;
+		}
+		else if( res.getResourceType() == resourceTypeEnum.IR_GROUP )
+		{
+			obj = res.findChildRecursive( idNum );
+			if( obj != null )
+			{
+				return obj;
+			}
+		}
+	}
+	return null;
+}
+
 GroupResource.prototype.addChild = function( interfaceResource )
 {
-	// TODO: Do check to avoid circular reference
-	this.childrenIds.push( interfaceResource.getId );
+	// Do not allow to insert a resource already grouped
+	if( interfaceResource.getParentId() != iResGlobals.PARENTLESS )
+	{
+		return false;
+	}
+	// Do not allow circular references
+	if( interfaceResource.getResourceType() == resourceTypeEnum.IR_GROUP && 
+		interfaceResource.findChildRecursive( this.getId() ) != null )
+	{
+		return false;
+	}
+	this.childrenIds.push( interfaceResource.getId() );
 	this.childrenObjects.push( interfaceResource );
 	interfaceResource.setParentId( this.getId() );
+	return true;
 }

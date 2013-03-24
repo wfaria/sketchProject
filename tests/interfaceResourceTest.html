@@ -30,7 +30,6 @@
 	
 	
 	
-		// TODO: Do check to avoid circular reference
 	/*************** GROUP TEST *************/
 	module("Group Resource");
 	
@@ -81,6 +80,7 @@
 			var id = 0;
 			var group1 = new GroupResource( x,y,0,100, 50, "Group1", id, version );
 			var group2 = new GroupResource( x,y,0,100, 50, "Group2", id+1, version );
+			var group3 = new GroupResource( x,y,0,100, 50, "Group3", id-1, version );
 			var btns1 = {};
 			var btns2 = {};
 			var qtdBtns = 4;
@@ -108,7 +108,14 @@
 			ok( group2.getChildren().length == qtdBtns , "The group2 continues with " + qtdBtns + " children");
 			ok( group2.getParentId() == group1.getId() , "The group2's parent id is the group1's id");
 			
-			//alert( group1.toString() );
+			group2.addChild( group3 );
+			ok( group2.getChildren().length == (qtdBtns+1) , "Adding a new group as group2's child, now the group1 has " + (qtdBtns+1) + " children");
+
+			ok( group3.addChild( group1 ) == false, "Don't allow to group3 have group1 as child (circular reference)" );
+			ok( group2.addChild( group1 ) == false, "Don't allow to group2 have group1 as child (circular reference)" );
+			ok( group1.addChild( group3 ) == false, "Don't allow to group1 have group3 as child (it is already grouped)" );
+			
+			alert( group1.toString() );
 			
 		}
 	);
