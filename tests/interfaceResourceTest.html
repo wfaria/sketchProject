@@ -19,13 +19,98 @@
 	(
 		"InterfaceResource object basic tests", function()
 		{
-			ok( iR1.toString()==("Interface at position ("+x+","+y+") created at the version " + 0 ), "toString() OK");
+			ok( iR1.toString()==("Interface at position ("+x+","+y+") created at the version " + 0 +
+		' with id (' + 0+ ')'  ), "toString() OK");
 			ok( iR1.getId()==("0"), "getId() OK");
 			ok( iR1.getX()==x, "getX() OK");
 			ok( iR1.getY()==y, "getY() OK");
 		}
 		
 	);	
+	
+	
+	
+		// TODO: Do check to avoid circular reference
+	/*************** GROUP TEST *************/
+	module("Group Resource");
+	
+	test
+	(
+		"Empty group object basic test", function()
+		{
+			var version = 0;
+			var group1 = new GroupResource( x,y,0,100, 50, "Group", 0, version );
+			//alert( group1.toString() );
+			ok( group1.getChildren().length == 0 , "The group is created empty");
+		}
+	);
+	
+	test
+	(
+		"Simple group test", function()
+		{
+			var x = 0;
+			var y = 0;
+			var version = 0;
+			var id = 0;
+			var group1 = new GroupResource( x,y,0,100, 50, "Group", id, version );
+			var btns = {};
+			var qtdBtns = 4;
+			var i = 0;
+			ok( group1.getChildren().length == 0 , "The group is created empty");
+			for( i = 0; i < qtdBtns; i++)
+			{
+				btns[i] = new ButtonResource( x+i*2,y+i*2,0,100, 50, "Button"+i, id+i+1, version );
+				group1.addChild( btns[i] );
+			}
+			ok( group1.getChildren().length == qtdBtns , "Now the group has " + qtdBtns + " children");
+			//alert( group1.toString() );
+			
+		}
+	);
+	
+	test
+	(
+		"Nested group test", function()
+		{
+			var x = 0;
+			var y = 0;
+			var version = 0;
+			var id = 0;
+			var group1 = new GroupResource( x,y,0,100, 50, "Group1", id, version );
+			var group2 = new GroupResource( x,y,0,100, 50, "Group2", id+1, version );
+			var btns1 = {};
+			var btns2 = {};
+			var qtdBtns = 4;
+			var i = 0;
+			ok( group1.getChildren().length == 0 && group2.getChildren().length == 0, "The groups are created empty");
+			
+			for( i = 0; i < qtdBtns; i++)
+			{
+				btns1[i] = new ButtonResource( x+i*2,y+i*2,0,100, 50, "Button"+i, id+i+2, version );
+				group1.addChild( btns1[i] );
+			}
+			ok( group1.getChildren().length == qtdBtns , "Now the group1 has " + qtdBtns + " children");
+			
+			for( i = 0; i < qtdBtns; i++)
+			{
+				btns2[i] = new ButtonResource( x+i*2,y+i*2,0,100, 50, "Button"+(id+i+2+qtdBtns), id+i+2+qtdBtns, version );
+				group2.addChild( btns2[i] );
+			}
+			ok( group2.getChildren().length == qtdBtns , "Now the group2 has " + qtdBtns + " children");
+			
+		
+			group1.addChild( group2 );
+			
+			ok( group1.getChildren().length == (qtdBtns+1) , "Adding group2 as group1's child, now the group1 has " + (qtdBtns+1) + " children");
+			ok( group2.getChildren().length == qtdBtns , "The group2 continues with " + qtdBtns + " children");
+			ok( group2.getParentId() == group1.getId() , "The group2's parent id is the group1's id");
+			
+			//alert( group1.toString() );
+			
+		}
+	);
+	
   </script>
 </body>
 </html>
