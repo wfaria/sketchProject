@@ -1,4 +1,4 @@
-var resourceTypeEnum = { IR_UNDEFINED: -1, IR_DELETED: 0, IR_BUTTON: 1, IR_WINDOW: 2, IR_TEXTLABEL: 3 };
+var resourceTypeEnum = { IR_UNDEFINED: -1, IR_DELETED: 0, IR_BUTTON: 1, IR_WINDOW: 2, IR_TEXTLABEL: 3, IR_GROUP: 4 };
 
 var iResGlobals = {};
 iResGlobals.PARENTLESS = -1;
@@ -77,7 +77,7 @@ function GroupResource( posX,posY,posZ,widthVal, heightVal, name, id, initialVer
 {
 	// the function call is used to simulate the super(...) call function, you will get SYNTAX_ERR if you miss the parameter number
 	InterfaceResource.call(this, posX,posY,posZ,widthVal, heightVal, name, id, initialVersion);
-	this.resourceType = resourceTypeEnum.IR_DELETED;
+	this.resourceType = resourceTypeEnum.IR_GROUP;
 	this.childrenIds = [];
 	this.childrenObjects = [];
 }

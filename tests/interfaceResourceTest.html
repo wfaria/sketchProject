@@ -42,6 +42,8 @@
 			var group1 = new GroupResource( x,y,0,100, 50, "Group", 0, version );
 			//alert( group1.toString() );
 			ok( group1.getChildren().length == 0 , "The group is created empty");
+			ok( group1.getResourceType() == resourceTypeEnum.IR_GROUP , "Group's resource type is OK");
+			
 		}
 	);
 	
