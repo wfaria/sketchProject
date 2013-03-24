@@ -65,6 +65,12 @@
 				group1.addChild( btns[i] );
 			}
 			ok( group1.getChildren().length == qtdBtns , "Now the group has " + qtdBtns + " children");
+			ok( group1.removeChild( btns[0] ).getId() == 1, "Removing one child from the group" );
+			ok( group1.getChildren().length == (qtdBtns-1) , "Now the group has " + (qtdBtns-1) + " children");
+			ok( group1.removeChild( btns[0] ) == null, "Trying to remove an inexistent resource in the group does not do nothing." );
+			ok( group1.getChildren().length == (qtdBtns-1) , "The group continues with " + (qtdBtns-1) + " children");
+			ok( btns[0].getParentId() == iResGlobals.PARENTLESS , "The removed resource does not have parent" );
+
 			//alert( group1.toString() );
 			
 		}
@@ -110,12 +116,17 @@
 			
 			group2.addChild( group3 );
 			ok( group2.getChildren().length == (qtdBtns+1) , "Adding a new group as group2's child, now the group1 has " + (qtdBtns+1) + " children");
-
+			ok( group3.getParentId() == group2.getId() , "The group3's parent id is the group2's id");
+			
 			ok( group3.addChild( group1 ) == false, "Don't allow to group3 have group1 as child (circular reference)" );
 			ok( group2.addChild( group1 ) == false, "Don't allow to group2 have group1 as child (circular reference)" );
 			ok( group1.addChild( group3 ) == false, "Don't allow to group1 have group3 as child (it is already grouped)" );
 			
-			alert( group1.toString() );
+			ok( group1.removeChild( group2 ).getId() == group2.getId(), "Removing group2 from group1's children" );
+			ok( group2.getParentId() == iResGlobals.PARENTLESS , "Now group2 does not have parent it");
+
+			
+			alert( group2.toString() );
 			
 		}
 	);
