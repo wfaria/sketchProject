@@ -124,6 +124,7 @@
 			
 			ok( group1.removeChild( group2 ).getId() == group2.getId(), "Removing group2 from group1's children" );
 			ok( group2.getParentId() == iResGlobals.PARENTLESS , "Now group2 does not have parent it");
+			ok( group1.removeChild( group2 ) == null, "Removing an inexistent child from group1's children returns null" );
 
 			
 			alert( group2.toString() );

@@ -77,6 +77,10 @@ GraphicController.prototype.addInterfaceResource = function ( interfaceRes )
 	
 		new GenericKineticComponent( componentBaseObj );
 	}
+	else if( interfaceRes.getResourceType() == resourceTypeEnum.IR_GROUP )
+	{
+		// TODO
+	}
 	else
 	{
 		alert("ERRO");
@@ -93,8 +97,16 @@ GraphicController.prototype.createGraphicObject = function ( interfaceResource )
 
 GraphicController.prototype.defaultKineticFactory = function( interfaceResource )
 {
+	var kineticRet = null;
 	switch( interfaceResource.getResourceType() )
 	{
+		case( resourceTypeEnum.IR_GROUP ):
+		{
+			var kineticGroup = new Kinetic.Group(  { x:0, y:0, draggable:true, 
+				id:"_group_"+interfaceResource.getId(), name:interfaceResource.getName() });
+			kineticRet = kineticGroup;
+			break;
+		}
 		case( resourceTypeEnum.IR_BUTTON ):
 		{
 			var kinectGroup = new Kinetic.Group(  { x:interfaceResource.getX(), y:interfaceResource.getY(), draggable:true, id:"_button", name:interfaceResource.getName() });
@@ -142,15 +154,16 @@ GraphicController.prototype.defaultKineticFactory = function( interfaceResource 
 			kinectGroup.add( square1 );
 			kinectGroup.add( square2 );
 			kinectGroup.add( simpleText );
-			return kinectGroup;
+			kineticRet = kinectGroup;
 			break;
 		}
 		default:
 		{
-			alert("ERRO");
+			alert("FACTORY_ERROR");
 			break;
 		}
-	}
+	} // END switch( interfaceResource.getResourceType() )
+	return kineticRet;
 }
 
 GraphicController.prototype.extendKineticShape = function( interfaceResource, kineticShape )
@@ -158,11 +171,31 @@ GraphicController.prototype.extendKineticShape = function( interfaceResource, ki
 	var extendedKineticShape;
 	switch( interfaceResource.getResourceType() )
 	{
+		case( resourceTypeEnum.IR_GROUP ):
+		{
+			var childrenArray = interfaceResource.getChildren();
+			var length = childrenArray.length;
+			for( var i = 0; i < length; i++ )
+			{
+				var newKineticShape = this.defaultKineticFactory( childrenArray[i] );
+				newKineticShape = this.extendKineticShape( childrenArray[i], newKineticShape );
+				newKineticShape.setDraggable( false ); // The root element from the group must be the unique draggable element
+				kineticShape.add( newKineticShape );
+			}
+			extendedKineticShape = kineticShape;
+			break;
+		}
 		case( resourceTypeEnum.IR_BUTTON ):
 		{
 			extendedKineticShape = graphicControllerGlobals.styleChangers[ graphicControllerGlobals.currentStyle ].modifyButton( kineticShape );
+			break;
 		}
-	}
+		default:
+		{
+			alert("EXTEND_ERROR");
+			break;
+		}
+	} // END switch( interfaceResource.getResourceType() )
 	
 	return extendedKineticShape;
 }
