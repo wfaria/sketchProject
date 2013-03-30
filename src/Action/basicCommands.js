@@ -1,6 +1,6 @@
 var basicCommandsGlobals = {};
 
-basicCommandsGlobals.commandTypeEnum = { CMD_UNDEFINED: -1, CMD_DRAG: 0 };
+basicCommandsGlobals.commandTypeEnum = { CMD_UNDEFINED: -1, CMD_DRAG: 0, CMD_KINETIC_DRAG: 1 };
 basicCommandsGlobals.executionTypeEnum = { CMEX_UNDEFINED: -1, CMEX_EDITION: 0, CMEX_SIMULATION: 1 };
 
 function Command()
@@ -32,6 +32,37 @@ Command.prototype.toString = function()
 }
 
 
+function KineticDragCommand( executionMode, resourceObj, kineticObj, toX, toY )
+{
+	Command.call(this);
+	this.commandCode = basicCommandsGlobals.commandTypeEnum.CMD_KINETIC_DRAG;
+	this.executionMode = executionMode;
+	this.setArgs( 
+		{
+			resource : resourceObj,
+			kineticShape: kineticObj,
+			x : toX,
+			y : toY
+		}
+	);
+}
+KineticDragCommand.prototype = new Command;
+KineticDragCommand.prototype.constructor = KineticDragCommand;
+
+KineticDragCommand.prototype.toString = function()
+{
+	var interfaceResource = this.argObject.resource;
+	var kineticShape = this.argObject.kineticShape;
+	var x = this.argObject.x;
+	var y = this.argObject.y;
+	return 		"Kinetic Shape Drag  " + Command.prototype.toString.call( this ) + "\n" +
+		"Parameters:\n" +  interfaceResource.toString() + "\n" +
+		kineticShape.toString() + "\n" +
+		"x: " + x + ",y: " + y;
+}
+
+
+
 function DragResourceCommand( executionMode, resourceObj, toX, toY )
 {
 	Command.call(this);
@@ -46,7 +77,7 @@ function DragResourceCommand( executionMode, resourceObj, toX, toY )
 	);
 }
 DragResourceCommand.prototype = new Command;
-DragResourceCommand.prototype.constructor = Command;
+DragResourceCommand.prototype.constructor = DragResourceCommand;
 
 DragResourceCommand.prototype.toString = function()
 {
@@ -59,7 +90,7 @@ DragResourceCommand.prototype.toString = function()
 
 }
 
-/****** command factyory test *********/
+/****** command factory test *********/
 var dragResourceFunctions = new Array();
 dragResourceFunctions[basicCommandsGlobals.executionTypeEnum.CMEX_EDITION] = function( commandObject )
 {
@@ -79,13 +110,47 @@ dragResourceUndoFunctions[basicCommandsGlobals.executionTypeEnum.CMEX_EDITION] =
 	return new DragResourceCommand( basicCommandsGlobals.executionTypeEnum.CMEX_EDITION, interfaceResource, x, y );
 }
 
+
+
+kineticDragFunctions = new Array();
+kineticDragFunctions[basicCommandsGlobals.executionTypeEnum.CMEX_EDITION] = function( commandObject )
+{
+	// Model handling
+	var interfaceResource = commandObject.argObject.resource;
+	var x = commandObject.argObject.x;
+	var y = commandObject.argObject.y;
+	interfaceResource.setX( x );
+	interfaceResource.setY( y );
+	
+	// Graphic handling
+	var kineticShape = commandObject.argObject.kineticShape;
+	kineticShape.setX( x );
+	kineticShape.setY( y );
+	if( kineticShape.getLayer() != null )
+	{
+		kineticShape.getLayer().draw();
+	}
+}
+
+var kineticDragUndoFunctions = new Array();
+kineticDragUndoFunctions[basicCommandsGlobals.executionTypeEnum.CMEX_EDITION] = function( commandObject )
+{
+	var interfaceResource = commandObject.argObject.resource;
+	var kineticShape = commandObject.argObject.kineticShape;
+	var x = interfaceResource.getX();
+	var y = interfaceResource.getY();
+	return new KineticDragCommand( basicCommandsGlobals.executionTypeEnum.CMEX_EDITION, interfaceResource, kineticShape, x, y );
+}
+
 function CommandFunctionFactory()
 {
 	this.commandMatrix = new Array();
 	this.commandMatrix[basicCommandsGlobals.commandTypeEnum.CMD_DRAG] = dragResourceFunctions;
+	this.commandMatrix[basicCommandsGlobals.commandTypeEnum.CMD_KINETIC_DRAG] = kineticDragFunctions;
 	
 	this.undoMatrix = new Array();
 	this.undoMatrix[basicCommandsGlobals.commandTypeEnum.CMD_DRAG] = dragResourceUndoFunctions;
+	this.undoMatrix[basicCommandsGlobals.commandTypeEnum.CMD_KINETIC_DRAG] = kineticDragUndoFunctions;
 }
 
 // This one creates a command to be executed

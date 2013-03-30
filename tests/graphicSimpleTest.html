@@ -8,6 +8,7 @@
 		<script src="../src/Model/sketch.js"></script>
 		<script src="../src/Editor/mediatorObject.js"></script>
 		<script src="../src/Action/actionController.js"></script>
+		<script src="../src/Action/basicCommands.js"></script>
 		<script src="../src/Action/basicComponents.js"></script>	
 		<script src="../src/Graphic/graphicController.js"></script>
 		<script src="../src/Editor/generalManager.js"></script>
@@ -38,10 +39,21 @@
 			
 			var brs = [];
 			var groupRes = new GroupResource( x,y,0,100, 50, "Group1", 1, 0 );
+			
+			var j = 0;
 			for( var i = 0; i < 10; i++ )
 			{
 				brs[i] =  new ButtonResource( x+i*10,y+i*10,0,200, 160, "Button", 2+i, 0 );
 				groupRes.addChild( brs[i] );
+				
+				var innerGroup =  new GroupResource( x,y,0,100, 50, "InnerGroup"+i, i*100, 0 );
+				for( var j = 0; j < 10; j++ )
+				{
+					var innerBtn = new ButtonResource( x+(i+j)*10, y+(i+j)*10,0,200, 160, "Button", 2+i*100, 0 );
+					innerGroup.addChild( innerBtn );
+				}
+				j++;
+				groupRes.addChild( innerGroup );
 			}
 			gc.addInterfaceResource( groupRes );
 			

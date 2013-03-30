@@ -1,40 +1,40 @@
-var componentGlobals = {};
+var EventManagerGlobals = {};
 
-function Component( baseObject )
+function EventManager( baseObject )
 {
 	this.base = baseObject;
 	this.funcArray = new Array();
 }
 
-Component.prototype.constructor = Component;
+EventManager.prototype.constructor = EventManager;
 
-Component.prototype.addFunction = function ( funcKey, funcImp )
+EventManager.prototype.addFunction = function ( funcKey, funcImp )
 {
 	this.funcArray[ funcKey ] = funcImp;
 }
 
-Component.prototype.callFunction = function( funcKey, funcParams )
+EventManager.prototype.callFunction = function( funcKey, funcParams )
 {
 	this.funcArray[funcKey].apply( this.base, funcParams );
 } 
 
 /*******************************************************/
 
-function componentKineticPrepare( componentObject, kineticShape )
+function EventManagerKineticPrepare( eventManagerObject, kineticShape )
 {
-	componentObject.on("dragmove", function() {
-				shapeComponent.callFunction( "dragmove", [] );
+	eventManagerObject.on("dragmove", function() {
+				shapeEventManager.callFunction( "dragmove", [] );
             });
-    // TODO: Define how the components function will work and finish this function
+    // TODO: Define how the EventManagers function will work and finish this function
 }
 
 /*********************************************************/
 
-/* GenericKineticComponent component */
-function click()
+/* GenericKineticEventManager EventManager */
+function click( evt , kineticShape )
 {
 	window.status = "Click over " + this.interfaceResource.getName() ;
-	generalGlobals.manager.graphicMediator.publish( "kineticClick", [this.kineticShape, this.interfaceResource] );
+	//generalGlobals.manager.graphicMediator.publish( "kineticClick", [this.kineticShape, this.interfaceResource] );
 }
 
 function mouseOver() 
@@ -52,68 +52,84 @@ function dragMove()
      document.body.style.cursor = "pointer";
 };
 
-function dblClick( kineticShape )
+function dragEnd( evt, kineticShape ) 
 {
-	var layer = kineticShape.getLayer();
+	alert("dragEnd");
+	generalGlobals.manager.graphicMediator.publish( "EditorDragEnd", [evt,this.interfaceResource,kineticShape] );
+    document.body.style.cursor = "default";
+};
+
+function dblClick( evt )
+{
+	/*var layer = kineticShape.getLayer();
 	kineticShape.remove();
-    layer.draw();
+    layer.draw();*/
+   	generalGlobals.manager.graphicMediator.publish( "EditorClick", [evt,this.interfaceResource, this.kineticShape] );
 }
 
-function bindGenericComponent( kineticShape, componentObj )
+function bindGenericEventManager( kineticShape, EventManagerObj )
 {
 	kineticShape.on( "click",
 		function( evt )
 		{
-			componentObj.callFunction( "click", [] );
+			EventManagerObj.callFunction( "click", [ evt,kineticShape ] );
 		}
 	);
 	kineticShape.on( "dragmove",
 		function( evt )
 		{
-			componentObj.callFunction( "dragmove", [] );
+			EventManagerObj.callFunction( "dragmove", [] );
 		}
 	);
 	
 	kineticShape.on( "mouseover",
 		function( evt )
 		{
-			componentObj.callFunction( "mouseover", [] );
+			EventManagerObj.callFunction( "mouseover", [] );
 		}
 	);
 	
 	kineticShape.on( "mouseout",
 		function( evt )
 		{
-			componentObj.callFunction( "mouseout", [] );
+			EventManagerObj.callFunction( "mouseout", [] );
 		}
 	);
 	
 	kineticShape.on( "dblclick",
 		function( evt )
 		{
-			componentObj.callFunction( "dblclick", [kineticShape] );
+			EventManagerObj.callFunction( "dblclick", [evt] );
+		}
+	);
+	
+	kineticShape.on( "dragend",
+		function( evt )
+		{
+			EventManagerObj.callFunction( "dragend", [evt, kineticShape] );
 		}
 	);
 }
 
 /**
- * Create a generic component for a simple Kinetic shape.
+ * Create a generic EventManager for a simple Kinetic shape.
  * This kinetic shape must be a simple image or a draggable kinetic group.
- * This function will associate the component functions with the kinetic events automatically.
+ * This function will associate the EventManager functions with the kinetic events automatically.
  *
  * @param {?} baseObj - A specific object that will be used as the function caller.
  */
-function GenericKineticComponent( baseObj )
+function GenericKineticEventManager( baseObj )
 {
-	Component.call( this , baseObj );
+	EventManager.call( this , baseObj );
 	this.addFunction( "dragmove", dragMove );
+	this.addFunction( "dragend", dragEnd );
 	this.addFunction( "dblclick", dblClick );
 	this.addFunction( "click", click );
 	this.addFunction( "mouseover", mouseOver );
 	this.addFunction( "mouseout", mouseOut );
 	
-	bindGenericComponent( baseObj.kineticShape, this );
+	bindGenericEventManager( baseObj.kineticShape, this );
 }
 
-GenericKineticComponent.prototype = new Component;
-GenericKineticComponent.prototype.constructor = GenericKineticComponent;
+GenericKineticEventManager.prototype = new EventManager;
+GenericKineticEventManager.prototype.constructor = GenericKineticEventManager;

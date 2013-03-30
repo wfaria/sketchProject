@@ -29,6 +29,7 @@ function GraphicController( containerDOMID )
 		this.layers[i] = new Kinetic.Layer();
 		this.stage.add( this.layers[i] );
 	}
+	this.eventManagers = new Array();
 	
 	graphicControllerGlobals.styleChangers[ graphicControllerGlobals.stylesEnum.DEFAULT ] = new KineticStyleChanger();
 	graphicControllerGlobals.styleChangers[ graphicControllerGlobals.stylesEnum.ANDROID ] = new AndroidStyleChanger();
@@ -75,7 +76,7 @@ GraphicController.prototype.addInterfaceResource = function ( interfaceRes )
 			interfaceResource: interfaceRes
 		};
 	
-		new GenericKineticComponent( componentBaseObj );
+		this.eventManagers.push( new GenericKineticEventManager( componentBaseObj ) );
 	}
 	else if( interfaceRes.getResourceType() == resourceTypeEnum.IR_GROUP )
 	{
@@ -103,13 +104,13 @@ GraphicController.prototype.defaultKineticFactory = function( interfaceResource 
 		case( resourceTypeEnum.IR_GROUP ):
 		{
 			var kineticGroup = new Kinetic.Group(  { x:0, y:0, draggable:true, 
-				id:"_group_"+interfaceResource.getId(), name:interfaceResource.getName() });
+				id:interfaceResource.getId(), name:interfaceResource.getName() });
 			kineticRet = kineticGroup;
 			break;
 		}
 		case( resourceTypeEnum.IR_BUTTON ):
 		{
-			var kinectGroup = new Kinetic.Group(  { x:interfaceResource.getX(), y:interfaceResource.getY(), draggable:true, id:"_button", name:interfaceResource.getName() });
+			var kinectGroup = new Kinetic.Group(  { x:interfaceResource.getX(), y:interfaceResource.getY(), draggable:true, id:interfaceResource.getId(), name:interfaceResource.getName() });
 
 			var square1 = new Kinetic.Rect({
 			  fill: "#669933",

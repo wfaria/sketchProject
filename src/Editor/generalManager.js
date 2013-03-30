@@ -39,6 +39,35 @@ GeneralManager.prototype.subscribeToMediators = function()
   			}()
 
 		); //end mediator.subscribe( compName, true, ...
+			
+			
+	this.graphicMediator.subscribe( "generalManager", true, 
+  			function() // Do this way if you want to create a closure to the component
+  			{	
+  				return	{ // The real object (mediator component) with callback functions
+
+  					onEditorDragEnd: function( evt, interfaceResource, kineticShape )
+  					{
+  						var dragCommand = new KineticDragCommand( 
+  							basicCommandsGlobals.executionTypeEnum.CMEX_EDITION, interfaceResource, 
+  							kineticShape, kineticShape.getX(), kineticShape.getY() 
+  						);
+  						generalGlobals.manager.actionController.doCommand( dragCommand );
+  					},
+  					onEditorClick: function( evt, interfaceResource, kineticShape  )
+  					{
+  						generalGlobals.manager.actionController.undo();
+  						alert("undo");
+  					},
+  					onEditorStageChange: function( newState )
+  					{
+  						this.editorStage = newState;
+  						//TODO: call this for the graphic part
+  					}
+  				};
+  			}()
+
+		); //end mediator.subscribe( compName, true, ...
 }
 
 
