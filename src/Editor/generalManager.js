@@ -57,7 +57,7 @@ GeneralManager.prototype.subscribeToMediators = function()
   					onEditorClick: function( evt, interfaceResource, kineticShape  )
   					{
   						generalGlobals.manager.actionController.undo();
-  						alert("undo");
+  						//alert("undo");
   					},
   					onEditorStageChange: function( newState )
   					{

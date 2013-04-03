@@ -54,7 +54,6 @@ function dragMove()
 
 function dragEnd( evt, kineticShape ) 
 {
-	alert("dragEnd");
 	generalGlobals.manager.graphicMediator.publish( "EditorDragEnd", [evt,this.interfaceResource,kineticShape] );
     document.body.style.cursor = "default";
 };

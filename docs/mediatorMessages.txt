@@ -1,0 +1,21 @@
+/****** Graphic messages ********/
+
+
+/**
+ * EventKey: EditorDragEnd
+ * Sent when a interface resource on the canvas drag is finished 
+ *
+ * @param {?} evt - The event that has been published
+ * @param {InterfaceResource} interfaceResource - The data object from the shape which has been dragged
+ * @param {Kinetic.Node} kineticShape - The kinetic node on the canvas that has been dragged
+ */
+ 
+ /**
+ * EventKey: EditorClick
+ * Sent when a interface resource on the canvas is clicked
+ *
+ * @param {?} evt - The event that has been published
+ * @param {InterfaceResource} interfaceResource - The data object from the shape which has been clicked
+ * @param {Kinetic.Node} kineticShape - The kinetic node on the canvas that has been clicked
+ */
+ 
