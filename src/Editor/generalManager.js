@@ -22,11 +22,15 @@ GeneralManager.prototype.subscribeToMediators = function()
   			{	
   				return	{ // The real object (mediator component) with callback functions
 
-  					onProjectClose: function()
+  					onCreateProject: function( projectName, authorName )
   					{
   						//TODO: kill the graphic canvas and free the manager object
   					},
-  					onProjectSave: function( )
+  					onCloseProject: function( mustSave )
+  					{
+  						//TODO: kill the graphic canvas and free the manager object
+  					},
+  					onSaveProject: function( )
   					{
   						//TODO: this.sketch.Serialize
   					},
@@ -83,4 +87,6 @@ generalGlobals.newProject = function(  nameStr , authorStr  )
 	generalGlobals.manager = new GeneralManager();
 	generalGlobals.manager.sketchProject = new Sketch( nameStr , authorStr );
 	generalGlobals.manager.subscribeToMediators();
+   	generalGlobals.manager.internalMediator.publish( "CreateProject", [ nameStr, authorStr ] );
+
 }

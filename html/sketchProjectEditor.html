@@ -1,0 +1,47 @@
+<html>
+	<head>
+		<title>Sketch Project</title>
+		
+		<link rel="stylesheet" type="text/css" href="../css/style.css" />
+		<link rel="stylesheet" type="text/css" href="../css/menu.css" /> 
+		
+		<script src="../src/Libs/utils.js"></script>
+		<script src="../src/Libs/kinetic-v4.3.2.js"></script>	
+		<script src="../src/Model/interfaceResource.js"></script>
+		<script src="../src/Model/sketch.js"></script>
+		<script src="../src/Editor/mediatorObject.js"></script>
+		<script src="../src/Action/actionController.js"></script>
+		<script src="../src/Action/basicCommands.js"></script>
+		<script src="../src/Action/basicComponents.js"></script>	
+		<script src="../src/Graphic/graphicController.js"></script>
+		<script src="../src/Editor/generalManager.js"></script>
+		<script src="../src/HTMLHelper/DOMManipulator.js"></script>
+	</head>
+	
+	<body>
+		<div id="normalBar" > </div>
+		<div id="extraBar" > </div>
+
+		<script>
+			var menuID = "topBar";
+			var menuDOM = createMenuBar( menuID );
+			document.getElementById("normalBar").appendChild( menuDOM );
+			createMenuButtonGroup( menuID, "File" );
+				createMenuButton( "File", "New", "alert('Project created')" );
+				createMenuButton( "File", "Open", "alert('Project opened')" );
+			createMenuButtonGroup( menuID, "Help" );
+			console.log(menuDOM.outerHTML);
+		</script>
+		
+		<script>			
+			menuID = "EditorBar";
+			menuDOM = createMenuBar( menuID );
+			document.getElementById("extraBar").appendChild( menuDOM );
+			createMenuButtonGroup( menuID, "Create" );
+				createMenuButton( "Create", "Button", "alert('Button created')" );
+			createMenuButton( menuID, "Change Mode", "alert('Mode changed')" );
+			console.log(menuDOM.outerHTML);			
+		</script>
+	</body>
+	
+</html>

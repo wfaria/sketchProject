@@ -217,7 +217,10 @@ function Sketch( name, author )
 	 */
 }
 
-
+Sketch.prototype.getActiveVersionNumber = function()
+{
+	return this.activeVersion;
+}
 Sketch.prototype.addScreen = function ( screenObj )
 {
 	if( this.getScreen( screenObj.getName() ) != null )

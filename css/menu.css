@@ -1,0 +1,91 @@
+/* START NAV MENU - http://www.antsmagazine.com/web-development/40-free-dropdown-menus-in-html5-and-css3/ multi layer menu ( the gray one )*/
+
+/* main menu styles */
+.nav,.nav ul {
+    /*background-image:url(../images/tr75.png);*/
+    list-style:none;
+    margin:0;
+    padding:0;
+}
+.nav {
+    height:41px;
+    padding-left:5px;
+    padding-top:5px;
+    position:relative;
+    /*z-index:2;  with this you can use only one menubar, otherwise you'll have z-index problems with the dropdown menus*/
+}
+.nav ul {
+    left:-9999px;
+    position:absolute;
+    top:37px;
+    width:auto;
+	z-index:20;
+}
+.nav ul ul {
+    left:-9999px;
+    position:absolute;
+    top:0;
+    width:auto;
+}
+.nav li {
+    float:left;
+    margin-right:5px;
+    position:relative;
+}
+.nav li a {
+    background:#c1c1bf;
+    color:#000;
+    display:block;
+    float:left;
+    font-size:16px;
+    padding:8px 10px;
+    text-decoration:none;
+}
+.nav > li > a {
+    -moz-border-radius:6px;
+    -webkit-border-radius:6px;
+    -o-border-radius:6px;
+    border-radius:6px;
+
+    overflow:hidden;
+}
+.nav li a.fly {
+    background:#c1c1bf url(../images/arrow.gif) no-repeat right center;
+    padding-right:15px;
+}
+
+.nav li a.disabled {
+    background-color:#FFFFFF;
+    padding-right:15px;
+}
+
+.nav ul li {
+    margin:0;
+}
+.nav ul li a {
+    width:120px;
+}
+.nav ul li a.fly {
+    padding-right:10px;
+}
+
+/*hover styles*/
+.nav li:hover > a {
+    background-color:#858180;
+    color:#fff;
+}
+
+/*focus styles*/
+    .nav li a:focus {
+    outline-width:0;
+}
+
+/*popups*/
+.nav li a:active + ul.dd,.nav li a:focus + ul.dd,.nav li ul.dd:hover {
+    left:0;
+}
+.nav ul.dd li a:active + ul,.nav ul.dd li a:focus + ul,.nav ul.dd li ul:hover {
+    left:140px;
+}
+ 
+/* END NAV MENU */

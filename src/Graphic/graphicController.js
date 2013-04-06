@@ -40,7 +40,43 @@ function GraphicController( containerDOMID )
 GraphicController.prototype.constructor = GraphicController;
 
 /**
+ * Subscribe the graphic controller to the convinient mediators
+ *
+ */
+GraphicController.prototype.subscribeToMediators = function ( )
+{
+	generalGlobals.manager.internalMediator.subscribe( "graphicController", true, 
+  			function() // Do this way if you want to create a closure to the component
+  			{	
+  				return	{ // The real object (mediator component) with callback functions
+
+  					onCreateProject: function( projectName, authorName )
+  					{
+  						//TODO: kill the graphic canvas and free the manager object
+  					},
+  					onCloseProject: function( mustSave )
+  					{
+  						//TODO: kill the graphic canvas and free the manager object
+  					},
+  					onSaveProject: function( )
+  					{
+  						//TODO: this.sketch.Serialize
+  					},
+  					onEditorStageChange: function( newState )
+  					{
+  						this.editorStage = newState;
+  						//TODO: call this for the graphic part
+  					}
+  				};
+  			}()
+
+		); //end mediator.subscribe( compName, true, ...
+}
+
+
+/**
  * This function will draw all elements from the current screen of a sketch project.
+ * If there is already a screen drew, it will be erased from the canvas.
  *
  * @param {!Object} sketchObject - An object which represents the sketch project.
  */
@@ -53,10 +89,11 @@ GraphicController.prototype.renderScreen = function ( sketchObject )
 		return;
 	var resources = currentScreen.getResources();
 	var length = resources.length();
+	var activeVersion = sketchObject.getActiveVersionNumber();
 	var i;
 	for ( i = 0;  i < length; i++ )
 	{
-		interfaceResource = resources[i].getResourceBeforeVersion();
+		interfaceResource = resources[i].getResourceBeforeVersion( activeVersion );
 		this.addInterfaceResource( interfaceResource );
 	}
 }

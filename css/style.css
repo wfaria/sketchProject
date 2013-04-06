@@ -1,0 +1,24 @@
+/* General site style */
+
+/*used by kineticjs*/
+#container {
+	background-color: #222;
+	display: inline-block;
+	width: 610px;
+	height: 610px;
+	border: 1px dotted #666666;
+}
+
+#normalBar {
+		/*position: absolute;
+		z-index: 40;*/
+}
+#extraBar {
+		/*position: relative;
+		z-index: 200;*/
+}
+
+body
+{
+  background-color: #CCCCFF;
+}

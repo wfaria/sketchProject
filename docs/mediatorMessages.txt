@@ -1,3 +1,27 @@
+/****** Internal messages ********/
+
+
+/**
+ * EventKey: CreateProject
+ * Sent when a project is created 
+ *
+ * @param {String} projectName - New project's name
+ * @param {String} authorName - New project's author
+ */
+ 
+ /**
+ * EventKey: CloseProject
+ * Sent when a project is closed 
+ *
+ * @param {boolean} mustSave - Check if the project need to be saved before closing it or not
+ */
+ 
+ /**
+ * EventKey: SaveProject
+ * Sent when a project is saved 
+ *
+ */
+
 /****** Graphic messages ********/
 
 
