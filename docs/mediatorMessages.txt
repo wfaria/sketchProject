@@ -1,19 +1,43 @@
 /****** Internal messages ********/
 
+/**
+ * EventKey: InterfaceResourceCreated
+ * Sent when a interface resource is created
+ *
+ * @param {InterfaceResource} interfaceResource - The object that contains the data from an interface resource.
+ */
+ 
+ /**
+ * EventKey: CreateButton
+ * Order to create a button
+ *
+ */
 
 /**
- * EventKey: CreateProject
+ * EventKey: Redo
+ * Order to undo an action
+ *
+ */
+ 
+ /**
+ * EventKey: Undo
+ * Order to undo an action
+ *
+ */
+
+/**
+ * EventKey: ProjectCreated
  * Sent when a project is created 
  *
  * @param {String} projectName - New project's name
  * @param {String} authorName - New project's author
+ * @param {Sketch} sketchProject - New project's object
  */
  
  /**
- * EventKey: CloseProject
+ * EventKey: ProjectClosed
  * Sent when a project is closed 
  *
- * @param {boolean} mustSave - Check if the project need to be saved before closing it or not
  */
  
  /**

@@ -1,3 +1,8 @@
+function $( idStr )
+{
+	return document.getElementById( idStr );
+}
+
 function getULId( parentId )
 {
 	return parentId+"ul";

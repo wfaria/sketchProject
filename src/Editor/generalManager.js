@@ -9,7 +9,7 @@ function GeneralManager()
 	this.graphicMediator = new Mediator( "graphicMediator" );
 	this.internalMediator = new Mediator( "internalMediator" );
 	this.actionController = new ActionController();
-	// this.graphicController = new GraphicController( generalGlobals.CONTAINER_DOMID ); removed for test 
+	this.graphicController = new GraphicController( generalGlobals.CONTAINER_DOMID ); 
 }
 
 
@@ -22,7 +22,7 @@ GeneralManager.prototype.subscribeToMediators = function()
   			{	
   				return	{ // The real object (mediator component) with callback functions
 
-  					onCreateProject: function( projectName, authorName )
+  					onProjectCreated: function( projectName, authorName, sketchProject )
   					{
   						//TODO: kill the graphic canvas and free the manager object
   					},
@@ -38,6 +38,23 @@ GeneralManager.prototype.subscribeToMediators = function()
   					{
   						this.editorStage = newState;
   						//TODO: call this for the graphic part
+  					},
+  					onCreateButton: function( )
+  					{
+  						/* TODO: Put this inside of a command */
+						var btn = new ButtonResource( 0,0,0,100, 50, "Button", 0, generalGlobals.manager.sketchProject.getActiveVersionNumber() );
+						var currentScreen = generalGlobals.manager.sketchProject.getCurrentScreen();
+						currentScreen.addResourceHistory( btn );
+						/* End of TODO */
+						generalGlobals.manager.internalMediator.publish( "InterfaceResourceCreated", [ btn ] );
+  					},
+  					onUndo: function( )
+  					{
+  						generalGlobals.manager.actionController.undo();
+  					},
+  					onRedo: function( )
+  					{
+  						generalGlobals.manager.actionController.redo();
   					}
   				};
   			}()
@@ -60,7 +77,7 @@ GeneralManager.prototype.subscribeToMediators = function()
   					},
   					onEditorClick: function( evt, interfaceResource, kineticShape  )
   					{
-  						generalGlobals.manager.actionController.undo();
+  						//generalGlobals.manager.actionController.undo();
   						//alert("undo");
   					},
   					onEditorStageChange: function( newState )
@@ -74,8 +91,6 @@ GeneralManager.prototype.subscribeToMediators = function()
 		); //end mediator.subscribe( compName, true, ...
 }
 
-
-
 generalGlobals.openProject = function()
 {
 	manager = new GeneralManager();
@@ -84,9 +99,14 @@ generalGlobals.openProject = function()
 
 generalGlobals.newProject = function(  nameStr , authorStr  )
 {
+	if( generalGlobals.manager != null )
+	{
+		generalGlobals.manager.internalMediator.publish( "ProjectClosed", [ ] );
+	}
 	generalGlobals.manager = new GeneralManager();
 	generalGlobals.manager.sketchProject = new Sketch( nameStr , authorStr );
 	generalGlobals.manager.subscribeToMediators();
-   	generalGlobals.manager.internalMediator.publish( "CreateProject", [ nameStr, authorStr ] );
+	generalGlobals.manager.graphicController.subscribeToMediators();
+   	generalGlobals.manager.internalMediator.publish( "ProjectCreated", [ nameStr, authorStr, generalGlobals.manager.sketchProject ] );
 
 }

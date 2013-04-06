@@ -22,6 +22,13 @@ function GraphicController( containerDOMID )
       width: graphicControllerGlobals.CANVAS_WIDTH,
       height: graphicControllerGlobals.CANVAS_HEIGHT
     }); 
+    this.initializeVariables();
+}
+
+GraphicController.prototype.constructor = GraphicController;
+
+GraphicController.prototype.initializeVariables = function()
+{
 	this.layers = new Array();
 	var i = 0;
 	for( i = 0; i < graphicControllerGlobals.MAX_DEPTH; i++ )
@@ -37,8 +44,6 @@ function GraphicController( containerDOMID )
 	graphicControllerGlobals.styleChangers[ graphicControllerGlobals.stylesEnum.LINUX ] = new KineticStyleChanger();
 }
 
-GraphicController.prototype.constructor = GraphicController;
-
 /**
  * Subscribe the graphic controller to the convinient mediators
  *
@@ -46,31 +51,7 @@ GraphicController.prototype.constructor = GraphicController;
 GraphicController.prototype.subscribeToMediators = function ( )
 {
 	generalGlobals.manager.internalMediator.subscribe( "graphicController", true, 
-  			function() // Do this way if you want to create a closure to the component
-  			{	
-  				return	{ // The real object (mediator component) with callback functions
-
-  					onCreateProject: function( projectName, authorName )
-  					{
-  						//TODO: kill the graphic canvas and free the manager object
-  					},
-  					onCloseProject: function( mustSave )
-  					{
-  						//TODO: kill the graphic canvas and free the manager object
-  					},
-  					onSaveProject: function( )
-  					{
-  						//TODO: this.sketch.Serialize
-  					},
-  					onEditorStageChange: function( newState )
-  					{
-  						this.editorStage = newState;
-  						//TODO: call this for the graphic part
-  					}
-  				};
-  			}()
-
-		); //end mediator.subscribe( compName, true, ...
+		this ); //end mediator.subscribe( compName, true, ...
 }
 
 
@@ -82,13 +63,15 @@ GraphicController.prototype.subscribeToMediators = function ( )
  */
 GraphicController.prototype.renderScreen = function ( sketchObject )
 {
-	if( this.stage != null )
-		this.stage.remove();
+	this.stage.clear();
+	this.stage.draw();
+	this.initializeVariables();
+	
 	var currentScreen = sketchObject.getCurrentScreen();
 	if( currentScreen == null )
 		return;
 	var resources = currentScreen.getResources();
-	var length = resources.length();
+	var length = resources.length;
 	var activeVersion = sketchObject.getActiveVersionNumber();
 	var i;
 	for ( i = 0;  i < length; i++ )
@@ -105,6 +88,8 @@ GraphicController.prototype.addInterfaceResource = function ( interfaceRes )
 	this.layers[ interfaceRes.getZ() ].add( ks );
 	this.layers[ interfaceRes.getZ() ].draw();
 	
+	
+	// TODO: Call this from a mediator to isolate the graphic part from the event handler
 	if( interfaceRes.getResourceType() == resourceTypeEnum.IR_BUTTON )
 	{
 		var componentBaseObj = { 
@@ -280,3 +265,30 @@ AndroidStyleChanger.prototype.modifyButton = function ( kineticShape )
 	return kineticShape;
 }
 
+
+
+/******** Mediator functions **********/
+GraphicController.prototype.onProjectCreated = function( projectName, authorName, sketchProject )
+{
+	generalGlobals.manager.graphicController.renderScreen( sketchProject );
+}
+  			
+GraphicController.prototype.onProjectClosed = function( )
+{
+	this.stage.clear();
+	this.stage.removeChildren();
+	this.stage.draw();
+}
+GraphicController.prototype.onSaveProject = function( )
+{
+	//TODO: this.sketch.Serialize
+}
+GraphicController.prototype.onEditorStageChange = function( newState )
+{
+	//TODO: call this for the graphic part
+}
+  					
+GraphicController.prototype.onInterfaceResourceCreated = function( interfaceResource )
+{
+	generalGlobals.manager.graphicController.addInterfaceResource( interfaceResource );
+}

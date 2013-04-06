@@ -16,31 +16,72 @@
 		<script src="../src/Graphic/graphicController.js"></script>
 		<script src="../src/Editor/generalManager.js"></script>
 		<script src="../src/HTMLHelper/DOMManipulator.js"></script>
+		
+		<script>
+			window.onload = function() {
+
+			};
+			
+			function callCreateButton()
+			{
+				generalGlobals.manager.internalMediator.publish( "CreateButton", [ ] );
+			}
+			
+			function callUndo()
+			{
+				generalGlobals.manager.internalMediator.publish( "Undo", [ ] );
+			}
+			
+			
+			function callRedo()
+			{
+				generalGlobals.manager.internalMediator.publish( "Redo", [ ] );
+			}
+			
+			
+			function openProjectEvent( isEmptyProject )
+			{
+				if( isEmptyProject )
+				{
+					generalGlobals.newProject( "me", "test" );
+					
+					var menuID = "EditorBar";
+					if( !$(menuID) )
+					{
+						var menuDOM = createMenuBar( menuID );
+						document.getElementById("extraBar").appendChild( menuDOM );
+						createMenuButtonGroup( menuID, "Create" );
+							createMenuButton( "Create", "Button", "callCreateButton()" );
+						createMenuButton( menuID, "Change Mode", "alert('Mode changed')" );
+						createMenuButtonGroup( menuID, "Edit" );
+							createMenuButton( "Edit", "Undo", "callUndo()" );
+							createMenuButton( "Edit", "Redo", "callRedo()" );
+						console.log(menuDOM.outerHTML);
+					}	
+				}
+			}
+	    </script>
+	    
 	</head>
 	
 	<body>
 		<div id="normalBar" > </div>
 		<div id="extraBar" > </div>
-
+		<div id="container"> </div>
+		
 		<script>
 			var menuID = "topBar";
 			var menuDOM = createMenuBar( menuID );
 			document.getElementById("normalBar").appendChild( menuDOM );
 			createMenuButtonGroup( menuID, "File" );
-				createMenuButton( "File", "New", "alert('Project created')" );
+				createMenuButton( "File", "New", "openProjectEvent(true)" );
 				createMenuButton( "File", "Open", "alert('Project opened')" );
 			createMenuButtonGroup( menuID, "Help" );
 			console.log(menuDOM.outerHTML);
 		</script>
 		
 		<script>			
-			menuID = "EditorBar";
-			menuDOM = createMenuBar( menuID );
-			document.getElementById("extraBar").appendChild( menuDOM );
-			createMenuButtonGroup( menuID, "Create" );
-				createMenuButton( "Create", "Button", "alert('Button created')" );
-			createMenuButton( menuID, "Change Mode", "alert('Mode changed')" );
-			console.log(menuDOM.outerHTML);			
+		
 		</script>
 	</body>
 	
