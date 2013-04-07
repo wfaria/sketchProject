@@ -34,7 +34,7 @@ function EventManagerKineticPrepare( eventManagerObject, kineticShape )
 function click( evt , kineticShape )
 {
 	window.status = "Click over " + this.interfaceResource.getName() ;
-	//generalGlobals.manager.graphicMediator.publish( "kineticClick", [this.kineticShape, this.interfaceResource] );
+	//globalMediators.graphicMediator.publish( "kineticClick", [this.kineticShape, this.interfaceResource] );
 }
 
 function mouseOver() 
@@ -54,7 +54,7 @@ function dragMove()
 
 function dragEnd( evt, kineticShape ) 
 {
-	generalGlobals.manager.graphicMediator.publish( "EditorDragEnd", [evt,this.interfaceResource,kineticShape] );
+	globalMediators.graphicMediator.publish( "EditorDragEnd", [evt,this.interfaceResource,kineticShape] );
     document.body.style.cursor = "default";
 };
 
@@ -63,7 +63,7 @@ function dblClick( evt )
 	/*var layer = kineticShape.getLayer();
 	kineticShape.remove();
     layer.draw();*/
-   	generalGlobals.manager.graphicMediator.publish( "EditorClick", [evt,this.interfaceResource, this.kineticShape] );
+   	globalMediators.graphicMediator.publish( "EditorClick", [evt,this.interfaceResource, this.kineticShape] );
 }
 
 function bindGenericEventManager( kineticShape, EventManagerObj )

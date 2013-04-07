@@ -50,7 +50,7 @@ GraphicController.prototype.initializeVariables = function()
  */
 GraphicController.prototype.subscribeToMediators = function ( )
 {
-	generalGlobals.manager.internalMediator.subscribe( "graphicController", true, 
+	globalMediators.internalMediator.subscribe( "graphicController", true, 
 		this ); //end mediator.subscribe( compName, true, ...
 }
 
@@ -65,6 +65,7 @@ GraphicController.prototype.renderScreen = function ( sketchObject )
 {
 	this.stage.clear();
 	this.stage.draw();
+
 	this.initializeVariables();
 	
 	var currentScreen = sketchObject.getCurrentScreen();
@@ -270,7 +271,7 @@ AndroidStyleChanger.prototype.modifyButton = function ( kineticShape )
 /******** Mediator functions **********/
 GraphicController.prototype.onProjectCreated = function( projectName, authorName, sketchProject )
 {
-	generalGlobals.manager.graphicController.renderScreen( sketchProject );
+	this.renderScreen( sketchProject );
 }
   			
 GraphicController.prototype.onProjectClosed = function( )
@@ -278,6 +279,7 @@ GraphicController.prototype.onProjectClosed = function( )
 	this.stage.clear();
 	this.stage.removeChildren();
 	this.stage.draw();
+	this.stage.remove();
 }
 GraphicController.prototype.onSaveProject = function( )
 {
@@ -290,5 +292,5 @@ GraphicController.prototype.onEditorStageChange = function( newState )
   					
 GraphicController.prototype.onInterfaceResourceCreated = function( interfaceResource )
 {
-	generalGlobals.manager.graphicController.addInterfaceResource( interfaceResource );
+	this.addInterfaceResource( interfaceResource );
 }

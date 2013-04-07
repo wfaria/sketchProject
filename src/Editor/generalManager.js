@@ -6,8 +6,6 @@ function GeneralManager()
 {
 	this.editorState = 0;
 	this.sketchProject = null;
-	this.graphicMediator = new Mediator( "graphicMediator" );
-	this.internalMediator = new Mediator( "internalMediator" );
 	this.actionController = new ActionController();
 	this.graphicController = new GraphicController( generalGlobals.CONTAINER_DOMID ); 
 }
@@ -17,7 +15,7 @@ GeneralManager.prototype.constructor = GeneralManager;
 
 GeneralManager.prototype.subscribeToMediators = function()
 {
-	this.internalMediator.subscribe( "generalManager", true, 
+	globalMediators.internalMediator.subscribe( "generalManager", true, 
   			function() // Do this way if you want to create a closure to the component
   			{	
   				return	{ // The real object (mediator component) with callback functions
@@ -46,7 +44,7 @@ GeneralManager.prototype.subscribeToMediators = function()
 						var currentScreen = generalGlobals.manager.sketchProject.getCurrentScreen();
 						currentScreen.addResourceHistory( btn );
 						/* End of TODO */
-						generalGlobals.manager.internalMediator.publish( "InterfaceResourceCreated", [ btn ] );
+						globalMediators.internalMediator.publish( "InterfaceResourceCreated", [ btn ] );
   					},
   					onUndo: function( )
   					{
@@ -62,7 +60,7 @@ GeneralManager.prototype.subscribeToMediators = function()
 		); //end mediator.subscribe( compName, true, ...
 			
 			
-	this.graphicMediator.subscribe( "generalManager", true, 
+	globalMediators.graphicMediator.subscribe( "generalManager", true, 
   			function() // Do this way if you want to create a closure to the component
   			{	
   				return	{ // The real object (mediator component) with callback functions
@@ -101,12 +99,13 @@ generalGlobals.newProject = function(  nameStr , authorStr  )
 {
 	if( generalGlobals.manager != null )
 	{
-		generalGlobals.manager.internalMediator.publish( "ProjectClosed", [ ] );
+		globalMediators.internalMediator.publish( "ProjectClosed", [ ] );
 	}
+	globalMediators.start();
 	generalGlobals.manager = new GeneralManager();
 	generalGlobals.manager.sketchProject = new Sketch( nameStr , authorStr );
 	generalGlobals.manager.subscribeToMediators();
 	generalGlobals.manager.graphicController.subscribeToMediators();
-   	generalGlobals.manager.internalMediator.publish( "ProjectCreated", [ nameStr, authorStr, generalGlobals.manager.sketchProject ] );
+   	globalMediators.internalMediator.publish( "ProjectCreated", [ nameStr, authorStr, generalGlobals.manager.sketchProject ] );
 
 }

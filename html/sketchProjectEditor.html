@@ -10,6 +10,7 @@
 		<script src="../src/Model/interfaceResource.js"></script>
 		<script src="../src/Model/sketch.js"></script>
 		<script src="../src/Editor/mediatorObject.js"></script>
+		<script src="../src/Editor/globalMediators.js"></script>
 		<script src="../src/Action/actionController.js"></script>
 		<script src="../src/Action/basicCommands.js"></script>
 		<script src="../src/Action/basicComponents.js"></script>	
@@ -24,18 +25,18 @@
 			
 			function callCreateButton()
 			{
-				generalGlobals.manager.internalMediator.publish( "CreateButton", [ ] );
+				globalMediators.internalMediator.publish( "CreateButton", [ ] );
 			}
 			
 			function callUndo()
 			{
-				generalGlobals.manager.internalMediator.publish( "Undo", [ ] );
+				globalMediators.internalMediator.publish( "Undo", [ ] );
 			}
 			
 			
 			function callRedo()
 			{
-				generalGlobals.manager.internalMediator.publish( "Redo", [ ] );
+				globalMediators.internalMediator.publish( "Redo", [ ] );
 			}
 			
 			
