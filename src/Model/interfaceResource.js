@@ -16,6 +16,7 @@ function InterfaceResource( posX,posY,posZ,widthVal, heightVal, name, id, initia
 	this.createdInVersion = initialVersion;
 	this.id = id;
 	this.parentId = iResGlobals.PARENTLESS;
+	this.extra = {};
 }
 InterfaceResource.prototype.constructor = InterfaceResource;
 
@@ -43,6 +44,33 @@ InterfaceResource.prototype.setVersion = function( versionNum )
 {	
 	this.createdInVersion = versionNum; 
 }
+
+/**
+ * Get the value from an extra attribute.
+ *
+ * @param {string} attributeKey - The key from the desired attribute.
+ * 
+ * @return {string} The value from this attribute, if it does not exist
+ * it returns null.
+ */
+InterfaceResource.prototype.getExtraAtrribute = function( attributeKey ) 
+{	
+	var attrValue =  this.extra[attributeKey]; 
+	if( typeof attrValue != 'undefined' )
+	{
+		return attrValue;
+	}
+	else
+	{
+		return null;
+	}
+}
+
+InterfaceResource.prototype.setExtraAtrribute = function( attributeKey, attributeValue ) 
+{	
+	this.extra[attributeKey] = attributeValue; 
+}
+
 
 function ButtonResource( posX,posY,posZ,widthVal, heightVal, name, id, initialVersion )
 {

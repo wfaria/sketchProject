@@ -126,11 +126,29 @@
 			ok( group2.getParentId() == iResGlobals.PARENTLESS , "Now group2 does not have parent it");
 			ok( group1.removeChild( group2 ) == null, "Removing an inexistent child from group1's children returns null" );
 
-			
-			alert( group2.toString() );
-			
 		}
 	);
+	
+		
+	test
+	(
+		"Extra Field Testing", function()
+		{
+			var x = 0;
+			var y = 0;
+			var version = 0;
+			var id = 0;
+			var colorString = "#00FFAA";
+			var group1 = new GroupResource( x,y,0,100, 50, "Group1", id, version );
+			var btn1 = new ButtonResource( x,y,0,100, 50, "Button", 0, version );
+			
+			ok( btn1.getExtraAtrribute( "color" ) == null, "At the start there is no extra color attribute on a button resource" );
+			btn1.setExtraAtrribute( "color", colorString );
+			ok( btn1.getExtraAtrribute( "color" ) == colorString, 
+				"After setting a value, the extra color attribute has the value " + colorString );
+
+		}
+	)
 	
   </script>
 </body>
