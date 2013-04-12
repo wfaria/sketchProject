@@ -2,6 +2,7 @@
 
 var DOMglobals = {};
 DOMglobals.SIDE_BAR_ID = "sideBar";
+DOMglobals.BASIC_RESOURCE_ID = "basic resource";
 DOMglobals.SIDE_SECTION_CLASS = "sideMenuSection";
 DOMglobals.SECTION_PART_CLASS = "sectionPart";
 
@@ -114,5 +115,14 @@ function createSideMenuSection( divId )
 function createSectionPart( divId )
 {
 	var newPartDom = createDiv( divId, DOMglobals.SECTION_PART_CLASS );
-	//TODO
+	return newPartDom;
+}
+
+function createResourceBasicSection( interfaceResource )
+{
+	var newSideSection = createSideMenuSection ( DOMglobals.BASIC_RESOURCE_ID );
+	var newSectionPart = createSectionPart( "namePart" );
+	var a = 1111;
+	newSectionPart.innerHTML = 'Name: = <input type="text" size ="10" onkeyup="alert(\'ahhhh\')">';
+	newSideSection.appendChild(newSectionPart);
 }
