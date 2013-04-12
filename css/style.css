@@ -4,18 +4,28 @@
 #container {
 	background-color: #222;
 	display: inline-block;
-	width: 610px;
-	height: 610px;
+	width: 800px;
+	height: 600px;
 	border: 1px dotted #666666;
 }
 
 #normalBar {
 		/*position: absolute;
 		z-index: 40;*/
+		
 }
 #extraBar {
 		/*position: relative;
 		z-index: 200;*/
+}
+
+#sidebar
+{
+	height: 600px;
+	width: 200px;
+	border: 1px dotted #666666;
+	background-color: #322;
+	display:inline-block;
 }
 
 body

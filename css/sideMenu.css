@@ -1,0 +1,11 @@
+.sideMenuSection {
+	background-color: #333333;
+	position:relative;
+	padding: 2px 2px;
+}
+
+.sectionPart{
+	background-color: #669999;
+	position:relative;
+	padding: 2px 2px;
+}

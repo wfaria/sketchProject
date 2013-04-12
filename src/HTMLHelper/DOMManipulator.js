@@ -1,3 +1,10 @@
+/**  MenuBar functions **/
+
+var DOMglobals = {};
+DOMglobals.SIDE_BAR_ID = "sideBar";
+DOMglobals.SIDE_SECTION_CLASS = "sideMenuSection";
+DOMglobals.SECTION_PART_CLASS = "sectionPart";
+
 function $( idStr )
 {
 	return document.getElementById( idStr );
@@ -41,7 +48,6 @@ function createMenuButtonGroup( parentId, buttonStr )
 		return null;
 	}
 
-
 	var newLi = document.createElement( "li" );
 	var newA = document.createElement( "a" );
 	newLi.id = getLIId( buttonStr );
@@ -78,4 +84,35 @@ function createMenuButton( parentId, buttonStr, onClickString )
 	newLi.appendChild( newA );
 	realParent.appendChild( newLi );
 	return newLi;
+}
+
+
+/** Side menu functions **/
+
+function createDiv( divId, divClass )
+{
+	var newDOM = document.createElement( "div" );
+	newDOM.id = divId;
+	newDOM.className = divClass;
+	return newDOM;
+}
+
+function createSideMenuSection( divId )
+{
+	var newSectionDOM = createDiv( divId, DOMglobals.SIDE_SECTION_CLASS );
+	var sideBarDOM = $(DOMglobals.SIDE_BAR_ID); 
+	if( sideBarDOM == null )
+	{
+		// TODO: Create console class and use mediators to send error messages
+		alert("no sidebar");
+		return;
+	}
+	sideBarDOM.appendChild( newSectionDOM );
+	return newSectionDOM; 
+}
+
+function createSectionPart( divId )
+{
+	var newPartDom = createDiv( divId, DOMglobals.SECTION_PART_CLASS );
+	//TODO
 }
