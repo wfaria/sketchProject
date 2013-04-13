@@ -1,3 +1,13 @@
+/***
+
+This text describes the messages that the mediator is supposed to interpret.
+It isn't need to let the program work but it is recommended to document all messages here.
+
+There are order commands and event commands, 
+order comments starts with a present verb, it is send to let the event occur
+event comments ends with a past verb, they should ALWAYS be sent when the event is over
+
+***/
 /****** Internal messages ********/
 
 /**
@@ -11,6 +21,14 @@
  * EventKey: CreateButton
  * Order to create a button
  *
+ */
+
+ /**
+ * EventKey: RenameElement
+ * Order to rename an element
+ *
+ * @param {InterfaceResource} interfaceResource - The object that contains the data from an interface resource.
+ * @param {String} newNameStr - The new name's String
  */
 
 /**
@@ -68,7 +86,7 @@
  */
  
  /**
- * EventKey: ResourceNameChange
+ * EventKey: ResourceNameChanged
  * Sent when a interface resource name's changed
  *
  * @param {InterfaceResource} interfaceResource - The data object from the shape which has been clicked

@@ -174,7 +174,7 @@ renameResourceFunctions[basicCommandsGlobals.executionTypeEnum.CMEX_EDITION] = f
 	var interfaceResource = commandObject.argObject.resource;
 	var newName = commandObject.argObject.newName;
 	interfaceResource.setName( newName );
-	globalMediators.graphicMediator.publish( "ResourceNameChange", [ interfaceResource, newName ] );
+	globalMediators.graphicMediator.publish( "ResourceNameChanged", [ interfaceResource, newName ] );
 }
 
 var renameResourceUndoFunctions = new Array();

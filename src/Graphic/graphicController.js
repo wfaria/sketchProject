@@ -53,7 +53,9 @@ GraphicController.prototype.initializeVariables = function()
 GraphicController.prototype.subscribeToMediators = function ( )
 {
 	globalMediators.internalMediator.subscribe( "graphicController", true, 
-		this ); //end mediator.subscribe( compName, true, ...
+		this ); 
+	globalMediators.graphicMediator.subscribe( "graphicController", true, 
+		this );
 }
 
 
@@ -132,6 +134,21 @@ GraphicController.prototype.getKineticObjectById = function ( interfaceResource 
 		}
 	}
 	return null;
+}
+
+/**
+ * The Kinetic library identifies it objects by IDs and names.
+ * The ID must be unique, but the names must not be, so they can be used as a class specifier.
+ * This function returns an array with all children with this name. 
+ *
+ * @param {string} event - The event that has been published
+ * @param {...[?]} args -  A variable number of variables of different types that the event can use
+ * @param {string} source - The object where the callback function will be called, 
+ * if it is undefined, then it will be called in the component itself (the object which contains the callback function)
+ */
+GraphicController.prototype.getKineticChildrenByName = function ( kineticObject, nameStr )
+{
+	return kineticObject.get( "." + nameStr); 
 }
 
 GraphicController.prototype.createGraphicObject = function ( interfaceResource )
@@ -291,7 +308,7 @@ AndroidStyleChanger.prototype.modifyButton = function ( kineticShape )
 
 
 
-/******** Mediator functions **********/
+/******** Internal Mediator functions **********/
 GraphicController.prototype.onProjectCreated = function( projectName, authorName, sketchProject )
 {
 	this.renderScreen( sketchProject );
@@ -318,19 +335,31 @@ GraphicController.prototype.onInterfaceResourceCreated = function( interfaceReso
 	this.addInterfaceResource( interfaceResource );
 }
 
+/******** Graphic Mediator functions **********/
 
-GraphicController.prototype.onResourceNameChange = function( interfaceResource, newNameStr )
+GraphicController.prototype.onResourceNameChanged = function( interfaceResource, newNameStr )
 {
 	var kineticObject = this.getKineticObjectById( interfaceResource );
-	
 	//TODO
 	if( kineticObject == null )
 	{
+		console.error( "onResourceNameChange there is no kinetic object with the give ID" );
 		return;
 	}
 	else
 	{
-		return;
+		kineticTextObjArray = this.getKineticChildrenByName( kineticObject, graphicControllerGlobals.defaultNames.NAME );
+		if( kineticTextObjArray == null || kineticTextObjArray.length != 1 )
+		{
+			console.error( "onResourceNameChange there is no name child on the kinetic object with the name changed" );
+			return;
+		}
+		else
+		{
+			// The returned array is supposed to have only one element
+			kineticTextObjArray[0].setText( newNameStr );
+			kineticTextObjArray[0].getLayer().draw();
+		}
 	}
 }
 

@@ -60,10 +60,9 @@ function dragEnd( evt, kineticShape )
 
 function dblClick( evt )
 {
-	/*var layer = kineticShape.getLayer();
-	kineticShape.remove();
-    layer.draw();*/
+
    	globalMediators.graphicMediator.publish( "EditorClick", [evt,this.interfaceResource, this.kineticShape] );
+   	globalMediators.internalMediator.publish( "RenameElement", [ this.interfaceResource, "lol" ] );
 }
 
 function bindGenericEventManager( kineticShape, EventManagerObj )

@@ -45,6 +45,18 @@ GeneralManager.prototype.subscribeToMediators = function()
 						currentScreen.addResourceHistory( btn );
 						/* End of TODO */
 						globalMediators.internalMediator.publish( "InterfaceResourceCreated", [ btn ] );
+						console.log("Temporary button creation, fix it");
+
+  					},
+  					onRenameElement: function( interfaceResource, newNameStr )
+  					{
+						var command = new RenameResourceCommand( 
+							basicCommandsGlobals.executionTypeEnum.CMEX_EDITION, 
+							interfaceResource, newNameStr
+						);
+						generalGlobals.manager.actionController.doCommand( command );
+						console.log("The button creation isn't setting the id properly yet, so this part can't be undone properly yet");
+
   					},
   					onUndo: function( )
   					{
