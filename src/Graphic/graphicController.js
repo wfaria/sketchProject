@@ -7,6 +7,8 @@ graphicControllerGlobals.CANVAS_HEIGHT = 600;
 graphicControllerGlobals.stylesEnum = { DEFAULT : 0, ANDROID : 1, WINDOWS8: 2, LINUX: 3 };
 graphicControllerGlobals.currentStyle = graphicControllerGlobals.stylesEnum.DEFAULT;
 graphicControllerGlobals.styleChangers = {};
+graphicControllerGlobals.defaultNames = {};
+graphicControllerGlobals.defaultNames.NAME = "_NAME";
 
 
 /**
@@ -111,6 +113,27 @@ GraphicController.prototype.addInterfaceResource = function ( interfaceRes )
 	}
 }
 
+GraphicController.prototype.getKineticObjectById = function ( interfaceResource )
+{
+	for( i = 0; i < graphicControllerGlobals.MAX_DEPTH; i++ )
+	{
+		var kineticObjectArray = this.layers[i].get( "#"+interfaceResource.getId() );
+		if( kineticObjectArray != null )
+		{
+			if( kineticObjectArray.length > 1 || kineticObjectArray.length == 0 )
+			{
+				alert("There are elements using the same id on graphicController, getKineticObjectById function");
+				return null;
+			}
+			else
+			{
+				return kineticObjectArray[0];
+			}
+		}
+	}
+	return null;
+}
+
 GraphicController.prototype.createGraphicObject = function ( interfaceResource )
 {
 	var kineticShape = this.defaultKineticFactory( interfaceResource );
@@ -159,7 +182,7 @@ GraphicController.prototype.defaultKineticFactory = function( interfaceResource 
 			});
 			
 			var simpleText = new Kinetic.Text({
-				name: "_TEXT",
+				name: graphicControllerGlobals.defaultNames.NAME,
 				dragOnTop: false,
 			 	x:0.5*interfaceResource.getWidth(),
 			  	y:0.5*interfaceResource.getHeight(),
@@ -258,7 +281,7 @@ AndroidStyleChanger.prototype.modifyButton = function ( kineticShape )
 {
 	var externSquare = kineticShape.get( "._MAIN_ELEMENT" )[0]; 
 	var internSquare = kineticShape.get( "._INTERN_SQUARE" )[0]; 
-	var text = kineticShape.get( "._TEXT" )[0]; 
+	var text = kineticShape.get( "."+graphicControllerGlobals.defaultNames.NAME )[0]; 
 	externSquare.setFill( "#666666" );
 	externSquare.setStroke( "#99CCFF" );
 	internSquare.setFill( "#666666" );
@@ -294,3 +317,20 @@ GraphicController.prototype.onInterfaceResourceCreated = function( interfaceReso
 {
 	this.addInterfaceResource( interfaceResource );
 }
+
+
+GraphicController.prototype.onResourceNameChange = function( interfaceResource, newNameStr )
+{
+	var kineticObject = this.getKineticObjectById( interfaceResource );
+	
+	//TODO
+	if( kineticObject == null )
+	{
+		return;
+	}
+	else
+	{
+		return;
+	}
+}
+

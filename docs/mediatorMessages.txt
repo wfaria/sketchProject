@@ -67,3 +67,10 @@
  * @param {Kinetic.Node} kineticShape - The kinetic node on the canvas that has been clicked
  */
  
+ /**
+ * EventKey: ResourceNameChange
+ * Sent when a interface resource name's changed
+ *
+ * @param {InterfaceResource} interfaceResource - The data object from the shape which has been clicked
+ * @param {String} newNameStr - The new name's String
+ */

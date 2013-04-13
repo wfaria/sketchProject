@@ -13,6 +13,8 @@
   <script src="../src/Libs/utils.js"></script>
   <script src="../src/Action/basicCommands.js"></script>
   <script src="../src/Action/actionController.js"></script>
+  <script src="../src/Editor/mediatorObject.js"></script>
+  <script src="../src/Editor/globalMediators.js"></script>
   
   <script>
   	/*module("Action Controller Basic test");
@@ -75,6 +77,36 @@
   			ok( actionController.undo() != null , "Undo the redo action again");
   			ok( btn1.getX() == x, "After this button is  back to the start X position " + btn1.getX() + " again" );
   			ok( actionController.undo() == null , "There are no more commands to be undone");
+  		}
+  	);
+  	
+  	module("Rename Resource Test");
+  	test
+  	( 
+  		"Rename Command", function()
+  		{
+  			var newName = "pewpew";
+  			var oldName = "old";
+  			var n = 10;
+  			var x = 30;
+			var y = 10;
+			
+			globalMediators.start();
+			
+			var btn1 = new InterfaceResource( x,y,0,100, 50, oldName, 0, 0 );
+  			var actionController = new ActionController();
+  			var renameCommand =  new RenameResourceCommand( basicCommandsGlobals.executionTypeEnum.CMEX_EDITION, 
+  				btn1, newName );
+  			ok( actionController.undo() == null , "Nothing to be undone");
+  			ok( actionController.redo() == null , "Nothing to be redone");
+  			ok( btn1.getName() == oldName, "The resource is with the old name");
+  			ok( actionController.doCommand(renameCommand) == true, "Renaming this object");
+  			ok( btn1.getName() == newName, "Now the resource is with the new name");
+  			ok( actionController.undo() != null , "Undo the last action");
+  			ok( btn1.getName() == oldName, "The resource is with the old name again");
+  			ok( actionController.redo() != null , "Redo the last action");
+  			ok( btn1.getName() == newName, "Now the resource is with the new name again");
+  			ok( actionController.redo() == null , "There are no more commands to be redone");
   		}
   	);
   	

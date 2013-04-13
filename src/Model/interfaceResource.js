@@ -39,6 +39,7 @@ InterfaceResource.prototype.getVersion = function() {	return this.createdInVersi
 InterfaceResource.prototype.setX = function(num) { this.x = num; }
 InterfaceResource.prototype.setY = function(num) { this.y = num; }
 InterfaceResource.prototype.setParentId = function(num) { this.parentId = num; }
+InterfaceResource.prototype.setName = function( nameStr ) { this.name = nameStr; }
 
 InterfaceResource.prototype.setVersion = function( versionNum ) 
 {	

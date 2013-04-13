@@ -123,6 +123,7 @@ function createResourceBasicSection( interfaceResource )
 	var newSideSection = createSideMenuSection ( DOMglobals.BASIC_RESOURCE_ID );
 	var newSectionPart = createSectionPart( "namePart" );
 	var a = 1111;
-	newSectionPart.innerHTML = 'Name: = <input type="text" size ="10" onkeyup="alert(\'ahhhh\')">';
+	newSectionPart.innerHTML = 'Name: <input type="text" size ="10" onkeyup="alert(\'ahhhh\')">';
 	newSideSection.appendChild(newSectionPart);
+	alert( newSideSection.outerHTML );
 }
