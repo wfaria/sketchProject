@@ -1,6 +1,7 @@
 var basicCommandsGlobals = {};
 
-basicCommandsGlobals.commandTypeEnum = { CMD_UNDEFINED: -1, CMD_DRAG: 0, CMD_KINETIC_DRAG: 1, CMD_RENAME_RES: 2 };
+basicCommandsGlobals.commandTypeEnum = { CMD_UNDEFINED: -1, CMD_DRAG: 0, 
+	CMD_KINETIC_DRAG: 1, CMD_RENAME_RES: 2, CMD_SELECT_RES: 3, CMD_CANC_SELECT_RES: 4 };
 basicCommandsGlobals.executionTypeEnum = { CMEX_UNDEFINED: -1, CMEX_EDITION: 0, CMEX_SIMULATION: 1 };
 
 function Command()
@@ -114,6 +115,58 @@ RenameResourceCommand.prototype.toString = function()
 
 }
 
+function SelectResourceCommand( executionMode, resourceObjArray, isAdditive, selectManager )
+{
+	Command.call(this);
+	this.commandCode = basicCommandsGlobals.commandTypeEnum.CMD_SELECT_RES;
+	this.executionMode = executionMode;
+	this.setArgs(
+		{
+			resourceArrays : resourceObjArray,
+			isAdditiveSelection: isAdditive,
+			selectionManager: selectManager
+		}
+	);
+}
+SelectResourceCommand.prototype = new Command;
+SelectResourceCommand.prototype.constructor = SelectResourceCommand;
+SelectResourceCommand.prototype.toString = function()
+{
+	var resourceArrays = this.argObject.resourceArrays;
+	var isAdditiveSelection = this.argObject.isAdditiveSelection;
+	var selectionManager = this.argObject.selectionManager;
+	return 		"Select Resource " + Command.prototype.toString.call( this ) + "\n" +
+		"Parameters:\n" +  interfaceResources.toString() + "\n" +
+		"is this selection additive: " + isAdditive + "\n" +
+		"selection Manager: " + selectionManager.toString() ;
+}
+
+function CancelSelectResourceCommand( executionMode, resourceObjArray, isAdditive, selectManager )
+{
+	Command.call(this);
+	this.commandCode = basicCommandsGlobals.commandTypeEnum.CMD_CANC_SELECT_RES;
+	this.executionMode = executionMode;
+	this.setArgs(
+		{
+			resourceArrays : resourceObjArray,
+			isAdditiveSelection: isAdditive,
+			selectionManager: selectManager
+		}
+	);
+}
+CancelSelectResourceCommand.prototype = new Command;
+CancelSelectResourceCommand.prototype.constructor = CancelSelectResourceCommand;
+CancelSelectResourceCommand.prototype.toString = function()
+{
+	var resourceArrays = this.argObject.resourceArrays;
+	var isAdditiveSelection = this.argObject.isAdditiveSelection;
+	var selectionManager = this.argObject.selectionManager;
+	return 		"Cancel Select Resource " + Command.prototype.toString.call( this ) + "\n" +
+		"Parameters:\n" +  interfaceResources.toString() + "\n" +
+		"is this selection additive: " + isAdditive + "\n" +
+		"selection Manager: " + selectionManager.toString() ;
+}
+
 /****** command factory test *********/
 var dragResourceFunctions = new Array();
 dragResourceFunctions[basicCommandsGlobals.executionTypeEnum.CMEX_EDITION] = function( commandObject )
@@ -185,17 +238,65 @@ renameResourceUndoFunctions[basicCommandsGlobals.executionTypeEnum.CMEX_EDITION]
 	return new RenameResourceCommand( basicCommandsGlobals.executionTypeEnum.CMEX_EDITION, interfaceResource, oldName );
 }
 
+/**/
+var selectResourceFunctions= new Array();
+selectResourceFunctions[basicCommandsGlobals.executionTypeEnum.CMEX_EDITION] = function( commandObject )
+{
+	// Model handling
+	var resourceArrays = commandObject.argObject.resourceArrays;
+	var isAdditiveSelection = commandObject.argObject.isAdditiveSelection;
+	var selectionManager = commandObject.argObject.selectionManager;
+	selectionManager.addElement( resourceArrays, isAdditiveSelection );
+	//globalMediators.graphicMediator.publish( "ResourceSelected", [ resourceArrays, newName ] );
+}
+
+var selectResourceUndoFunctions = new Array();
+selectResourceUndoFunctions[basicCommandsGlobals.executionTypeEnum.CMEX_EDITION] = function( commandObject )
+{
+	var resourceArrays = commandObject.argObject.resourceArrays;
+	var isAdditiveSelection = commandObject.argObject.isAdditiveSelection;
+	var selectionManager = commandObject.argObject.selectionManager;
+	return new CancelSelectResourceCommand( basicCommandsGlobals.executionTypeEnum.CMEX_EDITION, resourceArrays,
+		 isAdditiveSelection, selectionManager );
+}
+
+/**/
+var cancelSelectResourceFunctions= new Array();
+cancelSelectResourceFunctions[basicCommandsGlobals.executionTypeEnum.CMEX_EDITION] = function( commandObject )
+{
+	// Model handling
+	var resourceArrays = commandObject.argObject.resourceArrays;
+	var isAdditiveSelection = commandObject.argObject.isAdditiveSelection;
+	var selectionManager = commandObject.argObject.selectionManager;
+	selectionManager.removeElement( resourceArrays );
+	//globalMediators.graphicMediator.publish( "ResourceSelectCanceled", [ resourceArrays, newName ] );
+}
+
+var cancelSelectResourceUndoFunctions = new Array();
+cancelSelectResourceUndoFunctions[basicCommandsGlobals.executionTypeEnum.CMEX_EDITION] = function( commandObject )
+{
+	var resourceArrays = commandObject.argObject.resourceArrays;
+	var isAdditiveSelection = commandObject.argObject.isAdditiveSelection;
+	var selectionManager = commandObject.argObject.selectionManager;
+	return new SelectResourceCommand( basicCommandsGlobals.executionTypeEnum.CMEX_EDITION, resourceArrays,
+		 isAdditiveSelection, selectionManager );
+}
+
 function CommandFunctionFactory()
 {
 	this.commandMatrix = new Array();
 	this.commandMatrix[basicCommandsGlobals.commandTypeEnum.CMD_DRAG] = dragResourceFunctions;
 	this.commandMatrix[basicCommandsGlobals.commandTypeEnum.CMD_KINETIC_DRAG] = kineticDragFunctions;
 	this.commandMatrix[basicCommandsGlobals.commandTypeEnum.CMD_RENAME_RES] = renameResourceFunctions;
+	this.commandMatrix[basicCommandsGlobals.commandTypeEnum.CMD_SELECT_RES] = selectResourceFunctions;
+	this.commandMatrix[basicCommandsGlobals.commandTypeEnum.CMD_CANC_SELECT_RES] = cancelSelectResourceFunctions;
 	
 	this.undoMatrix = new Array();
 	this.undoMatrix[basicCommandsGlobals.commandTypeEnum.CMD_DRAG] = dragResourceUndoFunctions;
 	this.undoMatrix[basicCommandsGlobals.commandTypeEnum.CMD_KINETIC_DRAG] = kineticDragUndoFunctions;
 	this.undoMatrix[basicCommandsGlobals.commandTypeEnum.CMD_RENAME_RES] = renameResourceUndoFunctions;
+	this.undoMatrix[basicCommandsGlobals.commandTypeEnum.CMD_SELECT_RES] = selectResourceUndoFunctions;
+	this.undoMatrix[basicCommandsGlobals.commandTypeEnum.CMD_CANC_SELECT_RES] = cancelSelectResourceUndoFunctions;
 }
 
 // This one creates a command to be executed

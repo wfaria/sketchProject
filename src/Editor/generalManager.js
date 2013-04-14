@@ -7,6 +7,7 @@ function GeneralManager()
 	this.editorState = 0;
 	this.sketchProject = null;
 	this.actionController = new ActionController();
+	this.selectionManager = new SelectionManager();
 	this.graphicController = new GraphicController( generalGlobals.CONTAINER_DOMID ); 
 }
 
@@ -85,14 +86,20 @@ GeneralManager.prototype.subscribeToMediators = function()
   						);
   						generalGlobals.manager.actionController.doCommand( dragCommand );
   					},
-  					onEditorClick: function( evt, interfaceResource, kineticShape  )
+  					onResourceClicked: function( evt, interfaceResource )
   					{
-  						//generalGlobals.manager.actionController.undo();
-  						//alert("undo");
+  						var isAdditiveSelection = evt.ctrlKey;
+
+  						var command = new SelectResourceCommand( 
+  							basicCommandsGlobals.executionTypeEnum.CMEX_EDITION, [interfaceResource],
+		 					isAdditiveSelection, generalGlobals.manager.selectionManager );
+		 				generalGlobals.manager.actionController.doCommand( command );
+						console.log("The button creation isn't setting the id properly yet, so this part can't work properly yet");
+
   					},
   					onEditorStageChange: function( newState )
   					{
-  						this.editorStage = newState;
+  						this.editorStage = newState; //TODO: It's state, not stage
   						//TODO: call this for the graphic part
   					}
   				};

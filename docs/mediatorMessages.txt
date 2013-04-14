@@ -8,6 +8,7 @@ order comments starts with a present verb, it is send to let the event occur
 event comments ends with a past verb, they should ALWAYS be sent when the event is over
 
 ***/
+
 /****** Internal messages ********/
 
 /**
@@ -77,12 +78,11 @@ event comments ends with a past verb, they should ALWAYS be sent when the event 
  */
  
  /**
- * EventKey: EditorClick
+ * EventKey: ResourceClicked
  * Sent when a interface resource on the canvas is clicked
  *
  * @param {?} evt - The event that has been published
  * @param {InterfaceResource} interfaceResource - The data object from the shape which has been clicked
- * @param {Kinetic.Node} kineticShape - The kinetic node on the canvas that has been clicked
  */
  
  /**

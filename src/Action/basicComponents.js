@@ -34,6 +34,7 @@ function EventManagerKineticPrepare( eventManagerObject, kineticShape )
 function click( evt , kineticShape )
 {
 	window.status = "Click over " + this.interfaceResource.getName() ;
+	globalMediators.graphicMediator.publish( "ResourceClicked", [ evt,this.interfaceResource ] );
 	//globalMediators.graphicMediator.publish( "kineticClick", [this.kineticShape, this.interfaceResource] );
 }
 
@@ -61,8 +62,36 @@ function dragEnd( evt, kineticShape )
 function dblClick( evt )
 {
 
-   	globalMediators.graphicMediator.publish( "EditorClick", [evt,this.interfaceResource, this.kineticShape] );
+   	globalMediators.graphicMediator.publish( "ResourceClicked", [ evt,this.interfaceResource ] );
    	globalMediators.internalMediator.publish( "RenameElement", [ this.interfaceResource, "lol" ] );
+}
+
+/*********************************************************/
+/* canvas events */
+function canvasClick( evt , kineticShape )
+{
+
+}
+
+function canvasMouseOver() 
+{
+}
+
+function canvasMouseOut() 
+{
+}
+
+function canvasDragMove() 
+{
+};
+
+function canvasDragEnd( evt, kineticShape ) 
+{
+};
+
+function canvasDblClick( evt )
+{
+
 }
 
 function bindGenericEventManager( kineticShape, EventManagerObj )
@@ -131,3 +160,28 @@ function GenericKineticEventManager( baseObj )
 
 GenericKineticEventManager.prototype = new EventManager;
 GenericKineticEventManager.prototype.constructor = GenericKineticEventManager;
+
+
+/**
+ * Create a EventManager for the Kinetic stage.
+ * This kinetic shape must be a simple image or a draggable kinetic group.
+ * This function will associate the EventManager functions with the kinetic events automatically.
+ *
+ * @param {?} baseObj - A specific object that will be used as the function caller.
+ */
+function GenericKineticEventManager( baseObj )
+{
+	EventManager.call( this , baseObj );
+	this.addFunction( "dragmove", dragMove );
+	this.addFunction( "dragend", dragEnd );
+	this.addFunction( "dblclick", dblClick );
+	this.addFunction( "click", click );
+	this.addFunction( "mouseover", mouseOver );
+	this.addFunction( "mouseout", mouseOut );
+	
+	bindGenericEventManager( baseObj.kineticShape, this );
+}
+
+GenericKineticEventManager.prototype = new EventManager;
+GenericKineticEventManager.prototype.constructor = GenericKineticEventManager;
+

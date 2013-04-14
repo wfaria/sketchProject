@@ -5,21 +5,51 @@ function SelectionManager()
 
 SelectionManager.prototype.constructor = SelectionManager;
 
-SelectionManager.prototype.addElement = function( interfaceResource )
+SelectionManager.prototype.addElement = function( interfaceResourceArray, isAdditiveSelection )
 {
-	this.selectedElements.push( interfaceResource );
+	var length = interfaceResourceArray.length;
+	var iR;
+	var i;
+	
+	if( !isAdditiveSelection )
+	{
+		this.eraseSelection();
+	}
+	
+	for( i = 0; i < length; i++ )
+	{
+		iR = interfaceResourceArray[i];
+
+		if( isAdditiveSelection )
+		{
+			removeElement( [iR] );
+		}
+		this.selectedElements.push( iR );
+	}
+	alert( this.selectedElements.length );
 }
 
-SelectionManager.prototype.removeElement = function( interfaceResource )
+SelectionManager.prototype.removeElement = function( interfaceResourceArray )
 {
-	for (var i = 0; i < this.selectedElements.length; i++) 
-    {
-    	if( this.selectedElements[i].getId() == interfaceResource.getId() )
-    	{
-    		var obj = this.selectedElements[i];
-    		this.selectedElements.splice(i,1);
-    		return obj;
-    	}
-    }
-    return null;
+	var length = interfaceResourceArray.length;
+	var iR;
+	var i;
+	for( i = 0; i < length; i++ )
+	{
+		iR = interfaceResourceArray[i];
+		for (var j = 0; j < this.selectedElements.length; j++) 
+	    {
+	    	if( this.selectedElements[j].getId() == iR.getId() )
+	    	{
+	    		this.selectedElements.splice(j,1);
+	    		return;
+	    	}
+	    }
+	}
+	alert( this.selectedElements.length );
+}
+
+SelectionManager.prototype.eraseSelection = function()
+{
+	this.selectedElements = new Array();
 }
