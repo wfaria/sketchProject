@@ -12,6 +12,18 @@ function Command()
 }
 Command.prototype.constructor = Command;
 
+Command.prototype.execute = function( commandObject )
+{
+	console.error( "This command object does not have an execute function:\n" +
+	 commandObject.toString() );
+}
+
+Command.prototype.undo = function( commandObject )
+{
+	console.error( "This command object does not have an undo function:\n" +
+	 commandObject.toString() );
+}
+
 Command.prototype.getCode = function()
 {
 	return this.commandCode;
@@ -136,8 +148,8 @@ SelectResourceCommand.prototype.toString = function()
 	var isAdditiveSelection = this.argObject.isAdditiveSelection;
 	var selectionManager = this.argObject.selectionManager;
 	return 		"Select Resource " + Command.prototype.toString.call( this ) + "\n" +
-		"Parameters:\n" +  interfaceResources.toString() + "\n" +
-		"is this selection additive: " + isAdditive + "\n" +
+		"Parameters:\n" +  resourceArrays.toString() + "\n" +
+		"is this selection additive: " + isAdditiveSelection + "\n" +
 		"selection Manager: " + selectionManager.toString() ;
 }
 
@@ -162,14 +174,13 @@ CancelSelectResourceCommand.prototype.toString = function()
 	var isAdditiveSelection = this.argObject.isAdditiveSelection;
 	var selectionManager = this.argObject.selectionManager;
 	return 		"Cancel Select Resource " + Command.prototype.toString.call( this ) + "\n" +
-		"Parameters:\n" +  interfaceResources.toString() + "\n" +
-		"is this selection additive: " + isAdditive + "\n" +
+		"Parameters:\n" +  resourceArrays.toString() + "\n" +
+		"is this selection additive: " + isAdditiveSelection + "\n" +
 		"selection Manager: " + selectionManager.toString() ;
 }
 
 /****** command factory test *********/
-var dragResourceFunctions = new Array();
-dragResourceFunctions[basicCommandsGlobals.executionTypeEnum.CMEX_EDITION] = function( commandObject )
+DragResourceCommand.prototype.execute = function( commandObject )
 {
 	var interfaceResource = commandObject.argObject.resource;
 	var x = commandObject.argObject.x;
@@ -178,8 +189,7 @@ dragResourceFunctions[basicCommandsGlobals.executionTypeEnum.CMEX_EDITION] = fun
 	interfaceResource.setY(y);
 }
 
-var dragResourceUndoFunctions = new Array();
-dragResourceUndoFunctions[basicCommandsGlobals.executionTypeEnum.CMEX_EDITION] = function( commandObject )
+DragResourceCommand.prototype.undo = function( commandObject )
 {
 	var interfaceResource = commandObject.argObject.resource;
 	var x = interfaceResource.getX();
@@ -189,8 +199,7 @@ dragResourceUndoFunctions[basicCommandsGlobals.executionTypeEnum.CMEX_EDITION] =
 
 
 /**/
-var kineticDragFunctions = new Array();
-kineticDragFunctions[basicCommandsGlobals.executionTypeEnum.CMEX_EDITION] = function( commandObject )
+KineticDragCommand.prototype.execute = function( commandObject )
 {
 	// Model handling
 	var interfaceResource = commandObject.argObject.resource;
@@ -209,8 +218,7 @@ kineticDragFunctions[basicCommandsGlobals.executionTypeEnum.CMEX_EDITION] = func
 	}
 }
 
-var kineticDragUndoFunctions = new Array();
-kineticDragUndoFunctions[basicCommandsGlobals.executionTypeEnum.CMEX_EDITION] = function( commandObject )
+KineticDragCommand.prototype.undo = function( commandObject )
 {
 	var interfaceResource = commandObject.argObject.resource;
 	var kineticShape = commandObject.argObject.kineticShape;
@@ -220,8 +228,7 @@ kineticDragUndoFunctions[basicCommandsGlobals.executionTypeEnum.CMEX_EDITION] = 
 }
 
 /**/
-var renameResourceFunctions= new Array();
-renameResourceFunctions[basicCommandsGlobals.executionTypeEnum.CMEX_EDITION] = function( commandObject )
+RenameResourceCommand.prototype.execute = function( commandObject )
 {
 	// Model handling
 	var interfaceResource = commandObject.argObject.resource;
@@ -230,8 +237,7 @@ renameResourceFunctions[basicCommandsGlobals.executionTypeEnum.CMEX_EDITION] = f
 	globalMediators.graphicMediator.publish( "ResourceNameChanged", [ interfaceResource, newName ] );
 }
 
-var renameResourceUndoFunctions = new Array();
-renameResourceUndoFunctions[basicCommandsGlobals.executionTypeEnum.CMEX_EDITION] = function( commandObject )
+RenameResourceCommand.prototype.undo = function( commandObject )
 {
 	var interfaceResource = commandObject.argObject.resource;
 	var oldName = interfaceResource.getName();
@@ -239,8 +245,7 @@ renameResourceUndoFunctions[basicCommandsGlobals.executionTypeEnum.CMEX_EDITION]
 }
 
 /**/
-var selectResourceFunctions= new Array();
-selectResourceFunctions[basicCommandsGlobals.executionTypeEnum.CMEX_EDITION] = function( commandObject )
+SelectResourceCommand.prototype.execute = function( commandObject )
 {
 	// Model handling
 	var resourceArrays = commandObject.argObject.resourceArrays;
@@ -250,8 +255,7 @@ selectResourceFunctions[basicCommandsGlobals.executionTypeEnum.CMEX_EDITION] = f
 	//globalMediators.graphicMediator.publish( "ResourceSelected", [ resourceArrays, newName ] );
 }
 
-var selectResourceUndoFunctions = new Array();
-selectResourceUndoFunctions[basicCommandsGlobals.executionTypeEnum.CMEX_EDITION] = function( commandObject )
+SelectResourceCommand.prototype.undo = function( commandObject )
 {
 	var resourceArrays = commandObject.argObject.resourceArrays;
 	var isAdditiveSelection = commandObject.argObject.isAdditiveSelection;
@@ -261,8 +265,7 @@ selectResourceUndoFunctions[basicCommandsGlobals.executionTypeEnum.CMEX_EDITION]
 }
 
 /**/
-var cancelSelectResourceFunctions= new Array();
-cancelSelectResourceFunctions[basicCommandsGlobals.executionTypeEnum.CMEX_EDITION] = function( commandObject )
+CancelSelectResourceCommand.prototype.execute = function( commandObject )
 {
 	// Model handling
 	var resourceArrays = commandObject.argObject.resourceArrays;
@@ -272,8 +275,7 @@ cancelSelectResourceFunctions[basicCommandsGlobals.executionTypeEnum.CMEX_EDITIO
 	//globalMediators.graphicMediator.publish( "ResourceSelectCanceled", [ resourceArrays, newName ] );
 }
 
-var cancelSelectResourceUndoFunctions = new Array();
-cancelSelectResourceUndoFunctions[basicCommandsGlobals.executionTypeEnum.CMEX_EDITION] = function( commandObject )
+CancelSelectResourceCommand.prototype.undo = function( commandObject )
 {
 	var resourceArrays = commandObject.argObject.resourceArrays;
 	var isAdditiveSelection = commandObject.argObject.isAdditiveSelection;
@@ -282,6 +284,7 @@ cancelSelectResourceUndoFunctions[basicCommandsGlobals.executionTypeEnum.CMEX_ED
 		 isAdditiveSelection, selectionManager );
 }
 
+/*
 function CommandFunctionFactory()
 {
 	this.commandMatrix = new Array();
@@ -298,13 +301,14 @@ function CommandFunctionFactory()
 	this.undoMatrix[basicCommandsGlobals.commandTypeEnum.CMD_SELECT_RES] = selectResourceUndoFunctions;
 	this.undoMatrix[basicCommandsGlobals.commandTypeEnum.CMD_CANC_SELECT_RES] = cancelSelectResourceUndoFunctions;
 }
+*/
 
 // This one creates a command to be executed
 function undoFactory( commandObject )
 {
 	var code = commandObject.getCode();
 	var mode = commandObject.getMode();
-	var functionFactory = new CommandFunctionFactory();
+	/*var functionFactory = new CommandFunctionFactory();
 	if( typeof functionFactory.undoMatrix[code] != 'undefined' )
 	{
 		if( typeof functionFactory.undoMatrix[code][mode] != 'undefined' )
@@ -312,7 +316,9 @@ function undoFactory( commandObject )
 			return functionFactory.undoMatrix[code][mode]( commandObject );
 		}
 	}
-	return null;
+	return null;*/
+	return commandObject.undo( commandObject );
+	
 }
 
 // This one executes a command
@@ -320,6 +326,7 @@ function commandDigest( commandObject )
 {
 	var code = commandObject.getCode();
 	var mode = commandObject.getMode();
+	/*
 	var functionFactory = new CommandFunctionFactory();
 	if( typeof functionFactory.commandMatrix[code] != 'undefined' )
 	{
@@ -330,4 +337,7 @@ function commandDigest( commandObject )
 		}
 	}
 	return false;
+	*/
+	commandObject.execute( commandObject );
+	return true;
 }
