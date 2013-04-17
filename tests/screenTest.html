@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>QUnit Screen Object Test Page</title>
+  <link rel="stylesheet" href="../css/qunit.css">
+</head>
+<body>
+  <div id="qunit"> </div>
+  <script src="../src/Libs/qunit.js"></script>
+  <script src="../src/Model/interfaceResource.js"></script>
+  <script src="../src/Model/sketch.js"></script>
+  
+  <script>
+	module("Basic test");
+	test
+	(
+		"Testing basic functions", function()
+		{
+			var screenName = "Test Screen";
+			var screen = new Screen( screenName );
+			ok( screen.getName() == screenName, "At the start one screen called " +screenName+ " is created" );
+			ok( screen.getResources().length == 0, "Trying to get its resources returns an array with length 0" );
+			ok( screen.getResourceHistory(0) == null, "Trying to find a non-existent resource on this screen returns null" );
+			ok( screen.deleteResourceHistory(0) == null, "Trying to delete a non-existent resource on this screen returns null" );
+		}
+		
+	);	
+	module("Iteration with histories test");
+	test
+	(
+		"Histories insertion and remotion", function()
+		{
+			var x = 30;
+			var y = 10;
+			var version = 0;
+			var id1 = 0;
+			var id2 = 1;
+			var id3 = 2;
+			var screenName = "Test Screen";
+			var btn1 = new ButtonResource( x,y,0,100, 50, "Button1", id1, version );
+			var btn2 = new ButtonResource( x,y,0,100, 50, "Button2", id2, version );
+			var btn3 = new ButtonResource( x,y,0,100, 50, "Button3", id3, version );
+			var screen = new Screen( screenName );
+			ok( screen.getName() == screenName, "At the start one screen called " +screenName+ " is created" );
+			ok( screen.getResources().length == 0, "Trying to get its resources returns an array with length 0" );
+			screen.addResourceHistory( btn1 );
+			ok( screen.getResources().length == 1, 
+				" After adding 1 resource getting its resources returns an array with length 1" );
+
+		}
+		
+	);	
+  </script>
+</body>
+</html>

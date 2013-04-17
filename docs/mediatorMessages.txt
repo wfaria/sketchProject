@@ -1,7 +1,7 @@
 /***
 
 This text describes the messages that the mediator is supposed to interpret.
-It isn't need to let the program work but it is recommended to document all messages here.
+It isn't needed to let the program work but it is recommended to document all messages here.
 
 There are order commands and event commands, 
 order comments starts with a present verb, it is send to let the event occur

@@ -41,6 +41,12 @@ GeneralManager.prototype.subscribeToMediators = function()
   					onCreateButton: function( )
   					{
   						/* TODO: Put this inside of a command */
+  						/*
+  						 1- Pegar o ID certo do projeto
+  						 2- Criar o objeto
+  						 3- No futuro perguntar se é exclusão total do elemento ou apenas da versão dele
+  						 4- 
+  						 * */	
 						var btn = new ButtonResource( 0,0,0,100, 50, "Button", 0, generalGlobals.manager.sketchProject.getActiveVersionNumber() );
 						var currentScreen = generalGlobals.manager.sketchProject.getCurrentScreen();
 						currentScreen.addResourceHistory( btn );

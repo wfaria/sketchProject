@@ -180,6 +180,7 @@ Screen.prototype.getName = function()
 
 Screen.prototype.addResourceHistory = function( resource )
 {
+	this.deleteResourceHistory( resource.getId() );
 	this.resourceHistories.push( new ResourceHistory( resource ) ); 
 }
 
@@ -193,6 +194,21 @@ Screen.prototype.getResourceHistory = function( resourceId )
 		if( this.resourceHistories[i].getId() == resourceId )
 		{
 			return this.resourceHistories[i];
+		}
+	}
+	return null;
+}
+
+Screen.prototype.deleteResourceHistory = function( resourceId )
+{
+	var i;
+	for( i = 0; i < this.resourceHistories; i++ )
+	{
+		if( this.resourceHistories[i].getId() == resourceId )
+		{
+			var ret = this.resourceHistories[i];
+			this.resourceHistories.splice(i,1);
+			return ret;
 		}
 	}
 	return null;
