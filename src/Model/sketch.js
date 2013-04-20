@@ -189,7 +189,7 @@ Screen.prototype.getResourceHistory = function( resourceId )
 	/*TODO: Check if it's better to check the last accessed resource to optimize here or
 	 * in the screen controller method */
 	var i;
-	for( i = 0; i < this.resourceHistories; i++ )
+	for( i = 0; i < this.resourceHistories.length; i++ )
 	{
 		if( this.resourceHistories[i].getId() == resourceId )
 		{
@@ -202,8 +202,10 @@ Screen.prototype.getResourceHistory = function( resourceId )
 Screen.prototype.deleteResourceHistory = function( resourceId )
 {
 	var i;
-	for( i = 0; i < this.resourceHistories; i++ )
+	console.log( "-----" );
+	for( i = 0; i < this.resourceHistories.length; i++ )
 	{
+		console.log( this.resourceHistories[i].getId() + "|" + resourceId );
 		if( this.resourceHistories[i].getId() == resourceId )
 		{
 			var ret = this.resourceHistories[i];
@@ -212,6 +214,28 @@ Screen.prototype.deleteResourceHistory = function( resourceId )
 		}
 	}
 	return null;
+}
+
+/**
+ * It is like the addResourceHistory but it adds a resource history
+ * that can be with various versions, it is useful 
+ * to undo the deleteResourceHistory.
+ * Like the common add function it will overwrite any resource with
+ * same ID.
+ * 
+ * @param {ResourceHistory} resourceHistory - Any object that represents a resouce historic.
+ */
+Screen.prototype.restoreResourceHistory = function( resourceHistory )
+{
+	if( resourceHistory.getHistoryLength() > 0 )
+	{
+		this.deleteResourceHistory( resourceHistory.getId() );
+		this.resourceHistories.push( resourceHistory );
+	} 
+	else
+	{
+		console.error( "Trying to restore in the screen a resource history without versions");
+	}
 }
 
 function Sketch( name, author )

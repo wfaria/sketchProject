@@ -29,7 +29,7 @@
 	module("Iteration with histories test");
 	test
 	(
-		"Histories insertion and remotion", function()
+		"History insertion, remotion and restauration", function()
 		{
 			var x = 30;
 			var y = 10;
@@ -47,7 +47,39 @@
 			screen.addResourceHistory( btn1 );
 			ok( screen.getResources().length == 1, 
 				" After adding 1 resource getting its resources returns an array with length 1" );
+			screen.addResourceHistory( btn2 );
+			screen.addResourceHistory( btn3 );
+			ok( screen.getResources().length == 3, 
+				" After adding more 2 resources getting its resources returns an array with length 3" );
+				
+			ok( screen.getResourceHistory( btn1.getId() ) != null &&
+				screen.getResourceHistory( btn2.getId() ) != null &&
+				screen.getResourceHistory( btn3.getId() ) != null, 
+				"Get resource history function Ok." );
+				
+			var hist1  = screen.deleteResourceHistory( btn1.getId() );
 
+			ok( screen.getResources().length == 2, 
+				" After deleting one resource getting its resources returns an array with length 2" );
+			screen.addResourceHistory( btn2 );
+			ok( screen.getResources().length == 2, 
+				"Adding a resource history with an already inserted ID replaces the old history" );
+
+			hist1.cloneVersion( version, version+1);
+			version++;
+			hist1.cloneVersion( version, version+1);
+						
+			ok( hist1.getHistoryLength() == 3, "Changing the Length from the removed history to 3" );
+
+			screen.restoreResourceHistory( hist1 );
+										
+			ok( screen.getResources().length == 3, 
+				" After restoring the modified history getting its resources returns an array with length 3 again" );
+			screen.deleteResourceHistory( btn2.getId() );
+			ok( screen.getResources().length == 2, 
+				" After deleting one resource getting its resources returns an array with length 2" );
+			ok( screen.getResourceHistory( btn1.getId()  ).getHistoryLength() == 3, 
+				"The modified resource history from the screen has 3 versions like before." );
 		}
 		
 	);	
