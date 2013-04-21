@@ -1,7 +1,8 @@
 var basicCommandsGlobals = {};
 
 basicCommandsGlobals.commandTypeEnum = { CMD_UNDEFINED: -1, CMD_DRAG: 0, 
-	CMD_KINETIC_DRAG: 1, CMD_RENAME_RES: 2, CMD_SELECT_RES: 3, CMD_CANC_SELECT_RES: 4 };
+	CMD_KINETIC_DRAG: 1, CMD_RENAME_RES: 2, CMD_SELECT_RES: 3, CMD_CANC_SELECT_RES: 4,
+	CMD_CREATE_RES: 5, CMD_DELETE_RES: 6 };
 basicCommandsGlobals.executionTypeEnum = { CMEX_UNDEFINED: -1, CMEX_EDITION: 0, CMEX_SIMULATION: 1 };
 
 function Command()
@@ -177,6 +178,115 @@ CancelSelectResourceCommand.prototype.toString = function()
 		"Parameters:\n" +  resourceArrays.toString() + "\n" +
 		"is this selection additive: " + isAdditiveSelection + "\n" +
 		"selection Manager: " + selectionManager.toString() ;
+}
+
+function CreateResourceCommand( executionMode, newResCode, sketchObj )
+{
+	Command.call(this);
+	this.commandCode = basicCommandsGlobals.commandTypeEnum.CMD_CREATE_RES;
+	this.executionMode = executionMode;
+	this.setArgs(
+		{
+			newResourceCode: newResCode,
+			sketchObject: sketchObj
+		}
+	);
+}
+CreateResourceCommand.prototype = new Command;
+CreateResourceCommand.prototype.constructor = CreateResourceCommand;
+CreateResourceCommand.prototype.toString = function()
+{
+	var resourceCode = this.argObject.newResourceCode;
+	var sketchProject = this.argObject.sketchObject;
+	return 		"Create Resource " + Command.prototype.toString.call( this ) + "\n" +
+		"Parameters: Resource to be created with type " +  resourceCode +"\n"
+		"sketch project: " + sketchProject ;
+}
+
+CreateResourceCommand.prototype.execute = function( commandObject )
+{
+	var resourceCode = this.argObject.newResourceCode;
+	var sketchProject = this.argObject.sketchObject;
+	
+	var currentScreen = sketchProject.getCurrentScreen();
+	var activeVersionNum = sketchProject.getActiveVersionNumber();
+	var newId = sketchProject.getMaxId();
+	
+	var newResource = null;
+	
+	switch( resourceCode )
+	{
+		case IR_BUTTON:
+		{
+			newResource= new ButtonResource( 0,0,0,100, 50, "Button", newId, activeVersionNum );
+			break;
+		}
+		default:
+		{
+			console.error( "There is no available function to create a resource with type " +  resourceCode );
+			return;
+		}
+	}
+	
+	sketchProject.increaseMaxId();
+	if( newResource != null )
+	{
+		currentScreen.addResourceHistory( newResource );
+		globalMediators.internalMediator.publish( "InterfaceResourceCreated", [ newResource ] );
+	}
+	
+}
+
+CreateResourceCommand.prototype.undo = function( commandObject )
+{
+	//TODO: Put delete element here
+}
+
+function DeleteResourceCommand( executionMode, resourceObj, sketchObj )
+{
+	Command.call(this);
+	this.commandCode = basicCommandsGlobals.commandTypeEnum.CMD_DELETE_RES;
+	this.executionMode = executionMode;
+	this.setArgs(
+		{
+			resource: resourceObj,
+			sketchObject: sketchObj
+		}
+	);
+}
+DeleteResourceCommand.prototype = new Command;
+DeleteResourceCommand.prototype.constructor = DeleteResourceCommand;
+
+DeleteResourceCommand.prototype.toString = function()
+{
+	var interfaceResource = this.argObject.resource;
+	var sketchProject = this.argObject.newResourceCode;
+	return 		"Delete Resource " + Command.prototype.toString.call( this ) + "\n" +
+		"Parameters: Resource to be deleted " +  interfaceResource +"\n"
+		"sketch project: " + sketchProject ;
+}
+
+DeleteResourceCommand.prototype.execute = function( commandObject )
+{
+	var interfaceResource = this.argObject.resource;
+	var sketchProject = this.argObject.sketchObject;
+	
+	var currentScreen = sketchProject.getCurrentScreen();
+	var deletedResource = null;
+	
+	if( currentScreen.deleteResourceHistory( interfaceResource.getId() ) != null )
+	{
+		globalMediators.internalMediator.publish( "InterfaceResourceDeleted", [ newResource ] );
+	}
+	else
+	{
+		console.error( "Failure whilte deleting interface resource. \n" +  interfaceResource.toString() );
+	}
+}
+
+DeleteResourceCommand.prototype.undo = function( commandObject )
+{
+	//TODO: Create a restore command, get the resource's history and pass it to the restore command.
 }
 
 /****** command factory test *********/
