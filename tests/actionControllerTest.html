@@ -110,6 +110,114 @@
   		}
   	);
   	
+  	module("Resource Creation Test");
+  	test(
+  		"Simple Creation test", function()
+  		{
+			var sketchName = "test";
+			var sketchAuthor = "tester";
+			var sketchObj = new Sketch( sketchName, sketchAuthor );
+			var currentScreen = sketchObj.getCurrentScreen();
+			
+			globalMediators.start();
+			var actionController = new ActionController();
+			
+			var version = 0;
+			var createCommand = new CreateResourceCommand( 
+				basicCommandsGlobals.executionTypeEnum.CMEX_EDITION, 
+				resourceTypeEnum.IR_BUTTON, sketchObj );
+				
+
+			ok( currentScreen.getResources().length == 0, "There are no elements on the current screen");	
+			ok( actionController.undo() == null , "Nothing to be undone");
+  			ok( actionController.redo() == null , "Nothing to be redone");
+  			
+  			ok( actionController.doCommand( createCommand ) == true, "Creating a button");
+  			
+  			ok( currentScreen.getResources().length == 1, "Now there are one element on the current screen");	
+  			var newButtonResHistory = currentScreen.getResources()[0]; 
+  			ok( newButtonResHistory.getHistoryLength() == 1, 
+  				"Every new element start with only one version");
+  			ok( newButtonResHistory.getId() == 0, "The first new resource has the id 0");
+  			
+  			ok( actionController.undo() != null , "Undo the button creation action");
+  			ok( currentScreen.getResources().length == 0, "Now there are zero elements on the current screen");	
+  			
+  			ok( actionController.redo() != null , "Redo the button creation action");
+  			ok( currentScreen.getResources().length == 1, "Now there are one element on the current screen again");	
+  			newButtonResHistory = currentScreen.getResources()[0]; 
+  			ok( newButtonResHistory.getHistoryLength() == 1, 
+  				"This new element start with only one version");
+  			ok( newButtonResHistory.getId() == 0, "The first new resource still with the id 0");
+  			
+  			ok( actionController.undo() != null , "Undo the button creation action");
+  			ok( currentScreen.getResources().length == 0, "Finally there are zero elements on the current screen");	
+  		}
+  	);
+  	
+ 	test(
+  		"Multiple Simple Creation test", function()
+  		{
+			var sketchName = "test";
+			var sketchAuthor = "tester";
+			var sketchObj = new Sketch( sketchName, sketchAuthor );
+			var currentScreen = sketchObj.getCurrentScreen();
+			
+			var buttonNum = 1000;
+			
+			globalMediators.start();
+			var actionController = new ActionController();
+			
+			var version = 0;
+			var commands = [];
+			var allButtonsProccessed = true;
+			var i = 0;
+			
+			ok( currentScreen.getResources().length == 0, "There are no elements on the current screen");	
+			ok( actionController.undo() == null , "Nothing to be undone");
+  			ok( actionController.redo() == null , "Nothing to be redone");
+			
+			for( i = 0; i < buttonNum; i++ )
+			{
+				commands[i] = new CreateResourceCommand( 
+					basicCommandsGlobals.executionTypeEnum.CMEX_EDITION, 
+					resourceTypeEnum.IR_BUTTON, sketchObj );
+				allButtonsProccessed = allButtonsProccessed && ( actionController.doCommand( commands[i]  ) == true );
+			}	
+
+  			ok( allButtonsProccessed  == true, "Creating " + buttonNum + " buttons");
+  			
+
+  			
+  			ok( currentScreen.getResources().length == buttonNum, 
+  				"Now there are " + buttonNum + " buttons on the current screen");	
+  				
+  			var newButtonResHistory = currentScreen.getResources()[ buttonNum - 1 ]; 
+  			ok( newButtonResHistory.getHistoryLength() == 1, 
+  				"Every new element start with only one version");
+  			ok( newButtonResHistory.getId() == buttonNum - 1 , 
+  				"The new resource created for last has the id " + ( buttonNum - 1 ) );
+
+			for( i = 0; i < buttonNum; i++ )
+			{
+				allButtonsProccessed = allButtonsProccessed && ( actionController.undo()  != true );
+			}	
+			ok( allButtonsProccessed  == true, "All commands undone");
+			ok( actionController.undo() == null , "Nothing to be undone");
+			
+			for( i = 0; i < buttonNum/2; i++ )
+			{
+				allButtonsProccessed = allButtonsProccessed && ( actionController.redo()  != true );
+			}	
+			ok( allButtonsProccessed  == true, "Half of the commands redone");
+			newButtonResHistory = currentScreen.getResources()[ (buttonNum/2) - 1 ]; 
+  			ok( newButtonResHistory.getHistoryLength() == 1, 
+  				"Every new element start with only one version");
+  			ok( newButtonResHistory.getId() == ((buttonNum/2)  - 1) , 
+  				"The new resource created by the last redo has the id " + ( (buttonNum/2)  - 1 ) );
+  		}
+  	);
+  	
   </script>
 </body>
 </html>
