@@ -2,7 +2,7 @@ var basicCommandsGlobals = {};
 
 basicCommandsGlobals.commandTypeEnum = { CMD_UNDEFINED: -1, CMD_DRAG: 0, 
 	CMD_KINETIC_DRAG: 1, CMD_RENAME_RES: 2, CMD_SELECT_RES: 3, CMD_CANC_SELECT_RES: 4,
-	CMD_CREATE_RES: 5, CMD_DELETE_RES: 6 };
+	CMD_CREATE_RES: 5, CMD_DELETE_RES: 6, CMD_RESTORE_RES: 7 };
 basicCommandsGlobals.executionTypeEnum = { CMEX_UNDEFINED: -1, CMEX_EDITION: 0, CMEX_SIMULATION: 1 };
 
 function Command()
@@ -185,10 +185,14 @@ function CreateResourceCommand( executionMode, newResCode, sketchObj )
 	Command.call(this);
 	this.commandCode = basicCommandsGlobals.commandTypeEnum.CMD_CREATE_RES;
 	this.executionMode = executionMode;
+	
+	 // This id is needed to create and to delete the resource with the undo function
+	var maxId = sketchProject.getMaxId();
 	this.setArgs(
 		{
 			newResourceCode: newResCode,
-			sketchObject: sketchObj
+			sketchObject: sketchObj,
+			newResId: maxId
 		}
 	);
 }
@@ -198,8 +202,10 @@ CreateResourceCommand.prototype.toString = function()
 {
 	var resourceCode = this.argObject.newResourceCode;
 	var sketchProject = this.argObject.sketchObject;
+	var newId = this.argObject.newResId;
 	return 		"Create Resource " + Command.prototype.toString.call( this ) + "\n" +
-		"Parameters: Resource to be created with type " +  resourceCode +"\n"
+		"Parameters: Resource to be created with type " +  resourceCode +"\n" +
+		"using the id " + newId + "\n" +
 		"sketch project: " + sketchProject ;
 }
 
@@ -207,10 +213,11 @@ CreateResourceCommand.prototype.execute = function( commandObject )
 {
 	var resourceCode = this.argObject.newResourceCode;
 	var sketchProject = this.argObject.sketchObject;
+	var newId = this.argObject.newResId;
 	
 	var currentScreen = sketchProject.getCurrentScreen();
 	var activeVersionNum = sketchProject.getActiveVersionNumber();
-	var newId = sketchProject.getMaxId();
+
 	
 	var newResource = null;
 	
@@ -218,7 +225,7 @@ CreateResourceCommand.prototype.execute = function( commandObject )
 	{
 		case IR_BUTTON:
 		{
-			newResource= new ButtonResource( 0,0,0,100, 50, "Button", newId, activeVersionNum );
+			newResource = new ButtonResource( 0,0,0,100, 50, "Button", newId, activeVersionNum );
 			break;
 		}
 		default:
@@ -228,9 +235,9 @@ CreateResourceCommand.prototype.execute = function( commandObject )
 		}
 	}
 	
-	sketchProject.increaseMaxId();
 	if( newResource != null )
 	{
+		sketchProject.increaseMaxId();
 		currentScreen.addResourceHistory( newResource );
 		globalMediators.internalMediator.publish( "InterfaceResourceCreated", [ newResource ] );
 	}
@@ -239,7 +246,11 @@ CreateResourceCommand.prototype.execute = function( commandObject )
 
 CreateResourceCommand.prototype.undo = function( commandObject )
 {
-	//TODO: Put delete element here
+	var resourceCode = this.argObject.newResourceCode;
+	var sketchProject = this.argObject.sketchObject;
+	var newId = this.argObject.newResId;
+	return new DeleteResourceCommand( 
+		basicCommandsGlobals.executionTypeEnum.CMEX_EDITION, newId, sketchProject );
 }
 
 function DeleteResourceCommand( executionMode, resourceObj, sketchObj )
@@ -262,7 +273,7 @@ DeleteResourceCommand.prototype.toString = function()
 	var interfaceResource = this.argObject.resource;
 	var sketchProject = this.argObject.newResourceCode;
 	return 		"Delete Resource " + Command.prototype.toString.call( this ) + "\n" +
-		"Parameters: Resource to be deleted " +  interfaceResource +"\n"
+		"Parameters: Resource to be deleted " +  interfaceResource +"\n" +
 		"sketch project: " + sketchProject ;
 }
 
@@ -286,7 +297,82 @@ DeleteResourceCommand.prototype.execute = function( commandObject )
 
 DeleteResourceCommand.prototype.undo = function( commandObject )
 {
-	//TODO: Create a restore command, get the resource's history and pass it to the restore command.
+	var interfaceResource = this.argObject.resource;
+	var sketchProject = this.argObject.sketchObject;
+	
+	var currentScreen = sketchProject.getCurrentScreen();
+	
+	var resourceHistory = currentScreen.getResourceHistory( interfaceResource.getId() );
+	if( resourceHistory != null )
+	{
+		return new RestoreResHistCommand( 
+			basicCommandsGlobals.executionTypeEnum.CMEX_EDITION, resourceHistory, sketchProject );
+	}
+	else
+	{
+		console.error("Error while creating the delete resource undo object" );
+		return null;
+	}
+}
+
+function RestoreResHistCommand( executionMode, resHist, sketchObj )
+{
+	Command.call(this);
+	this.commandCode = basicCommandsGlobals.commandTypeEnum.CMD_RESTORE_RES;
+	this.executionMode = executionMode;
+	this.setArgs(
+		{
+			resourceHist: resHist,
+			sketchObject: sketchObj
+		}
+	);
+}
+
+RestoreResHistCommand.prototype = new Command;
+RestoreResHistCommand.prototype.constructor = RestoreResHistCommand;
+
+RestoreResHistCommand.prototype.toString = function()
+{
+	var resourceHistory = this.argObject.resourceHist;
+	var sketchProject = this.argObject.newResourceCode;
+	return 		"Restore Resource History" + Command.prototype.toString.call( this ) + "\n" +
+		"Parameters: Resource History to be restored " +  resourceHistory +"\n"+
+		"sketch project: " + sketchProject ;
+}
+
+RestoreResHistCommand.prototype.execute = function( commandObject )
+{
+	var resourceHistory = this.argObject.resourceHist;
+	var sketchProject = this.argObject.newResourceCode;
+
+	var currentScreen = sketchProject.getCurrentScreen();
+	
+	currentScreen.restoreResourceHistory( resourceHistory );
+	
+	// Checking integrity and getting the resource from the active version
+	resourceHistory = currentScreen.getResourceHistory( resourceHistory.getId() );
+	if( resourceHistory != null )
+	{
+		var activeVersionNum = sketchProject.getActiveVersionNumber();
+		var interfaceResource = resourceHistory.getResourceBeforeVersion( activeVersionNum ); 
+		
+		if( interfaceResource != null )
+		{
+			//TODO: Send message to the mediator
+			return;
+		}
+	}
+	console.error( "Error while trying to restore resource history" );
+}
+
+RestoreResHistCommand.prototype.undo = function( commandObject )
+{
+	var resourceHistory = this.argObject.resourceHist;
+	var sketchProject = this.argObject.newResourceCode;
+	var activeVersionNum = sketchProject.getActiveVersionNumber();
+	var interfaceResource = resourceHistory.getResourceBeforeVersion( activeVersionNum ); 
+	return new DeleteResourceCommand( 
+		basicCommandsGlobals.executionTypeEnum.CMEX_EDITION, interfaceResource, sketchProject );
 }
 
 /****** command factory test *********/
