@@ -202,10 +202,8 @@ Screen.prototype.getResourceHistory = function( resourceId )
 Screen.prototype.deleteResourceHistory = function( resourceId )
 {
 	var i;
-	console.log( "-----" );
 	for( i = 0; i < this.resourceHistories.length; i++ )
 	{
-		console.log( this.resourceHistories[i].getId() + "|" + resourceId );
 		if( this.resourceHistories[i].getId() == resourceId )
 		{
 			var ret = this.resourceHistories[i];

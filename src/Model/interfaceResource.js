@@ -16,7 +16,7 @@ function InterfaceResource( posX,posY,posZ,widthVal, heightVal, name, id, initia
 	this.createdInVersion = initialVersion;
 	this.id = id;
 	this.parentId = iResGlobals.PARENTLESS;
-	this.extra = {};
+	this.extra = [];
 }
 InterfaceResource.prototype.constructor = InterfaceResource;
 

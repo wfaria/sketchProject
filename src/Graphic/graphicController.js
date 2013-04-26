@@ -89,6 +89,11 @@ GraphicController.prototype.renderScreen = function ( sketchObject )
 
 GraphicController.prototype.addInterfaceResource = function ( interfaceRes )
 {
+	if( this.deleteInterfaceResource( interfaceRes ) != null )
+	{
+		console.error("Error while adding element on canvas, it already exists.");
+	}
+	
 	var ks = this.createGraphicObject( interfaceRes );
 	this.layers[ interfaceRes.getZ() ].add( ks );
 	this.layers[ interfaceRes.getZ() ].draw();
@@ -115,6 +120,46 @@ GraphicController.prototype.addInterfaceResource = function ( interfaceRes )
 	}
 }
 
+GraphicController.prototype.deleteEventManager =  function ( interfaceResource )
+{
+	var length = this.eventManagers.length;
+	var i;
+	
+	for ( i = 0;  i < length; i ++ )
+	{
+		if( this.eventManagers[i].getId() == interfaceResource.getId()  )
+		{
+			var ret = this.eventManagers[i];
+			this.eventManagers.splice(i,1);
+			return ret;
+		} 
+	}
+	return null;
+}
+
+GraphicController.prototype.deleteInterfaceResource = function ( interfaceResource )
+{
+	var deletedResource = this.getKineticObjectById( interfaceResource );
+	if( deletedResource != null )
+	{
+		var parentLayer = deletedResource.getLayer();
+		if( this.deleteEventManager( deletedResource ) == null )
+		{
+			console.error( "Internal error while deleting object (inexistent event listener)." );
+		}
+		else
+		{
+			deletedResource.remove();
+			parentLayer.draw();
+			return deletedResource;
+		}
+	}
+	else
+	{
+		return null;
+	}
+}
+
 GraphicController.prototype.getKineticObjectById = function ( interfaceResource )
 {
 	for( i = 0; i < graphicControllerGlobals.MAX_DEPTH; i++ )
@@ -124,7 +169,6 @@ GraphicController.prototype.getKineticObjectById = function ( interfaceResource 
 		{
 			if( kineticObjectArray.length > 1 || kineticObjectArray.length == 0 )
 			{
-				alert("There are elements using the same id on graphicController, getKineticObjectById function");
 				return null;
 			}
 			else
@@ -334,6 +378,33 @@ GraphicController.prototype.onInterfaceResourceCreated = function( interfaceReso
 {
 	this.addInterfaceResource( interfaceResource );
 }
+
+GraphicController.prototype.onInterfaceResourceDeleted = function( interfaceResource )
+{
+	if( this.deleteInterfaceResource( interfaceResource ) == null )
+	{
+		console.error( "Trying to delete an unexistent element on the graphic canvas." );
+	}
+}
+
+GraphicController.prototype.onInterfaceResourceMoved = function( interfaceResource, oldX, oldY )
+{
+	var kineticObject = this.getKineticObjectById( interfaceResource );
+	//TODO
+	if( kineticObject == null )
+	{
+		console.error( "onInterfaceResourceMoved there is no kinetic object with the give ID" );
+		return;
+	}
+	else
+	{
+		var parentLayer = kineticObject.getParent();
+		kineticObject.setX( interfaceResource.getX() );
+		kineticObject.setY( interfaceResource.getY() );
+		parentLayer.draw();
+	}
+}
+
 
 /******** Graphic Mediator functions **********/
 

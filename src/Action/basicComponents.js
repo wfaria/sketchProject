@@ -2,6 +2,7 @@ var EventManagerGlobals = {};
 
 function EventManager( baseObject )
 {
+	this.id = 0;
 	this.base = baseObject;
 	this.funcArray = new Array();
 }
@@ -16,6 +17,16 @@ EventManager.prototype.addFunction = function ( funcKey, funcImp )
 EventManager.prototype.callFunction = function( funcKey, funcParams )
 {
 	this.funcArray[funcKey].apply( this.base, funcParams );
+} 
+
+EventManager.prototype.getBaseObject = function( )
+{
+	return this.base;
+} 
+
+EventManager.prototype.getId = function( )
+{
+	return this.id;
 } 
 
 /*******************************************************/
@@ -61,8 +72,6 @@ function dragEnd( evt, kineticShape )
 
 function dblClick( evt )
 {
-
-   	globalMediators.graphicMediator.publish( "ResourceClicked", [ evt,this.interfaceResource ] );
    	globalMediators.internalMediator.publish( "RenameElement", [ this.interfaceResource, "lol" ] );
 }
 
@@ -154,7 +163,7 @@ function GenericKineticEventManager( baseObj )
 	this.addFunction( "click", click );
 	this.addFunction( "mouseover", mouseOver );
 	this.addFunction( "mouseout", mouseOut );
-	
+	this.id = baseObj.interfaceResource.getId();
 	bindGenericEventManager( baseObj.kineticShape, this );
 }
 
@@ -169,6 +178,7 @@ GenericKineticEventManager.prototype.constructor = GenericKineticEventManager;
  *
  * @param {?} baseObj - A specific object that will be used as the function caller.
  */
+/*
 function GenericKineticEventManager( baseObj )
 {
 	EventManager.call( this , baseObj );
@@ -185,3 +195,4 @@ function GenericKineticEventManager( baseObj )
 GenericKineticEventManager.prototype = new EventManager;
 GenericKineticEventManager.prototype.constructor = GenericKineticEventManager;
 
+*/

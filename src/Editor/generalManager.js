@@ -47,11 +47,16 @@ GeneralManager.prototype.subscribeToMediators = function()
   						 3- No futuro perguntar se é exclusão total do elemento ou apenas da versão dele
   						 4- 
   						 * */	
-						var btn = new ButtonResource( 0,0,0,100, 50, "Button", 0, generalGlobals.manager.sketchProject.getActiveVersionNumber() );
+					/*	var btn = new ButtonResource( 0,0,0,100, 50, "Button", 0, generalGlobals.manager.sketchProject.getActiveVersionNumber() );
 						var currentScreen = generalGlobals.manager.sketchProject.getCurrentScreen();
 						currentScreen.addResourceHistory( btn );
-						/* End of TODO */
 						globalMediators.internalMediator.publish( "InterfaceResourceCreated", [ btn ] );
+						* */
+						/* End of TODO */
+						var command = new CreateResourceCommand( 
+							basicCommandsGlobals.executionTypeEnum.CMEX_EDITION, 
+							resourceTypeEnum.IR_BUTTON, generalGlobals.manager.sketchProject );
+						generalGlobals.manager.actionController.doCommand( command );
 						console.log("Temporary button creation, fix it");
 
   					},
@@ -86,9 +91,9 @@ GeneralManager.prototype.subscribeToMediators = function()
 
   					onEditorDragEnd: function( evt, interfaceResource, kineticShape )
   					{
-  						var dragCommand = new KineticDragCommand( 
+  						var dragCommand = new DragResourceCommand( 
   							basicCommandsGlobals.executionTypeEnum.CMEX_EDITION, interfaceResource, 
-  							kineticShape, kineticShape.getX(), kineticShape.getY() 
+  							kineticShape.getX(), kineticShape.getY() 
   						);
   						generalGlobals.manager.actionController.doCommand( dragCommand );
   					},

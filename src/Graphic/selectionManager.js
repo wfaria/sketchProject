@@ -26,7 +26,6 @@ SelectionManager.prototype.addElement = function( interfaceResourceArray, isAddi
 		}
 		this.selectedElements.push( iR );
 	}
-	alert( this.selectedElements.length );
 }
 
 SelectionManager.prototype.removeElement = function( interfaceResourceArray )
@@ -46,7 +45,6 @@ SelectionManager.prototype.removeElement = function( interfaceResourceArray )
 	    	}
 	    }
 	}
-	alert( this.selectedElements.length );
 }
 
 SelectionManager.prototype.eraseSelection = function()

@@ -292,7 +292,7 @@ DeleteResourceCommand.prototype.execute = function( commandObject )
 	}
 	else
 	{
-		console.error( "Failure whilte deleting interface resource with id " + interfaceResourceId );
+		console.error( "Failure while deleting interface resource with id " + interfaceResourceId );
 	}
 }
 
@@ -359,7 +359,7 @@ RestoreResHistCommand.prototype.execute = function( commandObject )
 		
 		if( interfaceResource != null )
 		{
-			//TODO: Send message to the mediator
+			globalMediators.internalMediator.publish( "InterfaceResourceCreated", [ interfaceResource ] );
 			return;
 		}
 	}
@@ -380,10 +380,13 @@ RestoreResHistCommand.prototype.undo = function( commandObject )
 DragResourceCommand.prototype.execute = function( commandObject )
 {
 	var interfaceResource = commandObject.argObject.resource;
+	var oldX = interfaceResource.getX();
+	var oldY = interfaceResource.getY();
 	var x = commandObject.argObject.x;
 	var y = commandObject.argObject.y;
 	interfaceResource.setX(x);
 	interfaceResource.setY(y);
+	globalMediators.internalMediator.publish( "InterfaceResourceMoved", [ interfaceResource, oldX, oldY ] );
 }
 
 DragResourceCommand.prototype.undo = function( commandObject )
@@ -535,6 +538,7 @@ function commandDigest( commandObject )
 	}
 	return false;
 	*/
+	console.log( commandObject );
 	commandObject.execute( commandObject );
 	return true;
 }

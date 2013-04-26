@@ -17,6 +17,15 @@ event comments ends with a past verb, they should ALWAYS be sent when the event 
  *
  * @param {InterfaceResource} interfaceResource - The object that contains the data from an interface resource.
  */
+
+/**
+ * EventKey: InterfaceResourceMoved
+ * Sent when a interface resource is moved
+ *
+ * @param {InterfaceResource} interfaceResource - The object that contains the data from an interface resource.
+ * @param {int} oldX - The last X position from the resource.
+ * @param {int} oldY - The last Y position from the resource.
+ */
  
  /**
  * EventKey: CreateButton
