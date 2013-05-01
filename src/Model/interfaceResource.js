@@ -181,7 +181,7 @@ GroupResource.prototype.addChild = function( interfaceResource )
 		return false;
 	}
 	this.childrenObjects.push( interfaceResource );
-	this.childrenIds.push( interfaceResource );
+	this.childrenIds.push( interfaceResource.getId() );
 	interfaceResource.setParentId( this.getId() );
 	return true;
 }
@@ -202,4 +202,26 @@ GroupResource.prototype.removeChild = function( interfaceResource )
 		}
 	}
 	return null;
+}
+
+
+GroupResource.prototype.toJSON = function()
+{
+	/*
+	 * Lazy implementation, it disables this function to not allow recursion loops
+	 * when stringfy calls toJSON and disable the object array
+	 * to not allow circular references
+	 */
+	var auxArray = this.childrenObjects;
+	var auxFunction = this.toJSON;
+	
+	this.childrenObjects = null;
+	this.toJSON = null;
+	
+	var JSONString = JSON.stringfy( this );
+	
+	this.childrenObjects = auxArray;
+	this.toJSON = auxFunction;
+	
+	return JSONString;
 }

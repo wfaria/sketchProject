@@ -328,3 +328,13 @@ Sketch.prototype.getScreen = function( screenName )
 	return null;
 }
 
+Sketch.prototype.getScreens = function( )
+{
+	return this.screens;
+}
+
+
+Sketch.prototype.getName = function( )
+{
+	return this.name;
+}

@@ -31,6 +31,7 @@ GeneralManager.prototype.subscribeToMediators = function()
   					},
   					onDownloadProject: function( )
   					{
+						LocalPersistence.downloadProject( generalGlobals.manager.sketchProject );
   						alert( "Downloading project" );
   					},
   					onEditorStageChange: function( newState )
@@ -40,19 +41,6 @@ GeneralManager.prototype.subscribeToMediators = function()
   					},
   					onCreateButton: function( )
   					{
-  						/* TODO: Put this inside of a command */
-  						/*
-  						 1- Pegar o ID certo do projeto
-  						 2- Criar o objeto
-  						 3- No futuro perguntar se é exclusão total do elemento ou apenas da versão dele
-  						 4- 
-  						 * */	
-					/*	var btn = new ButtonResource( 0,0,0,100, 50, "Button", 0, generalGlobals.manager.sketchProject.getActiveVersionNumber() );
-						var currentScreen = generalGlobals.manager.sketchProject.getCurrentScreen();
-						currentScreen.addResourceHistory( btn );
-						globalMediators.internalMediator.publish( "InterfaceResourceCreated", [ btn ] );
-						* */
-						/* End of TODO */
 						var command = new CreateResourceCommand( 
 							basicCommandsGlobals.executionTypeEnum.CMEX_EDITION, 
 							resourceTypeEnum.IR_BUTTON, generalGlobals.manager.sketchProject );

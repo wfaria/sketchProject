@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>QUnit Interface Local Persistence Functions Test Page</title>
+  <link rel="stylesheet" href="../css/qunit.css">
+</head>
+<body>
+  <div id="qunit"> </div>
+  <script src="../src/Libs/qunit.js"></script>
+  <script src="../src/Model/interfaceResource.js"></script>
+  <script src="../src/Model/sketch.js"></script>
+  <script src="../src/Persistence/LocalPersistence.js"></script>
+  
+  <script>
+	module("Basic test");
+	test
+	(
+		"Testing saving an empty sketch project", function()
+		{
+			var sketchName = "test";
+			var sketchAuthor = "tester";
+			var sketchObj = new Sketch( sketchName, sketchAuthor );
+			
+			
+			var sketchObjJSONStr = LocalPersistence.downloadProject( sketchObj ) ;
+			
+			var uploadedSketchObj = LocalPersistence.uploadProject( sketchObjJSONStr );
+			
+			ok( 1==1, ":)");
+		}
+		
+	);
+  </script>
+</body>
+</html>
