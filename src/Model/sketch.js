@@ -35,6 +35,11 @@ ResourceHistory.prototype.getHistoryLength = function()
 	return this.timeSlots.length;
 }
 
+ResourceHistory.prototype.getResources = function()
+{
+	return this.timeSlots;
+}
+
 ResourceHistory.prototype.toString = function()
 {
 	var s = "Resource history from object with id " + this.resourceId + "\n";

@@ -17,6 +17,8 @@ function InterfaceResource( posX,posY,posZ,widthVal, heightVal, name, id, initia
 	this.id = id;
 	this.parentId = iResGlobals.PARENTLESS;
 	this.extra = [];
+	
+	this.prototypeName = this.constructor.name; // This is only used in local serialization
 }
 InterfaceResource.prototype.constructor = InterfaceResource;
 
