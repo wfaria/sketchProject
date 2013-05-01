@@ -25,6 +25,11 @@
 				//createResourceBasicSection(null);
 			};
 			
+			function callDownload()
+			{
+				globalMediators.internalMediator.publish( "DownloadProject", [ ] );
+			}
+			
 			function callCreateButton()
 			{
 				globalMediators.internalMediator.publish( "CreateButton", [ ] );
@@ -79,6 +84,7 @@
 			document.getElementById("normalBar").appendChild( menuDOM );
 			createMenuButtonGroup( menuID, "File" );
 				createMenuButton( "File", "New", "openProjectEvent(true)" );
+				createMenuButton( "File", "Download project...", "callDownload( )" );
 				createMenuButton( "File", "Open", "alert('Project opened')" );
 			createMenuButtonGroup( menuID, "Help" );
 			console.log(menuDOM.outerHTML);

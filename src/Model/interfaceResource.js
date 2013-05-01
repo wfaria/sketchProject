@@ -107,8 +107,13 @@ function GroupResource( posX,posY,posZ,widthVal, heightVal, name, id, initialVer
 	// the function call is used to simulate the super(...) call function, you will get SYNTAX_ERR if you miss the parameter number
 	InterfaceResource.call(this, posX,posY,posZ,widthVal, heightVal, name, id, initialVersion);
 	this.resourceType = resourceTypeEnum.IR_GROUP;
-	// The children are only the resources which have as parent this resource
-	this.childrenObjects = [];
+	/*	
+		The children are only the resources which have as parent this resource
+		This should be emptied setted null before serializing this object and refill after this
+	*/
+	this.childrenObjects = []; 
+	// This is serialized with this object
+	this.childrenIds = []; 
 }
 GroupResource.prototype = new InterfaceResource;
 GroupResource.prototype.constructor = GroupResource;
@@ -176,6 +181,7 @@ GroupResource.prototype.addChild = function( interfaceResource )
 		return false;
 	}
 	this.childrenObjects.push( interfaceResource );
+	this.childrenIds.push( interfaceResource );
 	interfaceResource.setParentId( this.getId() );
 	return true;
 }
@@ -190,6 +196,7 @@ GroupResource.prototype.removeChild = function( interfaceResource )
 		{
 			var ret = this.childrenObjects[i];
 			this.childrenObjects.splice( i, 1 );
+			this.childrenIds.splice( i, 1 );
 			ret.setParentId( iResGlobals.PARENTLESS );
 			return ret;
 		}

@@ -29,9 +29,9 @@ GeneralManager.prototype.subscribeToMediators = function()
   					{
   						//TODO: kill the graphic canvas and free the manager object
   					},
-  					onSaveProject: function( )
+  					onDownloadProject: function( )
   					{
-  						//TODO: this.sketch.Serialize
+  						alert( "Downloading project" );
   					},
   					onEditorStageChange: function( newState )
   					{

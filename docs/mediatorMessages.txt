@@ -69,8 +69,14 @@ event comments ends with a past verb, they should ALWAYS be sent when the event 
  */
  
  /**
- * EventKey: SaveProject
- * Sent when a project is saved 
+ * EventKey: DownloadProject
+ * Order to download the current project, it saves on the current disk from the user.
+ *
+ */
+
+ /**
+ * EventKey: UploadProject
+ * Order to upload some project to the memory, it loads it from the current disk of the user.
  *
  */
 
