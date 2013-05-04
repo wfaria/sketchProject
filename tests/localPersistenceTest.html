@@ -34,6 +34,75 @@
 		}
 		
 	);
+	
+	test
+	(
+		"Testing saving an sketch project with some objects", function()
+		{
+			var sketchName = "test";
+			var sketchAuthor = "tester";
+			
+			var x = 30;
+			var y = 10;
+			var version = 0;
+			var id1 = 0;
+			var id2 = 1;
+			var id3 = 2;
+			
+			var sketchObj = new Sketch( sketchName, sketchAuthor );
+			
+			var screen = sketchObj.getCurrentScreen();
+			
+			ok( screen != null, "The new Sketch project starts with one screen" );
+			
+			var btn1 = new ButtonResource( x,y,0,100, 50, "Button1", id1, version );
+			var btn2 = new ButtonResource( x,y,0,100, 50, "Button2", id2, version );
+			var btn3 = new ButtonResource( x,y,0,100, 50, "Button3", id3, version );
+			
+			screen.addResourceHistory( btn1 );
+			screen.addResourceHistory( btn2 );
+			screen.addResourceHistory( btn3 );
+			
+			ok( screen.getResourceHistory( btn1.getId() ) != null &&
+				screen.getResourceHistory( btn2.getId() ) != null &&
+				screen.getResourceHistory( btn3.getId() ) != null, 
+				"3 interface resources added to Sketch project." );
+			
+			var sketchObjJSONStr = LocalPersistence.convertToString( sketchObj ) ;
+			
+			ok( sketchObjJSONStr != null, "Serializing the sketch project into a JSON String" );
+			
+			var uploadedSketchObj = LocalPersistence.convertToObject( sketchObjJSONStr );
+			
+			ok( uploadedSketchObj != null, "Deserializing the sketch project from a JSON String" );
+			
+			
+			screen = uploadedSketchObj.getCurrentScreen();
+			
+			ok( screen != null, "The loaded Sketch project starts with one screen" );
+			
+			ok( screen.getResourceHistory( btn1.getId() ) != null &&
+				screen.getResourceHistory( btn2.getId() ) != null &&
+				screen.getResourceHistory( btn3.getId() ) != null, 
+				"Get resource histories from the loaded Sketch project Ok." );
+				
+			var hist1 = screen.getResourceHistory( btn1.getId() );
+			hist1.cloneVersion( version, version+1);
+			
+			var btn1v2 = hist1.getResourceFromVersion( version + 1 );
+			btn1v2.setX(x+100);
+			
+			sketchObjJSONStr = LocalPersistence.convertToString( uploadedSketchObj ) ;
+			
+			ok( sketchObjJSONStr != null, "Serializing the updated sketch project into a JSON String" );
+			
+			var uploadedSketchObj2 = LocalPersistence.convertToObject( sketchObjJSONStr );
+			
+			ok( uploadedSketchObj2 != null, "Deserializing the updated sketch project from a JSON String" );
+			
+		}
+		
+	);
   </script>
 </body>
 </html>

@@ -47,6 +47,8 @@
 			ok( sketchObj.getScreen( screenName ) == null, "Trying to find a screen by a name that does not exist return null" );
 			ok( sketchObj.deleteScreen( screenName ) == null, "Trying to delete a screen by a name that does not exist return null" );
 			sketchObj.addScreen( screenObj );
+			
+			//TODO: Think about using normal arrays like the other functions
 			var screenIterator = sketchObj.getScreenIterator(); // always create a new iterator after changing the project
 			ok( screenIterator.getLength() == 2, "After add a new screen the length of the iterator increases"  );
 			ok( screenIterator.next().getName() == "Default Screen", "The first screen has a default name"  );
