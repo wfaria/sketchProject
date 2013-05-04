@@ -87,10 +87,17 @@
 				"Get resource histories from the loaded Sketch project Ok." );
 				
 			var hist1 = screen.getResourceHistory( btn1.getId() );
-			hist1.cloneVersion( version, version+1);
+			hist1.cloneVersion( version, version+1 );
+			ok( hist1.getHistoryLength() == 2, "Creating a new version object from the button1" );
 			
 			var btn1v2 = hist1.getResourceFromVersion( version + 1 );
 			btn1v2.setX(x+100);
+			ok( btn1v2.getX() == x+100, "Changing the X position from the button1 at its version " + (version + 1) );
+			
+			var newScreen = new Screen( "newScreen" );
+			uploadedSketchObj.addScreen( newScreen );
+			
+			ok( uploadedSketchObj.getScreens().length == 2, "Adding a new screen to the loaded sketch project" );
 			
 			sketchObjJSONStr = LocalPersistence.convertToString( uploadedSketchObj ) ;
 			
@@ -100,6 +107,20 @@
 			
 			ok( uploadedSketchObj2 != null, "Deserializing the updated sketch project from a JSON String" );
 			
+			ok( uploadedSketchObj.getScreens().length == 2, "The reloaded Sketch project starts with two screens" );
+			
+			screen = uploadedSketchObj.getCurrentScreen();
+			
+			ok( screen.getResourceHistory( btn1.getId() ) != null &&
+				screen.getResourceHistory( btn2.getId() ) != null &&
+				screen.getResourceHistory( btn3.getId() ) != null, 
+				"Get resource histories from the reloaded Sketch project Ok." );
+			
+			hist1 = screen.getResourceHistory( btn1.getId() );
+			
+			btn1v2 = hist1.getResourceFromVersion( version + 1 );
+			
+			ok( btn1v2.getX() == x+100, "The last change in the button1'X value has been saved" );
 		}
 		
 	);
