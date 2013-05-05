@@ -17,6 +17,7 @@ event comments ends with a past verb, they should ALWAYS be sent when the event 
  *
  * @param {InterfaceResource} interfaceResource - The object that contains the data from an interface resource.
  */
+onInterfaceResourceCreated = function( interfaceResource ){}
 
 /**
  * EventKey: InterfaceResourceMoved
@@ -26,6 +27,7 @@ event comments ends with a past verb, they should ALWAYS be sent when the event 
  * @param {int} oldX - The last X position from the resource.
  * @param {int} oldY - The last Y position from the resource.
  */
+onInterfaceResourceMoved = function( interfaceResource, oldX, oldY ){}
  
  /**
  * EventKey: CreateButton

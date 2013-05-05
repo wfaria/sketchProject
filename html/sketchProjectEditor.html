@@ -5,6 +5,7 @@
 		<link rel="stylesheet" type="text/css" href="../css/style.css" />
 		<link rel="stylesheet" type="text/css" href="../css/menu.css" />
 		<link rel="stylesheet" type="text/css" href="../css/sideMenu.css" />  
+		<link rel="stylesheet" type="text/css" href="../css/popup.css" />
 		
 		<script src="../src/Libs/utils.js"></script>
 		<script src="../src/Libs/kinetic-v4.3.2.js"></script>	
@@ -20,11 +21,19 @@
 		<script src="../src/Persistence/LocalPersistence.js"></script>
 		<script src="../src/Editor/generalManager.js"></script>
 		<script src="../src/HTMLHelper/DOMManipulator.js"></script>
+		<script src="../src/HTMLHelper/Popup.js"></script>
 		
 		<script>
 			window.onload = function() {
 				//createResourceBasicSection(null);
 			};
+			
+			function callOpenProject()
+			{
+				var innerHTMLText = "<h2>Open Sketch Project<\/h2>\n<input type=\"file\" id=\"files\" name=\"files[]\" multiple \/>";
+				Popup.showPopupDiv( innerHTMLText, 10 , 10) ;
+				globalMediators.internalMediator.publish( "UploadProject", [ ] );
+			}
 			
 			function callDownload()
 			{
@@ -85,8 +94,8 @@
 			document.getElementById("normalBar").appendChild( menuDOM );
 			createMenuButtonGroup( menuID, "File" );
 				createMenuButton( "File", "New", "openProjectEvent(true)" );
-				createMenuButton( "File", "Download project...", "callDownload( )" );
-				createMenuButton( "File", "Open", "alert('Project opened')" );
+				createMenuButton( "File", "Save...", "callDownload( )" );
+				createMenuButton( "File", "Open...", "callOpenProject( )" );
 			createMenuButtonGroup( menuID, "Help" );
 			console.log(menuDOM.outerHTML);
 		</script>

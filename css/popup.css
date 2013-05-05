@@ -113,4 +113,9 @@
 	overflow: auto;
 }
 
-
+.closePopup {
+	color: white;
+	font-size: 30px;
+	font-weight: bold;
+	float:right;
+}

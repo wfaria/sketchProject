@@ -1,4 +1,4 @@
-LocalPersistence = {};
+var LocalPersistence = {};
 
 //TODO: Test Crockford's json2.js. 
 //TODO: Add file sanity check

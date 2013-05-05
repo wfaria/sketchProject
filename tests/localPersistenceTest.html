@@ -107,9 +107,9 @@
 			
 			ok( uploadedSketchObj2 != null, "Deserializing the updated sketch project from a JSON String" );
 			
-			ok( uploadedSketchObj.getScreens().length == 2, "The reloaded Sketch project starts with two screens" );
+			ok( uploadedSketchObj2.getScreens().length == 2, "The reloaded Sketch project starts with two screens" );
 			
-			screen = uploadedSketchObj.getCurrentScreen();
+			screen = uploadedSketchObj2.getCurrentScreen();
 			
 			ok( screen.getResourceHistory( btn1.getId() ) != null &&
 				screen.getResourceHistory( btn2.getId() ) != null &&
@@ -121,6 +121,37 @@
 			btn1v2 = hist1.getResourceFromVersion( version + 1 );
 			
 			ok( btn1v2.getX() == x+100, "The last change in the button1'X value has been saved" );
+		}
+		
+	);
+	
+	module("Error handling");
+	test
+	(
+		"Testing invalid input", function()
+		{
+			try
+			{
+				var sketchObjJSONStr = "Potato sauce";
+				
+				var uploadedSketchObj = LocalPersistence.convertToObject( sketchObjJSONStr );
+				
+				ok( sketchObjJSONStr != null, "Deserializing the sketch project from a JSON String" );
+			} catch( err ) {
+				ok( 1==1, "Excepetion caught while trying to convert an invalid string to a JSON Object");
+			}
+			
+		}
+		
+	);
+	
+	test
+	(
+		"Sanity Check", function()
+		{
+
+				ok( 1==1, "TODO");
+
 		}
 		
 	);
