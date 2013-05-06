@@ -343,3 +343,8 @@ Sketch.prototype.getName = function( )
 {
 	return this.name;
 }
+
+Sketch.prototype.getAuthor = function( )
+{
+	return this.author;
+}

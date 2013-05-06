@@ -1,10 +1,11 @@
 <html>
 	<head>
-		
+		<script src="../../src/HTMLHelper/dataHandler.js"></script>
+		<script src="../../src/HTMLHelper/Popup.js"></script>
 	</head>
 
 	<body>
 		<h2>Open Sketch Project</h2>
-		<input type="file" id="files" name="files[]" multiple />
+		<input type="file" id="files" name="files[]" multiple onchange="DataHandler.handleFileSelect(event)" />
 	</body>	
 </html>

@@ -2,12 +2,6 @@
 
 var DataHandler = {};
 
-DataHandler.getStringFromFile = function( f )
-{
-	return "a";
-}
-
-
 DataHandler.errorHandler =  function(evt) {
 	switch(evt.target.error.code) {
 	  case evt.target.error.NOT_FOUND_ERR:
@@ -29,12 +23,12 @@ DataHandler.updateProgress =  function(evt) {
 	  var percentLoaded = Math.round((evt.loaded / evt.total) * 100);
 	  // Increase the progress bar length.
 	  if (percentLoaded < 100) {
-		$(textHere).innerHTML = percentLoaded + '%';
+		//$(textHere).innerHTML = percentLoaded + '%';
 	  }
 	}
 	else
 	{
-		$(textHere).innerHTML = "loading...";
+		//$(textHere).innerHTML = "loading...";
 	}
 }
 
@@ -42,12 +36,26 @@ DataHandler.loadEnd =  function( evt )
 {
 	if (evt.target.readyState == FileReader.DONE)
 	{
-		$("textHere").innerHTML =( evt.target.result );
+		var projStr = evt.target.result;
+		globalMediators.internalMediator.publish( "ProjectUploaded", [ evt.target.result ] );
 	}
 	else
 	{
 		alert( "fatal error while openning file" );
 	}
+}
+
+DataHandler.handleFileSelect = function(evt) 
+{
+	var files = evt.target.files; // FileList object
+	
+	if( files.length != 1 )
+	{
+		alert( "Please choose only one file.");
+		return;				
+	}
+	
+	DataHandler.readFile(  files[0] );
 }
 
 
@@ -62,8 +70,8 @@ DataHandler.readFile = function(f)
 		return;
 	}
 	
-	reader.onerror = errorHandler;
-	reader.onprogress = updateProgress;
+	reader.onerror = DataHandler.errorHandler;
+	reader.onprogress = DataHandler.updateProgress;
 	reader.onabort = function(e) {
 	  alert('File read cancelled');
 	};
@@ -71,9 +79,8 @@ DataHandler.readFile = function(f)
 
 	};
 	reader.onload = function(e) {
-		$("textHere").innerHTML = "loaded";
 	};
-	reader.onloadend = loadEnd;
+	reader.onloadend = DataHandler.loadEnd;
 
 	// Read in the image file as a data URL.
 	reader.readAsText(f);

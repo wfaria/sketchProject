@@ -3,6 +3,11 @@ var LocalPersistence = {};
 //TODO: Test Crockford's json2.js. 
 //TODO: Add file sanity check
 
+LocalPersistence.getUploadedProject = function( fileString )
+{
+	return LocalPersistence.convertToObject( fileString );
+}
+
 LocalPersistence.downloadProject = function( sketchObject )
 {
 	return LocalPersistence.convertToString( sketchObject );

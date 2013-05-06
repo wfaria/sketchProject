@@ -81,6 +81,15 @@ onInterfaceResourceMoved = function( interfaceResource, oldX, oldY ){}
  * Order to upload some project to the memory, it loads it from the current disk of the user.
  *
  */
+onUploadProject = function(){}
+
+ /**
+ * EventKey: ProjectUploaded
+ * Sent when a project is uploaded by the user.
+ *
+ * @param {String} JSONString - A string that represents the uploaded project's JSON object
+ */
+onProjectUploaded = function( JSONString ){}
 
 /****** Graphic messages ********/
 

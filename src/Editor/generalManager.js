@@ -29,10 +29,40 @@ GeneralManager.prototype.subscribeToMediators = function()
   					{
   						//TODO: kill the graphic canvas and free the manager object
   					},
+  					onUploadProject: function()
+  					{
+						var innerHTMLText = '<h2>Open Sketch Project<\/h2>\n<input type=\"file\" id=\"files\" name=\"files[]\" multiple onchange=\"DataHandler.handleFileSelect(event)\" \/>';
+						Popup.showPopupDiv( innerHTMLText, 10 , 10 ) ;
+  					},
+  					onProjectUploaded : function( JSONString )
+  					{
+  						try
+  						{
+  							var sketchObj = LocalPersistence.getUploadedProject( JSONString );
+  							generalGlobals.openProject( sketchObj );
+  							Popup.closePopupDiv( ) ;
+  						}
+  						catch(err)
+  						{
+  							alert(err);
+  							alert( "Error while opening uploaded project" );
+  						}
+  						
+  					},
   					onDownloadProject: function( )
   					{
-						LocalPersistence.downloadProject( generalGlobals.manager.sketchProject );
-  						alert( "Downloading project" );
+  						try
+  						{
+							var JSONString = LocalPersistence.downloadProject( generalGlobals.manager.sketchProject );
+							var uriContent = "data:application/octet-stream," + encodeURIComponent( JSONString );
+							var newWindow=window.open(uriContent, 'neuesDokument');
+  						}
+  						catch(err)
+  						{
+  							alert(err);
+  							alert( "Error while downloading project" );
+  						}
+
   					},
   					onEditorStageChange: function( newState )
   					{
@@ -107,10 +137,19 @@ GeneralManager.prototype.subscribeToMediators = function()
 		); //end mediator.subscribe( compName, true, ...
 }
 
-generalGlobals.openProject = function()
+generalGlobals.openProject = function( sketchObject )
 {
-	manager = new GeneralManager();
+	if( generalGlobals.manager != null )
+	{
+		globalMediators.internalMediator.publish( "ProjectClosed", [ ] );
+	}
+	globalMediators.start();
+	generalGlobals.manager = new GeneralManager();
+	generalGlobals.manager.sketchProject = sketchObject;
 	generalGlobals.manager.subscribeToMediators();
+	generalGlobals.manager.graphicController.subscribeToMediators();
+   	globalMediators.internalMediator.publish( "ProjectCreated", 
+   		[ sketchObject.getName(), sketchObject.getAuthor(), sketchObject ] );
 }
 
 generalGlobals.newProject = function(  nameStr , authorStr  )
@@ -125,5 +164,4 @@ generalGlobals.newProject = function(  nameStr , authorStr  )
 	generalGlobals.manager.subscribeToMediators();
 	generalGlobals.manager.graphicController.subscribeToMediators();
    	globalMediators.internalMediator.publish( "ProjectCreated", [ nameStr, authorStr, generalGlobals.manager.sketchProject ] );
-
 }
