@@ -16,6 +16,9 @@ GeneralManager.prototype.constructor = GeneralManager;
 
 GeneralManager.prototype.subscribeToMediators = function()
 {
+	generalGlobals.manager.graphicController.subscribeToMediators();
+	globalMediators.subscribeToMediators( this.selectionManager, "SelectionManager" );
+	
 	globalMediators.internalMediator.subscribe( "generalManager", true, 
   			function() // Do this way if you want to create a closure to the component
   			{	
@@ -147,7 +150,6 @@ generalGlobals.openProject = function( sketchObject )
 	generalGlobals.manager = new GeneralManager();
 	generalGlobals.manager.sketchProject = sketchObject;
 	generalGlobals.manager.subscribeToMediators();
-	generalGlobals.manager.graphicController.subscribeToMediators();
    	globalMediators.internalMediator.publish( "ProjectCreated", 
    		[ sketchObject.getName(), sketchObject.getAuthor(), sketchObject ] );
 }
@@ -162,6 +164,5 @@ generalGlobals.newProject = function(  nameStr , authorStr  )
 	generalGlobals.manager = new GeneralManager();
 	generalGlobals.manager.sketchProject = new Sketch( nameStr , authorStr );
 	generalGlobals.manager.subscribeToMediators();
-	generalGlobals.manager.graphicController.subscribeToMediators();
    	globalMediators.internalMediator.publish( "ProjectCreated", [ nameStr, authorStr, generalGlobals.manager.sketchProject ] );
 }

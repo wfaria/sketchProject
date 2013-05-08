@@ -91,6 +91,24 @@ onUploadProject = function(){}
  */
 onProjectUploaded = function( JSONString ){}
 
+
+ /**
+ * EventKey: ResourceSelected
+ * Sent when a group of resources are selected on the canvas.
+ *
+ * @param {Array} resourceArray - An array with the selected elements
+ */
+onResourceSelected = function( resourceArray ){}
+
+ /**
+ * EventKey: ResourceSelectCanceled
+ * Sent when a group of selected resources are unselected.
+ *
+ * @param {Array} resourceArray - An array with the unselected elements
+ */
+onResourceSelectCanceled = function( resourceArray ){}
+
+
 /****** Graphic messages ********/
 
 

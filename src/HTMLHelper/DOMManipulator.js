@@ -89,8 +89,10 @@ function createMenuButton( parentId, buttonStr, onClickString )
 
 
 /** Side menu functions **/
+var sideMenu = {};
 
-function createDiv( divId, divClass )
+
+sideMenu.createDiv = function( divId, divClass )
 {
 	var newDOM = document.createElement( "div" );
 	newDOM.id = divId;
@@ -98,9 +100,23 @@ function createDiv( divId, divClass )
 	return newDOM;
 }
 
-function createSideMenuSection( divId )
+sideMenu.removeSideMenuSection = function( divId )
 {
-	var newSectionDOM = createDiv( divId, DOMglobals.SIDE_SECTION_CLASS );
+	var removedDiv = $(divId);
+	if( removedDiv == null )
+	{
+		return;
+	}
+	else
+	{
+		var parentDiv = removedDiv.parentNode;
+		parentDiv.removeChild( removedDiv );
+	}
+}
+
+sideMenu.createSideMenuSection = function( divId )
+{
+	var newSectionDOM = sideMenu.createDiv( divId, DOMglobals.SIDE_SECTION_CLASS );
 	var sideBarDOM = $(DOMglobals.SIDE_BAR_ID); 
 	if( sideBarDOM == null )
 	{
@@ -112,18 +128,26 @@ function createSideMenuSection( divId )
 	return newSectionDOM; 
 }
 
-function createSectionPart( divId )
+sideMenu.createSectionPart = function ( divId )
 {
-	var newPartDom = createDiv( divId, DOMglobals.SECTION_PART_CLASS );
+	var newPartDom = sideMenu.createDiv( divId, DOMglobals.SECTION_PART_CLASS );
 	return newPartDom;
 }
 
-function createResourceBasicSection( interfaceResource )
+
+// TODO: Create a way to associate a sideMenu with an interface resource
+// Maybe associate the section with one ID
+sideMenu.createResourceBasicSection = function( interfaceResource )
 {
-	var newSideSection = createSideMenuSection ( DOMglobals.BASIC_RESOURCE_ID );
-	var newSectionPart = createSectionPart( "namePart" );
+	sideMenu.removeSideMenuSection( DOMglobals.BASIC_RESOURCE_ID );
+	var newSideSection = sideMenu.createSideMenuSection ( DOMglobals.BASIC_RESOURCE_ID );
+	var newSectionPart = sideMenu.createSectionPart( "namePart" );
 	var a = 1111;
-	newSectionPart.innerHTML = 'Name: <input type="text" size ="10" onkeyup="alert(\'ahhhh\')">';
+	// A closure is needed here to be able to find the variables onkeyup event
+	(function(){
+		ir = interfaceResource;
+		newSectionPart.innerHTML = 'Name: <input type=\"text\" size =\"10\" value="' + ir.getName() +
+		'" onkeyup=\"globalMediators.internalMediator.publish( \'RenameElement\', [ ir, this.value ] ) \">';
+	}());
 	newSideSection.appendChild(newSectionPart);
-	alert( newSideSection.outerHTML );
 }

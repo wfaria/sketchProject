@@ -452,7 +452,7 @@ SelectResourceCommand.prototype.execute = function( commandObject )
 	var isAdditiveSelection = commandObject.argObject.isAdditiveSelection;
 	var selectionManager = commandObject.argObject.selectionManager;
 	selectionManager.addElement( resourceArrays, isAdditiveSelection );
-	//globalMediators.graphicMediator.publish( "ResourceSelected", [ resourceArrays, newName ] );
+	globalMediators.graphicMediator.publish( "ResourceSelected", [ resourceArrays ] );
 }
 
 SelectResourceCommand.prototype.undo = function( commandObject )
@@ -472,7 +472,7 @@ CancelSelectResourceCommand.prototype.execute = function( commandObject )
 	var isAdditiveSelection = commandObject.argObject.isAdditiveSelection;
 	var selectionManager = commandObject.argObject.selectionManager;
 	selectionManager.removeElement( resourceArrays );
-	//globalMediators.graphicMediator.publish( "ResourceSelectCanceled", [ resourceArrays, newName ] );
+	globalMediators.graphicMediator.publish( "ResourceSelectCanceled", [ resourceArrays ] );
 }
 
 CancelSelectResourceCommand.prototype.undo = function( commandObject )

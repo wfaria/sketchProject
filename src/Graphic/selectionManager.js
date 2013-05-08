@@ -51,3 +51,28 @@ SelectionManager.prototype.eraseSelection = function()
 {
 	this.selectedElements = new Array();
 }
+
+
+
+/******** Graphic Mediator functions **********/
+
+SelectionManager.prototype.onResourceSelected = function( resourceArray )
+{
+	if( resourceArray.length == 1)
+	{
+		sideMenu.createResourceBasicSection(resourceArray[0]);
+	}
+	else
+	{
+		alert("Multiple selection isn't working");
+	}
+}
+
+SelectionManager.prototype.onResourceSelectCanceled = function( resourceArray )
+{
+	if( resourceArray.length == 1)
+	{
+		
+	}
+}
+
