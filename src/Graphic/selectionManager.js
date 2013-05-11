@@ -1,6 +1,6 @@
 function SelectionManager()
 {
-	var selectedElements = new Array();
+	this.selectedElements = new Array();
 }
 
 SelectionManager.prototype.constructor = SelectionManager;
@@ -22,7 +22,7 @@ SelectionManager.prototype.addElement = function( interfaceResourceArray, isAddi
 
 		if( isAdditiveSelection )
 		{
-			removeElement( [iR] );
+			this.removeElement( [iR] );
 		}
 		this.selectedElements.push( iR );
 	}
@@ -50,6 +50,11 @@ SelectionManager.prototype.removeElement = function( interfaceResourceArray )
 SelectionManager.prototype.eraseSelection = function()
 {
 	this.selectedElements = new Array();
+}
+
+SelectionManager.prototype.getSelectedElements = function()
+{
+	return this.selectedElements;
 }
 
 

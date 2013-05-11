@@ -13,6 +13,7 @@
   <script src="../src/Libs/utils.js"></script>
   <script src="../src/Action/basicCommands.js"></script>
   <script src="../src/Action/actionController.js"></script>
+  <script src="../src/Graphic/selectionManager.js"></script>	
   <script src="../src/Editor/mediatorObject.js"></script>
   <script src="../src/Editor/globalMediators.js"></script>
   
@@ -302,6 +303,64 @@
   		}
   	);
   			
+  			
+  	test(
+  		"Multiple selection and exclusion test", function()
+  		{
+			var sketchName = "test";
+			var sketchAuthor = "tester";
+			var sketchObj = new Sketch( sketchName, sketchAuthor );
+			var currentScreen = sketchObj.getCurrentScreen();
+			
+			var buttonNum = 10;
+			
+			globalMediators.start();
+			var actionController = new ActionController();
+			
+			var version = 0;
+			var commands = [];
+			var allButtonsProccessed = true;
+			var i = 0;
+			
+			ok( currentScreen.getResources().length == 0, "There are no elements on the current screen");	
+			ok( actionController.undo() == null , "Nothing to be undone");
+  			ok( actionController.redo() == null , "Nothing to be redone");
+			
+			for( i = 0; i < buttonNum; i++ )
+			{
+				commands[i] = new CreateResourceCommand( 
+					basicCommandsGlobals.executionTypeEnum.CMEX_EDITION, 
+					resourceTypeEnum.IR_BUTTON, sketchObj );
+				allButtonsProccessed = allButtonsProccessed && ( actionController.doCommand( commands[i]  ) == true );
+			}	
+
+  			ok( allButtonsProccessed  == true, "Creating " + buttonNum + " buttons");
+  		
+  			ok( currentScreen.getResources().length == buttonNum, 
+  				"Now there are " + buttonNum + " buttons on the current screen");	
+  				
+  				
+  			var selectionManager = new SelectionManager();
+  			var halfArray = [];
+  			var isAdditiveSelection = true;
+  			
+  			for( i = 0; i < buttonNum/2; i++ )
+  			{
+  				halfArray.push( currentScreen.getResourceHistory( i ) );
+  			}
+  			
+  			var selectCommand = new SelectResourceCommand( 
+				basicCommandsGlobals.executionTypeEnum.CMEX_EDITION, halfArray,
+				isAdditiveSelection, selectionManager );
+			ok( actionController.doCommand( selectCommand ) != null,
+				"Select half of the created elements" );	
+  			ok( selectionManager.getSelectedElements().length == buttonNum/2,
+				"Now there are " + (buttonNum/2) + " elements selected" );
+				
+			var cancelSelectCmd = new CancelSelectResourceCommand( basicCommandsGlobals.executionTypeEnum.CMEX_EDITION, 
+				halfArray, isAdditiveSelection, selectionManager );
+  		}
+  	);
   	
   </script>
 </body>
