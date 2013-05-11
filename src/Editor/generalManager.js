@@ -126,7 +126,6 @@ GeneralManager.prototype.subscribeToMediators = function()
   							basicCommandsGlobals.executionTypeEnum.CMEX_EDITION, [interfaceResource],
 		 					isAdditiveSelection, generalGlobals.manager.selectionManager );
 		 				generalGlobals.manager.actionController.doCommand( command );
-						console.log("The button creation isn't setting the id properly yet, so this part can't work properly yet");
 
   					},
   					onEditorStageChange: function( newState )

@@ -2,7 +2,7 @@ var basicCommandsGlobals = {};
 
 basicCommandsGlobals.commandTypeEnum = { CMD_UNDEFINED: -1, CMD_DRAG: 0, 
 	CMD_KINETIC_DRAG: 1, CMD_RENAME_RES: 2, CMD_SELECT_RES: 3, CMD_CANC_SELECT_RES: 4,
-	CMD_CREATE_RES: 5, CMD_DELETE_RES: 6, CMD_RESTORE_RES: 7 };
+	CMD_CREATE_RES: 5, CMD_DELETE_RES: 6, CMD_RESTORE_RES: 7, CMD_GROUP_EXEC: 8 };
 basicCommandsGlobals.executionTypeEnum = { CMEX_UNDEFINED: -1, CMEX_EDITION: 0, CMEX_SIMULATION: 1 };
 
 function Command()
@@ -374,6 +374,71 @@ RestoreResHistCommand.prototype.undo = function( commandObject )
 	var interfaceResource = resourceHistory.getResourceBeforeVersion( activeVersionNum ); 
 	return new DeleteResourceCommand( 
 		basicCommandsGlobals.executionTypeEnum.CMEX_EDITION, interfaceResource.getId(), sketchProject );
+}
+
+function CommandGroup( executionMode, commandArray, commandExplanationStr, actionController )
+{
+	Command.call(this);
+	this.commandCode = basicCommandsGlobals.commandTypeEnum.CMD_GROUP_EXEC;
+	this.executionMode = executionMode;
+	if( actionController == null )
+	{
+		actionController = new ActionController();
+	}
+	this.setArgs(
+		{
+			commands: commandArray,
+			commandExplanation: commandExplanationStr,
+			internalActionController: actionController
+		}
+	);
+}
+
+CommandGroup.prototype = new Command;
+CommandGroup.prototype.constructor = CommandGroup;
+
+CommandGroup.prototype.toString = function()
+{
+	var commandArray = this.argObject.commands;
+	var commandExplanationStr = this.argObject.commandExplanation;
+	
+	return "Command group with " + commandArray.length +
+		"commands. These commands are about " + commandExplanationStr;
+}
+
+CommandGroup.prototype.execute = function( commandObject )
+{
+	var commandArray = this.argObject.commands;
+	var commandExplanationStr = this.argObject.commandExplanation;
+	var actionController = this.argObject.internalActionController;
+
+	if( actionController.undoStack.isEmpty() && actionController.redoStack.isEmpty() )
+	{
+		var i;
+		var length = commandArray.length;
+		for( i = 0; i < length; i++ )
+			actionController.doCommand( commandArray[i] );
+	}
+	else if( !actionController.undoStack.isEmpty() )
+	{
+		while( actionController.undo() != null )
+		{ /* do nothing */ }
+	}
+	else if( !actionController.redoStack.isEmpty() )
+	{
+		while( actionController.redo() != null )
+		{ /* do nothing */ }
+	}
+}
+
+CommandGroup.prototype.undo = function( commandObject )
+{
+	var commandArray = this.argObject.commands;
+	var commandExplanationStr = this.argObject.commandExplanation;
+	var actionController = this.argObject.internalActionController;
+
+	return new CommandGroup( basicCommandsGlobals.executionTypeEnum.CMEX_EDITION, 
+	commandArray, commandExplanationStr, actionController );
 }
 
 /****** command factory test *********/

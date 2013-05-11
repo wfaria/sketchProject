@@ -9,6 +9,7 @@ graphicControllerGlobals.currentStyle = graphicControllerGlobals.stylesEnum.DEFA
 graphicControllerGlobals.styleChangers = {};
 graphicControllerGlobals.defaultNames = {};
 graphicControllerGlobals.defaultNames.NAME = "_NAME";
+graphicControllerGlobals.defaultNames.MAIN_SHAPE = "_MAIN_ELEMENT";
 
 
 /**
@@ -223,7 +224,7 @@ GraphicController.prototype.defaultKineticFactory = function( interfaceResource 
 			  fill: "#669933",
 			  stroke: "#003333",
 			  strokeWidth: 2,
-			  name: "_MAIN_ELEMENT",
+			  name: graphicControllerGlobals.defaultNames.MAIN_SHAPE,
 			  //draggable: true,
 			  dragOnTop: false,
 			  width: interfaceResource.getWidth(),
@@ -340,7 +341,7 @@ AndroidStyleChanger.prototype.constructor = AndroidStyleChanger;
 
 AndroidStyleChanger.prototype.modifyButton = function ( kineticShape )
 {
-	var externSquare = kineticShape.get( "._MAIN_ELEMENT" )[0]; 
+	var externSquare = kineticShape.get( graphicControllerGlobals.defaultNames.MAIN_SHAPE )[0]; 
 	var internSquare = kineticShape.get( "._INTERN_SQUARE" )[0]; 
 	var text = kineticShape.get( "."+graphicControllerGlobals.defaultNames.NAME )[0]; 
 	externSquare.setFill( "#666666" );

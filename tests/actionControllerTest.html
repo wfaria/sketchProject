@@ -37,6 +37,9 @@
   			var n = 10;
   			var x = 30;
 			var y = 10;
+			
+			globalMediators.start();
+			
 			var btn1 = new InterfaceResource( x,y,0,100, 50, "Button", 0, 0 );
   			var actionController = new ActionController();
   			var dragCommand = new DragResourceCommand( basicCommandsGlobals.executionTypeEnum.CMEX_EDITION, btn1, x+x, y+y );
@@ -153,7 +156,7 @@
   			ok( actionController.undo() != null , "Undo the button creation action");
   			ok( currentScreen.getResources().length == 0, "Finally there are zero elements on the current screen");	
   		}
-  	);
+  	); // close	test(
   	
  	test(
   		"Multiple Simple Creation test", function()
@@ -217,7 +220,7 @@
   			ok( newButtonResHistory.getId() == ((buttonNum/2)  - 1) , 
   				"The new resource created by the last redo has the id " + ( (buttonNum/2)  - 1 ) );
   		}
-  	);
+  	); // close	test(
   	
   	test(
   		"Explicit Deletion test", function()
@@ -261,7 +264,44 @@
   			ok( currentScreen.getResources().length == 0, "Now there are zero elements on the current screen again");	
 				
   		}
+  	); // close   	test(
+  	
+  	module("Command Group Test");
+  	test(
+  		"Multi Drag Command", function()
+  		{
+  			var i = 0;
+  			var n = 10;
+  			var x = 30;
+			var y = 10;
+			var btn1 = new InterfaceResource( x,y,0,100, 50, "Button", 0, 0 );
+  			var actionController = new ActionController();
+  			var drgCmd = new Array();
+  			
+  			globalMediators.start();
+  			
+  			ok( btn1.getX() == x, "In the start the button's X position is " + btn1.getX() );
+  			drgCmd[0] = new DragResourceCommand( basicCommandsGlobals.executionTypeEnum.CMEX_EDITION, btn1, x+x, y+y );
+  			drgCmd[1] = new DragResourceCommand( basicCommandsGlobals.executionTypeEnum.CMEX_EDITION, btn1, x+2*x, y+2*y );
+  			drgCmd[2] = new DragResourceCommand( basicCommandsGlobals.executionTypeEnum.CMEX_EDITION, btn1, x+3*x, y+3*y );
+  			ok( actionController.undo() == null , "Nothing to be undone");
+  			ok( actionController.redo() == null , "Nothing to be redone");
+  			var groupCmd =  new CommandGroup( basicCommandsGlobals.executionTypeEnum.CMEX_EDITION, 
+				drgCmd, "Drag elements", null );
+			
+			ok( actionController.doCommand(groupCmd) == true, "Dragging an object 3 times at once");
+			ok( btn1.getX() == 4*x, "Now its X position is " + (4*x) );
+			
+			ok( actionController.undo() != null , "Undoing the button drag");
+			ok( btn1.getX() == x, "Now its X position is " + (x) );
+			ok( actionController.undo() == null , "Nothing to be undone");
+			
+			ok( actionController.redo() != null , "Redoing the button drag");
+			ok( btn1.getX() == 4*x, "Now its X position is " + (4*x) );
+			ok( actionController.redo() == null , "Nothing to be redone");
+  		}
   	);
+  			
   	
   </script>
 </body>

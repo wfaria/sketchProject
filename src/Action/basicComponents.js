@@ -42,7 +42,7 @@ function EventManagerKineticPrepare( eventManagerObject, kineticShape )
 /*********************************************************/
 
 /* GenericKineticEventManager EventManager */
-function click( evt , kineticShape )
+function mouseDown( evt , kineticShape )
 {
 	window.status = "Click over " + this.interfaceResource.getName() ;
 	globalMediators.graphicMediator.publish( "ResourceClicked", [ evt,this.interfaceResource ] );
@@ -105,10 +105,10 @@ function canvasDblClick( evt )
 
 function bindGenericEventManager( kineticShape, EventManagerObj )
 {
-	kineticShape.on( "click",
+	kineticShape.on( "mousedown",
 		function( evt )
 		{
-			EventManagerObj.callFunction( "click", [ evt,kineticShape ] );
+			EventManagerObj.callFunction( "mousedown", [ evt,kineticShape ] );
 		}
 	);
 	kineticShape.on( "dragmove",
@@ -160,7 +160,7 @@ function GenericKineticEventManager( baseObj )
 	this.addFunction( "dragmove", dragMove );
 	this.addFunction( "dragend", dragEnd );
 	this.addFunction( "dblclick", dblClick );
-	this.addFunction( "click", click );
+	this.addFunction( "mousedown", mouseDown );
 	this.addFunction( "mouseover", mouseOver );
 	this.addFunction( "mouseout", mouseOut );
 	this.id = baseObj.interfaceResource.getId();
