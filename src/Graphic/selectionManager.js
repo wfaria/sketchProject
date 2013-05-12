@@ -33,6 +33,7 @@ SelectionManager.prototype.removeElement = function( interfaceResourceArray )
 	var length = interfaceResourceArray.length;
 	var iR;
 	var i;
+	var remNum = 0;
 	for( i = 0; i < length; i++ )
 	{
 		iR = interfaceResourceArray[i];
@@ -41,10 +42,11 @@ SelectionManager.prototype.removeElement = function( interfaceResourceArray )
 	    	if( this.selectedElements[j].getId() == iR.getId() )
 	    	{
 	    		this.selectedElements.splice(j,1);
-	    		return;
+	    		remNum++;
 	    	}
 	    }
 	}
+	return remNum;
 }
 
 SelectionManager.prototype.eraseSelection = function()

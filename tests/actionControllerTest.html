@@ -312,7 +312,7 @@
 			var sketchObj = new Sketch( sketchName, sketchAuthor );
 			var currentScreen = sketchObj.getCurrentScreen();
 			
-			var buttonNum = 10;
+			var buttonNum = 100;
 			
 			globalMediators.start();
 			var actionController = new ActionController();
@@ -357,8 +357,74 @@
   			ok( selectionManager.getSelectedElements().length == buttonNum/2,
 				"Now there are " + (buttonNum/2) + " elements selected" );
 				
+				
 			var cancelSelectCmd = new CancelSelectResourceCommand( basicCommandsGlobals.executionTypeEnum.CMEX_EDITION, 
 				halfArray, isAdditiveSelection, selectionManager );
+			var multiCommands = [];
+			multiCommands[0] = cancelSelectCmd;
+			for( i = 0; i < buttonNum/2; i++ )
+			{	
+				multiCommands[i+1] = new DeleteResourceCommand( 
+					basicCommandsGlobals.executionTypeEnum.CMEX_EDITION, 
+					selectionManager.getSelectedElements()[i].getId(), sketchObj );
+			}
+			var groupCmd =  new CommandGroup( basicCommandsGlobals.executionTypeEnum.CMEX_EDITION, 
+				multiCommands, "Deleting selected elements", null );
+			ok( actionController.doCommand(groupCmd) == true, "Deleting all selected elements");
+		  	ok( currentScreen.getResources().length == (buttonNum/2), 
+  				"Now there are " + (buttonNum/2) + " buttons on the current screen");
+  			ok( selectionManager.getSelectedElements().length == 0,
+				"Now there are zero elements selected." );				
+			allButtonsProccessed = true;
+			for( i = 0; i < buttonNum/2; i++ )
+  			{
+  				allButtonsProccessed = allButtonsProccessed && ( currentScreen.getResourceHistory( i ) == null );
+  			}
+  			ok( allButtonsProccessed == true, "There are no elements with the ids of the removed elements on the screen" );
+  			
+  			ok( actionController.undo() != null , "Undoing the multiple deletion");
+  			ok( currentScreen.getResources().length == buttonNum, 
+  				"Now there are " + buttonNum + " buttons on the current screen");	
+  			ok( selectionManager.getSelectedElements().length == buttonNum/2,
+				"Now there are " + (buttonNum/2) + " elements selected" );
+			allButtonsProccessed = true;
+			for( i = 0; i < buttonNum/2; i++ )
+  			{
+  				allButtonsProccessed = allButtonsProccessed && (currentScreen.getResourceHistory( i ) != null );
+  			}
+  			ok( allButtonsProccessed == true, "The restored elements kept their first creation id. (project id integrity OK)" );
+  			
+  			
+  			// The tests here are the same from the first deletion command
+  			ok( actionController.redo() != null , "Redoing the multiple deletion");
+  			ok( currentScreen.getResources().length == (buttonNum/2), 
+  				"Now there are " + (buttonNum/2) + " buttons on the current screen");
+  			ok( selectionManager.getSelectedElements().length == 0,
+				"Now there are zero elements selected." );				
+			allButtonsProccessed = true;
+			for( i = 0; i < buttonNum/2; i++ )
+  			{
+  				allButtonsProccessed = allButtonsProccessed && (currentScreen.getResourceHistory( i ) == null );
+  			}
+  			ok( allButtonsProccessed == true, "There are no elements with the ids of the removed elements on the screen" );
+  			
+  		
+  			while( actionController.undo() != null ){ /* do nothing */ }
+				ok( currentScreen.getResources().length == 0, "Undoing ALL commands");	
+			
+			// The tests here are the same from the first deletion command	
+			while( actionController.redo() != null ){ /* do nothing */ }
+				ok( currentScreen.getResources().length == (buttonNum/2), "Redoing ALL commands");	
+				ok( selectionManager.getSelectedElements().length == 0,
+				"Now there are zero elements selected." );				
+			allButtonsProccessed = true;
+			for( i = 0; i < buttonNum/2; i++ )
+  			{
+  				allButtonsProccessed = allButtonsProccessed && (currentScreen.getResourceHistory( i ) == null );
+  			}
+  			ok( allButtonsProccessed == true, "There are no elements with the ids of the removed elements on the screen" );
+  			
+  			ok( sketchObj.getMaxId() == buttonNum, "After all insertions and deletions, the sketchObj maxID keeps " + buttonNum );
   		}
   	);
   	
