@@ -98,6 +98,14 @@ GeneralManager.prototype.subscribeToMediators = function()
   					onRedo: function( )
   					{
   						generalGlobals.manager.actionController.redo();
+  					},
+  					onMoveInterfaceResource: function( interfaceResource, toX, toY )
+  					{
+						var dragCommand = new DragResourceCommand( 
+  							basicCommandsGlobals.executionTypeEnum.CMEX_EDITION, interfaceResource, 
+  							toX, toY 
+  						);
+  						generalGlobals.manager.actionController.doCommand( dragCommand );
   					}
   				};
   			}()

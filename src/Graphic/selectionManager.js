@@ -77,9 +77,19 @@ SelectionManager.prototype.onResourceSelected = function( resourceArray )
 
 SelectionManager.prototype.onResourceSelectCanceled = function( resourceArray )
 {
-	if( resourceArray.length == 1)
+	if( this.getSelectedElements.length == 0 )
 	{
-		
+		sideMenu.removeResourceBasicSection();
 	}
 }
 
+SelectionManager.prototype.onProjectCreated = function( projectName, authorName, sketchProject )
+{
+	sideMenu.removeResourceBasicSection();
+}
+
+SelectionManager.prototype.onInterfaceResourceMoved = function( interfaceResource, oldX, oldY )
+{
+	sideMenu.updateValue( DOMglobals.X_TEXT_ID, interfaceResource.getX() );
+	sideMenu.updateValue( DOMglobals.Y_TEXT_ID, interfaceResource.getY() );		
+}

@@ -28,6 +28,16 @@ onInterfaceResourceCreated = function( interfaceResource ){}
  * @param {int} oldY - The last Y position from the resource.
  */
 onInterfaceResourceMoved = function( interfaceResource, oldX, oldY ){}
+
+/**
+ * EventKey: MoveInterfaceResource
+ * Order to move an interface resource
+ *
+ * @param {InterfaceResource} interfaceResource - The object that contains the data from an interface resource.
+ * @param {int} toX - The last X position from the resource.
+ * @param {int} toY - The last Y position from the resource.
+ */
+onMoveInterfaceResource = function( interfaceResource, toX, toY ){}
  
  /**
  * EventKey: CreateButton

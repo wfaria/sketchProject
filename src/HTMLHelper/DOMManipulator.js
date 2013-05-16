@@ -3,6 +3,10 @@
 var DOMglobals = {};
 DOMglobals.SIDE_BAR_ID = "sideBar";
 DOMglobals.BASIC_RESOURCE_ID = "basic resource";
+DOMglobals.X_TEXT_ID = "_basic_x_input";
+DOMglobals.Y_TEXT_ID = "_basic_y_input";
+DOMglobals.WIDTH_TEXT_ID = "basic resource";
+DOMglobals.HEIGHT_TEXT_ID = "basic resource";
 DOMglobals.SIDE_SECTION_CLASS = "sideMenuSection";
 DOMglobals.SECTION_PART_CLASS = "sectionPart";
 
@@ -87,6 +91,75 @@ function createMenuButton( parentId, buttonStr, onClickString )
 	return newLi;
 }
 
+/** HTML code generators **/
+var htmlGen = {};
+
+htmlGen.numberCheckEvent = function( eventStr )
+{
+	//Test if the value from the input is a number
+	return 'if( /^\\d+$/.test( this.value ){ ' +eventStr+'; } else { this.value=\"0\";}';
+}
+
+/**
+ * Creates a string that represents a text input.
+ *
+ * @param {string} labelStr - The element's label
+ * @param {string} idStr - The element's id
+ * @param {int} sizeNum - The element's value attribute
+ * @param {int} initialValue - The element's value attribute initial value
+ * @param {string} onKeyUpEventStr - A string with the code of the 'onkeyup' event to be activated
+ * 
+ * @return {string} An innerHTML string of this input element
+ */
+htmlGen.createTextInputString = function( labelStr, idStr, sizeNum, initialValue, onKeyUpEventStr )
+{
+	return labelStr + ': <input type=\"text\"  id = \"'+idStr+
+		'\" size =\"'+sizeNum+'\" value="' + initialValue +
+		'" onkeyup=\"'+onKeyUpEventStr+'\" > <br\>';
+}
+
+/**
+ * Creates a string that represents a text input.
+ * This function also adds an extra check for integer
+ *
+ * @param {string} labelStr - The element's label
+ * @param {string} idStr - The element's id
+ * @param {int} sizeNum - The element's value attribute
+ * @param {int} initialValue - The element's value attribute initial value
+ * @param {string} onKeyUpEventStr - A string with the code of the 'onkeyup' event to be activated
+ * 
+ * @return {string} An innerHTML string of this input element
+ */
+htmlGen.createNumberInputString = function( labelStr, idStr, sizeNum, initialValue, onKeyUpEventStr )
+{
+	return labelStr + ': <input type=\"text\"  id = \"'+idStr+
+		'\" size =\"'+sizeNum+'\" value="' + initialValue +
+		'" onkeyup=\"'+htmlGen.numberCheckEvent(onKeyUpEventStr)+'\" > <br\>';
+}
+
+/**
+ * Call internalMediator's publish function only if the passed
+ * argument represents a valid number
+ *
+ * @param {string} numToCheck - The string to check
+ * @param {int} min - Minimum valid value from the number
+ * @param {int} initialValue - Maximum valid value from the number
+ * @param {string} eventKey - A string with the event key
+ * @param {...[?]} parameterArray -  A variable number of variables of different types that the event can use,
+ * be careful, if you are planning to use the checked number as a parameters, using parseInt before sending it
+ */
+htmlGen.numberEventToInterMediator = function( numToCheck, min, max, eventKey,  parameterArray )
+{
+	if( /^\d+$/.test( numToCheck ) )
+	{
+		var num = parseInt( numToCheck, 10 );
+		if( !isNaN(num) && num >= min && num <= max )
+		{
+			globalMediators.internalMediator.publish( eventKey, parameterArray );
+		}
+	}
+}
+
 
 /** Side menu functions **/
 var sideMenu = {};
@@ -146,8 +219,36 @@ sideMenu.createResourceBasicSection = function( interfaceResource )
 	// A closure is needed here to be able to find the variables onkeyup event
 	(function(){
 		ir = interfaceResource;
-		newSectionPart.innerHTML = 'Name: <input type=\"text\" size =\"10\" value="' + ir.getName() +
-		'" onkeyup=\"globalMediators.internalMediator.publish( \'RenameElement\', [ ir, this.value ] ) \">';
+		/*newSectionPart.innerHTML = 'Name: <input type=\"text\" size =\"10\" value="' + ir.getName() +
+		'" onkeyup=\"globalMediators.internalMediator.publish( \'RenameElement\', [ ir, this.value ] ) \">';*/
+		newSectionPart.innerHTML = htmlGen.createTextInputString( "Name", "change_name", 10, ir.getName(),
+			"globalMediators.internalMediator.publish( \'RenameElement\', [ ir, this.value ] );"  );
+		newSectionPart.innerHTML += htmlGen.createTextInputString( "Width", "change_width", 10, ir.getWidth(),
+			"globalMediators.internalMediator.publish( \'ResizeElement\', [ ir, this.value ] );"  );
+		newSectionPart.innerHTML += htmlGen.createTextInputString( "Height", "change_height", 10, ir.getHeight(),
+			"globalMediators.internalMediator.publish( \'ResizeElement\', [ ir, this.value ] );"  );
+		
+		/*Be careful to not send strings to the mediator,
+		 the following function guarantees that a value which isn't a number isn't sent to the mediator */
+		
+		newSectionPart.innerHTML += htmlGen.createTextInputString( "X Pos", DOMglobals.X_TEXT_ID, 10, ir.getX(),
+			"htmlGen.numberEventToInterMediator( this.value, 0, graphicControllerGlobals.CANVAS_WIDTH, "+
+			" \'MoveInterfaceResource\', [ ir, parseInt(this.value), ir.getY() ] );"  );
+		newSectionPart.innerHTML += htmlGen.createTextInputString( "Y Pos", DOMglobals.Y_TEXT_ID, 10, ir.getX(),
+			"htmlGen.numberEventToInterMediator( this.value, 0, graphicControllerGlobals.CANVAS_HEIGHT, "+
+			" \'MoveInterfaceResource\', [ ir, ir.getX(), parseInt(this.value) ] );"  );
 	}());
 	newSideSection.appendChild(newSectionPart);
 }
+
+sideMenu.updateValue = function( valueID, updatedValue )
+{
+	var DOMobj = $(valueID);
+	if( DOMobj != null)
+		DOMobj.value =  ""+updatedValue; // Always trying to use a string on the value
+}
+
+sideMenu.removeResourceBasicSection = function()
+{
+	sideMenu.removeSideMenuSection( DOMglobals.BASIC_RESOURCE_ID );
+} 
