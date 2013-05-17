@@ -203,6 +203,47 @@ GraphicController.prototype.createGraphicObject = function ( interfaceResource )
 	return kineticShape;
 }
 
+GraphicController.prototype.resizeKineticObject = function( kineticObject, newX, newY, newWidth, newHeight ) 
+{
+	var mainElementArray = this.getKineticChildrenByName( kineticObject,
+		graphicControllerGlobals.defaultNames.MAIN_SHAPE );
+	if( mainElementArray == null || mainElementArray.length != 1  )
+	{
+		console.error( "Internal error while resizing object." );
+		return;
+	}
+	var mainElement = mainElementArray[0];
+	var resizeXFactor = newWidth/mainElement.getWidth();
+	var resizeYFactor = newHeight/mainElement.getHeight();
+	
+	var elementArray = kineticObject.getChildren();
+	var length = elementArray.length;
+	var i = 0;
+	
+	for( i = 0; i < length; i++ )
+	{
+		if( elementArray[i].getName() != ( graphicControllerGlobals.defaultNames.MAIN_SHAPE ) )
+		{
+			// Scaling the distance between the parent and its children
+			elementArray[i].setX( resizeXFactor*( elementArray[i].getX() ) );
+			elementArray[i].setY( resizeYFactor*( elementArray[i].getY() ) );
+			if( elementArray[i].getName() != ( graphicControllerGlobals.defaultNames.NAME ) )
+				elementArray[i].setSize( resizeXFactor*elementArray[i].getWidth(), resizeYFactor*elementArray[i].getHeight() );
+		}
+	}
+	
+	kineticObject.setX( newX );
+	kineticObject.setY( newY );
+	mainElement.setSize( newWidth, newHeight );
+	
+	var layer = mainElement.getLayer();
+	if( layer == null  )
+	{
+		console.error( "Internal error while resizing object." );
+		return;
+	}
+	layer.draw();
+}
 
 GraphicController.prototype.defaultKineticFactory = function( interfaceResource )
 {
@@ -218,7 +259,10 @@ GraphicController.prototype.defaultKineticFactory = function( interfaceResource 
 		}
 		case( resourceTypeEnum.IR_BUTTON ):
 		{
-			var kinectGroup = new Kinetic.Group(  { x:interfaceResource.getX(), y:interfaceResource.getY(), draggable:true, id:interfaceResource.getId(), name:interfaceResource.getName() });
+			var kinectGroup = new Kinetic.Group(  { 
+				x:interfaceResource.getX(), y:interfaceResource.getY(), 
+				draggable:true, dragOnTop: false,
+				id:interfaceResource.getId(), name:interfaceResource.getName() });
 
 			var square1 = new Kinetic.Rect({
 			  fill: "#669933",
@@ -391,7 +435,6 @@ GraphicController.prototype.onInterfaceResourceDeleted = function( interfaceReso
 GraphicController.prototype.onInterfaceResourceMoved = function( interfaceResource, oldX, oldY )
 {
 	var kineticObject = this.getKineticObjectById( interfaceResource );
-	//TODO
 	if( kineticObject == null )
 	{
 		console.error( "onInterfaceResourceMoved there is no kinetic object with the give ID" );
@@ -406,6 +449,21 @@ GraphicController.prototype.onInterfaceResourceMoved = function( interfaceResour
 	}
 }
 
+GraphicController.prototype.onInterfaceResourceResized = function( interfaceResource, oldX, oldY, oldWidth, oldHeight )
+{
+	var kineticObject = this.getKineticObjectById( interfaceResource );
+	if( kineticObject == null )
+	{
+		console.error( "onInterfaceResourceResized there is no kinetic object with the give ID" );
+		return;
+	}
+	else
+	{
+		this.resizeKineticObject( kineticObject, 
+			interfaceResource.getX(), interfaceResource.getY(),
+			interfaceResource.getWidth(), interfaceResource.getHeight() );
+	}
+}
 
 /******** Graphic Mediator functions **********/
 

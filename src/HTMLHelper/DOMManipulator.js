@@ -224,9 +224,11 @@ sideMenu.createResourceBasicSection = function( interfaceResource )
 		newSectionPart.innerHTML = htmlGen.createTextInputString( "Name", "change_name", 10, ir.getName(),
 			"globalMediators.internalMediator.publish( \'RenameElement\', [ ir, this.value ] );"  );
 		newSectionPart.innerHTML += htmlGen.createTextInputString( "Width", "change_width", 10, ir.getWidth(),
-			"globalMediators.internalMediator.publish( \'ResizeElement\', [ ir, this.value ] );"  );
+			"htmlGen.numberEventToInterMediator( this.value, 10, graphicControllerGlobals.CANVAS_WIDTH, "+
+			" \'ResizeInterfaceResource\', [ ir, ir.getX(), ir.getY(), parseInt(this.value), ir.getHeight() ]);"  );
 		newSectionPart.innerHTML += htmlGen.createTextInputString( "Height", "change_height", 10, ir.getHeight(),
-			"globalMediators.internalMediator.publish( \'ResizeElement\', [ ir, this.value ] );"  );
+			"htmlGen.numberEventToInterMediator( this.value, 10, graphicControllerGlobals.CANVAS_HEIGHT, "+
+			" \'ResizeInterfaceResource\', [ ir, ir.getX(), ir.getY(), ir.getWidth(), parseInt(this.value) ] );"  );
 		
 		/*Be careful to not send strings to the mediator,
 		 the following function guarantees that a value which isn't a number isn't sent to the mediator */
@@ -234,7 +236,7 @@ sideMenu.createResourceBasicSection = function( interfaceResource )
 		newSectionPart.innerHTML += htmlGen.createTextInputString( "X Pos", DOMglobals.X_TEXT_ID, 10, ir.getX(),
 			"htmlGen.numberEventToInterMediator( this.value, 0, graphicControllerGlobals.CANVAS_WIDTH, "+
 			" \'MoveInterfaceResource\', [ ir, parseInt(this.value), ir.getY() ] );"  );
-		newSectionPart.innerHTML += htmlGen.createTextInputString( "Y Pos", DOMglobals.Y_TEXT_ID, 10, ir.getX(),
+		newSectionPart.innerHTML += htmlGen.createTextInputString( "Y Pos", DOMglobals.Y_TEXT_ID, 10, ir.getY(),
 			"htmlGen.numberEventToInterMediator( this.value, 0, graphicControllerGlobals.CANVAS_HEIGHT, "+
 			" \'MoveInterfaceResource\', [ ir, ir.getX(), parseInt(this.value) ] );"  );
 	}());

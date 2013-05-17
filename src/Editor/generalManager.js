@@ -106,6 +106,12 @@ GeneralManager.prototype.subscribeToMediators = function()
   							toX, toY 
   						);
   						generalGlobals.manager.actionController.doCommand( dragCommand );
+  					},
+  					onResizeInterfaceResource: function( interfaceResource, toX, toY, newWidth, newHeight )
+  					{
+  						var resizeCommand = new ResizeResizeCommand( basicCommandsGlobals.executionTypeEnum.CMEX_EDITION,
+							interfaceResource, toX, toY, newWidth, newHeight );
+						generalGlobals.manager.actionController.doCommand( resizeCommand );
   					}
   				};
   			}()

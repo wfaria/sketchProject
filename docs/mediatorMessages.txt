@@ -34,8 +34,8 @@ onInterfaceResourceMoved = function( interfaceResource, oldX, oldY ){}
  * Order to move an interface resource
  *
  * @param {InterfaceResource} interfaceResource - The object that contains the data from an interface resource.
- * @param {int} toX - The last X position from the resource.
- * @param {int} toY - The last Y position from the resource.
+ * @param {int} toX - The new X position from the resource.
+ * @param {int} toY - The new Y position from the resource.
  */
 onMoveInterfaceResource = function( interfaceResource, toX, toY ){}
  
@@ -117,6 +117,30 @@ onResourceSelected = function( resourceArray ){}
  * @param {Array} resourceArray - An array with the unselected elements
  */
 onResourceSelectCanceled = function( resourceArray ){}
+
+/**
+ * EventKey: ResizeInterfaceResource
+ * Order to resize an element
+ *
+ * @param {InterfaceResource} interfaceResource - The object that contains the data from an interface resource.
+ * @param {int} toX - The new X position from the resource.
+ * @param {int} toY - The new Y position from the resource.
+ * @param {int} newWidth - New resource width.
+ * @param {int} newHeight - New resource height.
+ */
+onResizeInterfaceResource = function( interfaceResource, toX, toY, newWidth, newHeight ){}
+
+/**
+ * EventKey: InterfaceResourceResized
+ * Sent when a interface resource is resized
+ *
+ * @param {InterfaceResource} interfaceResource - The object that contains the data from an interface resource.
+ * @param {int} oldX - The new X position from the resource.
+ * @param {int} oldY - The new Y position from the resource.
+ * @param {int} oldWidth - New resource width.
+ * @param {int} oldHeight - New resource height.
+ */
+onInterfaceResourceResized = function( interfaceResource, oldX, oldY, oldWidth, oldHeight ){}
 
 
 /****** Graphic messages ********/

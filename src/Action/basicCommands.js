@@ -2,7 +2,8 @@ var basicCommandsGlobals = {};
 
 basicCommandsGlobals.commandTypeEnum = { CMD_UNDEFINED: -1, CMD_DRAG: 0, 
 	CMD_KINETIC_DRAG: 1, CMD_RENAME_RES: 2, CMD_SELECT_RES: 3, CMD_CANC_SELECT_RES: 4,
-	CMD_CREATE_RES: 5, CMD_DELETE_RES: 6, CMD_RESTORE_RES: 7, CMD_GROUP_EXEC: 8 };
+	CMD_CREATE_RES: 5, CMD_DELETE_RES: 6, CMD_RESTORE_RES: 7, CMD_GROUP_EXEC: 8,
+	CMD_RESIZE_RES: 9 };
 basicCommandsGlobals.executionTypeEnum = { CMEX_UNDEFINED: -1, CMEX_EDITION: 0, CMEX_SIMULATION: 1 };
 
 function Command()
@@ -440,6 +441,67 @@ CommandGroup.prototype.undo = function( commandObject )
 	return new CommandGroup( basicCommandsGlobals.executionTypeEnum.CMEX_EDITION, 
 	commandArray, commandExplanationStr, actionController );
 }
+
+function ResizeResizeCommand( executionMode, interfaceResource, toX, toY, newWidth, newHeight )
+{
+	Command.call(this);
+	this.commandCode = basicCommandsGlobals.commandTypeEnum.CMD_RESIZE_RES;
+	this.executionMode = executionMode;
+	this.setArgs(
+		{
+			resource: interfaceResource,
+			x: toX,
+			y: toY,
+			width: newWidth,
+			height: newHeight
+		}
+	);
+}
+
+ResizeResizeCommand.prototype = new Command;
+ResizeResizeCommand.prototype.constructor = ResizeResizeCommand;
+
+ResizeResizeCommand.prototype.toString = function()
+{
+	var interfaceResource = this.argObject.resource;
+	var toX = this.argObject.x;
+	var toY = this.argObject.y;
+	var newWidth = this.argObject.width;
+	var newHeight = this.argObject.height;
+	return 		"Resize Resource History" + Command.prototype.toString.call( this ) + "\n" +
+		"Parameters: X = " + toX + " Y = " + toY +
+		" newWidth = " + newWidth + " newWidth = " + newWidth +
+		"\ninterface resource: " + interfaceResource ;
+}
+
+
+ResizeResizeCommand.prototype.execute = function( commandObject )
+{
+	var interfaceResource = this.argObject.resource;
+	var toX = this.argObject.x;
+	var toY = this.argObject.y;
+	var newWidth = this.argObject.width;
+	var newHeight = this.argObject.height;
+	var oldX = interfaceResource.getX();
+	var oldY = interfaceResource.getY();
+	var oldWidth = interfaceResource.getWidth();
+	var oldHeight = interfaceResource.getHeight();
+	interfaceResource.setX( toX );
+	interfaceResource.setY( toY );
+	interfaceResource.setWidth( newWidth );
+	interfaceResource.setHeight( newHeight );
+	globalMediators.internalMediator.publish( "InterfaceResourceResized", 
+		[ interfaceResource, oldX, oldY, oldWidth, oldHeight ] );
+}
+
+ResizeResizeCommand.prototype.undo = function( commandObject )
+{
+	var interfaceResource = this.argObject.resource
+	return new ResizeResizeCommand( basicCommandsGlobals.executionTypeEnum.CMEX_EDITION,
+		interfaceResource, interfaceResource.getX(), interfaceResource.getY(), 
+		interfaceResource.getWidth(), interfaceResource.getHeight() );
+}
+		
 
 /****** command factory test *********/
 DragResourceCommand.prototype.execute = function( commandObject )
