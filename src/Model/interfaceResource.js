@@ -2,6 +2,9 @@ var resourceTypeEnum = { IR_UNDEFINED: -1, IR_DELETED: 0, IR_BUTTON: 1, IR_WINDO
 
 var iResGlobals = {};
 iResGlobals.PARENTLESS = -1;
+iResGlobals.defaultKeys = {};
+iResGlobals.defaultKeys.FONTSIZE_KEY = "font_size";
+iResGlobals.defaultKeys.FONTTYPE_KEY = "font_type";
 
 // This is the object that the other objects will inherit
 function InterfaceResource( posX,posY,posZ,widthVal, heightVal, name, id, initialVersion )
@@ -71,9 +74,31 @@ InterfaceResource.prototype.getExtraAtrribute = function( attributeKey )
 	}
 }
 
+/**
+ * Try to get the value from an extra attribute.
+ * If it doesn't have any value, it initialize this field with the given value
+ * and returns the value itself.
+ *
+ * @param {string} attributeKey - The key from the desired attribute.
+ * @param {string} attributeInitialValue - The value to be used in the case of 
+ * the key doesn't have any value.
+ * 
+ * @return {string} The value from this attribute or the given initial value.
+ */
+InterfaceResource.prototype.startWithExtraAtrribute = function( attributeKey, attributeInitialValue ) 
+{	
+	var ret = this.getExtraAtrribute( attributeKey );
+	if( ret == null )
+	{
+		ret = attributeInitialValue;
+		this.setExtraAtrribute( attributeKey, attributeInitialValue );
+	}
+	return ret;
+}
+
 InterfaceResource.prototype.setExtraAtrribute = function( attributeKey, attributeValue ) 
 {	
-	this.extra[attributeKey] = attributeValue; 
+	this.extra[attributeKey] = attributeValue+""; 
 }
 
 

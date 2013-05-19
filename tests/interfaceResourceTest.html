@@ -146,6 +146,12 @@
 			btn1.setExtraAtrribute( "color", colorString );
 			ok( btn1.getExtraAtrribute( "color" ) == colorString, 
 				"After setting a value, the extra color attribute has the value " + colorString );
+			ok( btn1.startWithExtraAtrribute( "color", "default" ) == colorString, 
+				"After setting a value, the start with value function returns the setted value " + colorString );
+			ok( btn1.startWithExtraAtrribute( "fontSize", "comicSams" ) == "comicSams", 
+				"Using the start with value function with a new key returns the given value 'comicSams' " );
+			ok( btn1.getExtraAtrribute( "fontSize" ) == "comicSams", 
+				"After this the key will return the  'comicSams' value" );
 
 		}
 	)

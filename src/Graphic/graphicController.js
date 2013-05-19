@@ -114,6 +114,7 @@ GraphicController.prototype.addInterfaceResource = function ( interfaceRes )
 	else if( interfaceRes.getResourceType() == resourceTypeEnum.IR_GROUP )
 	{
 		// TODO
+		console.error( "Groups not supported in this version" ); 
 	}
 	else
 	{

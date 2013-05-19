@@ -7,6 +7,8 @@ DOMglobals.X_TEXT_ID = "_basic_x_input";
 DOMglobals.Y_TEXT_ID = "_basic_y_input";
 DOMglobals.WIDTH_TEXT_ID = "basic resource";
 DOMglobals.HEIGHT_TEXT_ID = "basic resource";
+DOMglobals.FONTSIZE_TEXT_ID = "font size";
+DOMglobals.FONTSTYLE_TEXT_ID = "font size";
 DOMglobals.SIDE_SECTION_CLASS = "sideMenuSection";
 DOMglobals.SECTION_PART_CLASS = "sectionPart";
 
@@ -98,6 +100,11 @@ htmlGen.numberCheckEvent = function( eventStr )
 {
 	//Test if the value from the input is a number
 	return 'if( /^\\d+$/.test( this.value ){ ' +eventStr+'; } else { this.value=\"0\";}';
+}
+
+htmlGen.createSectionLine = function()
+{
+	return '<hr class = "sectionLine">';
 }
 
 /**
@@ -221,7 +228,8 @@ sideMenu.createResourceBasicSection = function( interfaceResource )
 		ir = interfaceResource;
 		/*newSectionPart.innerHTML = 'Name: <input type=\"text\" size =\"10\" value="' + ir.getName() +
 		'" onkeyup=\"globalMediators.internalMediator.publish( \'RenameElement\', [ ir, this.value ] ) \">';*/
-		newSectionPart.innerHTML = htmlGen.createTextInputString( "Name", "change_name", 10, ir.getName(),
+		newSectionPart.innerHTML =	htmlGen.createSectionLine();
+		newSectionPart.innerHTML += htmlGen.createTextInputString( "Name", "change_name", 10, ir.getName(),
 			"globalMediators.internalMediator.publish( \'RenameElement\', [ ir, this.value ] );"  );
 		newSectionPart.innerHTML += htmlGen.createTextInputString( "Width", "change_width", 10, ir.getWidth(),
 			"htmlGen.numberEventToInterMediator( this.value, 10, graphicControllerGlobals.CANVAS_WIDTH, "+
@@ -239,6 +247,13 @@ sideMenu.createResourceBasicSection = function( interfaceResource )
 		newSectionPart.innerHTML += htmlGen.createTextInputString( "Y Pos", DOMglobals.Y_TEXT_ID, 10, ir.getY(),
 			"htmlGen.numberEventToInterMediator( this.value, 0, graphicControllerGlobals.CANVAS_HEIGHT, "+
 			" \'MoveInterfaceResource\', [ ir, ir.getX(), parseInt(this.value) ] );"  );
+			
+		newSectionPart.innerHTML +=	htmlGen.createSectionLine();
+		newSectionPart.innerHTML += htmlGen.createTextInputString( "Font Size", 
+			DOMglobals.FONTSIZE_TEXT_ID, 10, 
+			ir.startWithExtraAtrribute( iResGlobals.defaultKeys.FONTSIZE_KEY, 10 ),
+			"htmlGen.numberEventToInterMediator( this.value, 10, graphicControllerGlobals.CANVAS_WIDTH, "+
+			" \'ResizeInterfaceResource\', [ ir, ir.getX(), ir.getY(), parseInt(this.value), ir.getHeight() ]);"  );
 	}());
 	newSideSection.appendChild(newSectionPart);
 }
