@@ -5,6 +5,12 @@ iResGlobals.PARENTLESS = -1;
 iResGlobals.defaultKeys = {};
 iResGlobals.defaultKeys.FONTSIZE_KEY = "font_size";
 iResGlobals.defaultKeys.FONTTYPE_KEY = "font_type";
+iResGlobals.defaultKeys.FONT_X_PADDING_KEY = "font_x_padding";
+iResGlobals.defaultKeys.FONT_Y_PADDING_KEY = "font_y_padding";
+
+iResGlobals.defaultExtraValues = {};
+iResGlobals.defaultExtraValues.FONTSIZE_KEY = "30";
+iResGlobals.defaultExtraValues.FONTTYPE_KEY = "calibri";
 
 // This is the object that the other objects will inherit
 function InterfaceResource( posX,posY,posZ,widthVal, heightVal, name, id, initialVersion )

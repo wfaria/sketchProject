@@ -168,6 +168,19 @@ htmlGen.numberEventToInterMediator = function( numToCheck, min, max, eventKey,  
 }
 
 
+htmlGen.createSelectInput = function( labelStr, idStr, optionStrArray, onChangeEventStr )
+{
+	var retStr = labelStr + ' <select onchange= '+onSelectEventStr+' >'
+	var i = 0;
+	var length = optionStrArray.length;
+	for( i = 0; i < length; i++ )
+	{
+		retStr += '<option value ="' +optionStrArray[i]+ '"> '+optionStrArray[i]+ '</option>';
+	}
+	retStr += '</select>';
+	return retStr;
+}
+
 /** Side menu functions **/
 var sideMenu = {};
 
@@ -250,10 +263,16 @@ sideMenu.createResourceBasicSection = function( interfaceResource )
 			
 		newSectionPart.innerHTML +=	htmlGen.createSectionLine();
 		newSectionPart.innerHTML += htmlGen.createTextInputString( "Font Size", 
-			DOMglobals.FONTSIZE_TEXT_ID, 10, 
-			ir.startWithExtraAtrribute( iResGlobals.defaultKeys.FONTSIZE_KEY, 10 ),
+			DOMglobals.FONTSIZE_TEXT_ID, 10, ir.getExtraAtrribute( iResGlobals.defaultKeys.FONTSIZE_KEY ),
 			"htmlGen.numberEventToInterMediator( this.value, 10, graphicControllerGlobals.CANVAS_WIDTH, "+
 			" \'ResizeInterfaceResource\', [ ir, ir.getX(), ir.getY(), parseInt(this.value), ir.getHeight() ]);"  );
+		/*TODO FINISH newSectionPart.innerHTML += htmlGen.createSelectInput( "Font Family", DOMglobals.FONTSTYLE_TEXT_ID, 
+			["calibri", "arial", "verdana"], 
+			"globalMediators.internalMediator.publish( \'FormatElement\', "+
+			"[ ir, ir.getExtraAtrribute( iResGlobals.defaultExtraValues.FONTSIZE_KEY ), "+
+			" this.options[this.selectedIndex].value ], "+
+			" ir.getExtraAtrribute( iResGlobals.defaultExtraValues.FONT_X_PADDING_KEY ), "+
+			" ir.getExtraAtrribute( iResGlobals.defaultExtraValues.FONT_Y_PADDING_KEY ) ); ");*/
 	}());
 	newSideSection.appendChild(newSectionPart);
 }

@@ -294,8 +294,10 @@ GraphicController.prototype.defaultKineticFactory = function( interfaceResource 
 			 	x:0.5*interfaceResource.getWidth(),
 			  	y:0.5*interfaceResource.getHeight(),
 		        text: interfaceResource.getName(),
-		        fontSize: 30,
-		        fontFamily: 'Calibri',
+		        fontSize: parseInt( interfaceResource.startWithExtraAtrribute( iResGlobals.defaultKeys.FONTSIZE_KEY, 
+		        	iResGlobals.defaultExtraValues.FONTSIZE_KEY ) ),
+		        fontFamily: interfaceResource.startWithExtraAtrribute( iResGlobals.defaultKeys.FONTTYPE_KEY, 
+		        	iResGlobals.defaultExtraValues.FONTTYPE_KEY ),
 		        fill: 'black',
 		        align: 'center'
 		      });
