@@ -291,17 +291,18 @@ GraphicController.prototype.defaultKineticFactory = function( interfaceResource 
 			var simpleText = new Kinetic.Text({
 				name: graphicControllerGlobals.defaultNames.NAME,
 				dragOnTop: false,
-			 	x:0.5*interfaceResource.getWidth(),
-			  	y:0.5*interfaceResource.getHeight(),
+			 	x: parseInt( interfaceResource.startWithExtraAttribute( iResGlobals.defaultKeys.FONT_X_PADDING_KEY, 
+		        	iResGlobals.defaultExtraValues.FONT_X_PADDING_KEY ), 10 )*interfaceResource.getWidth()/100,
+			  	y: parseInt( interfaceResource.startWithExtraAttribute( iResGlobals.defaultKeys.FONT_Y_PADDING_KEY, 
+		        	iResGlobals.defaultExtraValues.FONT_Y_PADDING_KEY ), 10 )*interfaceResource.getHeight()/100,
 		        text: interfaceResource.getName(),
-		        fontSize: parseInt( interfaceResource.startWithExtraAtrribute( iResGlobals.defaultKeys.FONTSIZE_KEY, 
-		        	iResGlobals.defaultExtraValues.FONTSIZE_KEY ) ),
-		        fontFamily: interfaceResource.startWithExtraAtrribute( iResGlobals.defaultKeys.FONTTYPE_KEY, 
+		        fontSize: parseInt( interfaceResource.startWithExtraAttribute( iResGlobals.defaultKeys.FONTSIZE_KEY, 
+		        	iResGlobals.defaultExtraValues.FONTSIZE_KEY ),10 ),
+		        fontFamily: interfaceResource.startWithExtraAttribute( iResGlobals.defaultKeys.FONTTYPE_KEY, 
 		        	iResGlobals.defaultExtraValues.FONTTYPE_KEY ),
 		        fill: 'black',
-		        align: 'center'
+		        align: 'right'
 		      });
-		      
 		   	simpleText.setOffset({
 		        x: simpleText.getWidth() / 2,
 		        y: simpleText.getHeight() / 2
@@ -457,7 +458,7 @@ GraphicController.prototype.onInterfaceResourceResized = function( interfaceReso
 	var kineticObject = this.getKineticObjectById( interfaceResource );
 	if( kineticObject == null )
 	{
-		console.error( "onInterfaceResourceResized there is no kinetic object with the give ID" );
+		console.error( "onInterfaceResourceResized there is no kinetic object with the given ID" );
 		return;
 	}
 	else
@@ -465,6 +466,34 @@ GraphicController.prototype.onInterfaceResourceResized = function( interfaceReso
 		this.resizeKineticObject( kineticObject, 
 			interfaceResource.getX(), interfaceResource.getY(),
 			interfaceResource.getWidth(), interfaceResource.getHeight() );
+	}
+}
+
+GraphicController.prototype.onResourceFormatted = function( interfaceResource )
+{
+	var kineticObject = this.getKineticObjectById( interfaceResource );
+	if( kineticObject == null )
+	{
+		console.error( "onResourceFormatted there is no kinetic object with the given ID" );
+		return;
+	}
+	else
+	{
+		var textElementArray = this.getKineticChildrenByName( kineticObject,
+			graphicControllerGlobals.defaultNames.NAME );
+		//TODO: Add condition here for elements without text
+		if( textElementArray == null || textElementArray.length != 1 )
+		{
+			console.error("Internal Error while formatting text" );
+			return; 
+		}
+		var textKineticObject = textElementArray[0];
+		textKineticObject.setFontFamily( interfaceResource.getExtraAttribute( iResGlobals.defaultKeys.FONTTYPE_KEY ) );
+		textKineticObject.setX( interfaceResource.getIntExtraAttribute( iResGlobals.defaultKeys.FONT_X_PADDING_KEY )/100 );
+		textKineticObject.setY( interfaceResource.getIntExtraAttribute( iResGlobals.defaultKeys.FONT_Y_PADDING_KEY )/100 );
+		textKineticObject.setFontSize( interfaceResource.getIntExtraAttribute( iResGlobals.defaultKeys.FONTSIZE_KEY ) );
+		
+		textKineticObject.getLayer().draw();
 	}
 }
 

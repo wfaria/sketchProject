@@ -16,6 +16,7 @@ LocalPersistence.downloadProject = function( sketchObject )
 LocalPersistence.convertToString = function ( sketchObject )
 {
 	var JSONString = JSON.stringify( sketchObject );
+	alert( "@#@#@"+ JSONString);
 	return JSONString;
 }
 

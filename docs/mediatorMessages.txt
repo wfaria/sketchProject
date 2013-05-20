@@ -12,6 +12,29 @@ event comments ends with a past verb, they should ALWAYS be sent when the event 
 /****** Internal messages ********/
 
 /**
+ * EventKey: FormatInterfaceResource
+ * Order to format interface resource's text
+ *
+ * @param {InterfaceResource} interfaceResource - The object that contains the data from an interface resource.
+ * @param {int} fontSize - The size of the font.
+ * @param {String} fontFamily - The family of the font (arial, calibri, etc).
+ * @param {int} xPadding - The horizontal padding from the text (from 0 to 100).
+ * @param {int} yPadding - The vertical padding from the text (from 0 to 100).
+ */
+onFormatInterfaceResource = function( interfaceResource, fontSize, fontFamily, xPadding, yPadding ){}
+
+//TODO: Add extraFormat with color and bold, italic, etc
+
+ /**
+ * EventKey: ResourceFormatted
+ * Sent when an interface resource have its text formatted
+ *
+ * @param {InterfaceResource} interfaceResource - The object that contains the data from an interface resource.
+ */
+onResourceFormatted = function( interfaceResource ){}
+
+
+/**
  * EventKey: InterfaceResourceCreated
  * Sent when a interface resource is created
  *

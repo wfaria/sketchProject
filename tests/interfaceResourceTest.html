@@ -142,15 +142,15 @@
 			var group1 = new GroupResource( x,y,0,100, 50, "Group1", id, version );
 			var btn1 = new ButtonResource( x,y,0,100, 50, "Button", 0, version );
 			
-			ok( btn1.getExtraAtrribute( "color" ) == null, "At the start there is no extra color attribute on a button resource" );
-			btn1.setExtraAtrribute( "color", colorString );
-			ok( btn1.getExtraAtrribute( "color" ) == colorString, 
+			ok( btn1.getExtraAttribute( "color" ) == null, "At the start there is no extra color attribute on a button resource" );
+			btn1.setExtraAttribute( "color", colorString );
+			ok( btn1.getExtraAttribute( "color" ) == colorString, 
 				"After setting a value, the extra color attribute has the value " + colorString );
-			ok( btn1.startWithExtraAtrribute( "color", "default" ) == colorString, 
+			ok( btn1.startWithExtraAttribute( "color", "default" ) == colorString, 
 				"After setting a value, the start with value function returns the setted value " + colorString );
-			ok( btn1.startWithExtraAtrribute( "fontSize", "comicSams" ) == "comicSams", 
+			ok( btn1.startWithExtraAttribute( "fontSize", "comicSams" ) == "comicSams", 
 				"Using the start with value function with a new key returns the given value 'comicSams' " );
-			ok( btn1.getExtraAtrribute( "fontSize" ) == "comicSams", 
+			ok( btn1.getExtraAttribute( "fontSize" ) == "comicSams", 
 				"After this the key will return the  'comicSams' value" );
 
 		}

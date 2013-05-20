@@ -112,6 +112,12 @@ GeneralManager.prototype.subscribeToMediators = function()
   						var resizeCommand = new ResizeResizeCommand( basicCommandsGlobals.executionTypeEnum.CMEX_EDITION,
 							interfaceResource, toX, toY, newWidth, newHeight );
 						generalGlobals.manager.actionController.doCommand( resizeCommand );
+  					},
+  					onFormatInterfaceResource: function( interfaceResource, fontSize, fontFamily, xPadding, yPadding )
+  					{
+  						var formatCmd = new FormatResourceCommand( basicCommandsGlobals.executionTypeEnum.CMEX_EDITION, 
+  							interfaceResource, fontSize, fontFamily, xPadding, yPadding );
+  						generalGlobals.manager.actionController.doCommand( formatCmd );
   					}
   				};
   			}()

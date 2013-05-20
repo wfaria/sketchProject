@@ -3,7 +3,7 @@ var basicCommandsGlobals = {};
 basicCommandsGlobals.commandTypeEnum = { CMD_UNDEFINED: -1, CMD_DRAG: 0, 
 	CMD_KINETIC_DRAG: 1, CMD_RENAME_RES: 2, CMD_SELECT_RES: 3, CMD_CANC_SELECT_RES: 4,
 	CMD_CREATE_RES: 5, CMD_DELETE_RES: 6, CMD_RESTORE_RES: 7, CMD_GROUP_EXEC: 8,
-	CMD_RESIZE_RES: 9 };
+	CMD_RESIZE_RES: 9, CMD_FORMAT_RES: 10 };
 basicCommandsGlobals.executionTypeEnum = { CMEX_UNDEFINED: -1, CMEX_EDITION: 0, CMEX_SIMULATION: 1 };
 
 function Command()
@@ -502,7 +502,66 @@ ResizeResizeCommand.prototype.undo = function( commandObject )
 		interfaceResource.getWidth(), interfaceResource.getHeight() );
 }
 		
+function FormatResourceCommand( executionMode, interfaceResource, fontSize, fontFamilyStr, xPadding, yPadding )
+{
+	Command.call(this);
+	this.commandCode = basicCommandsGlobals.commandTypeEnum.CMD_FORMAT_RES;
+	this.executionMode = executionMode;
+	this.setArgs(
+		{
+			resource: interfaceResource,
+			size: fontSize,
+			family: fontFamilyStr,
+			xPad: xPadding,
+			yPad: yPadding
+		}
+	);
+}
 
+FormatResourceCommand.prototype = new Command;
+FormatResourceCommand.prototype.constructor = FormatResourceCommand;
+
+FormatResourceCommand.prototype.toString = function()
+{
+	var interfaceResource = this.argObject.resource;
+	var fontSize = this.argObject.size;
+	var fontFamilyStr = this.argObject.family;
+	var xPadding = this.argObject.xPad;
+	var yPadding = this.argObject.yPad;
+	return 		"Format Resource " + Command.prototype.toString.call( this ) + "\n" +
+		"Parameters: fontSize = " + fontSize + " font family = " + fontFamilyStr +
+		" x padding = " + xPadding + " y padding = " + yPadding +
+		"\ninterface resource: " + interfaceResource ;
+}
+
+
+FormatResourceCommand.prototype.execute = function( commandObject )
+{
+
+	var interfaceResource = this.argObject.resource;
+	var fontSize = this.argObject.size;
+	var fontFamilyStr = this.argObject.family;
+	var xPadding = this.argObject.xPad;
+	var yPadding = this.argObject.yPad;
+	interfaceResource.setExtraAttribute( iResGlobals.defaultKeys.FONTSIZE_KEY, fontSize );
+	interfaceResource.setExtraAttribute( iResGlobals.defaultKeys.FONTTYPE_KEY, fontFamilyStr );
+	interfaceResource.setExtraAttribute( iResGlobals.defaultKeys.FONT_X_PADDING_KEY, xPadding );
+	interfaceResource.setExtraAttribute( iResGlobals.defaultKeys.FONT_Y_PADDING_KEY, yPadding );
+				
+	globalMediators.internalMediator.publish( "ResourceFormatted", [ interfaceResource ] );
+}
+
+FormatResourceCommand.prototype.undo = function( commandObject )
+{
+	var interfaceResource = this.argObject.resource;
+	return new FormatResourceCommand( basicCommandsGlobals.executionTypeEnum.CMEX_EDITION, interfaceResource,
+		parseInt( interfaceResource.getExtraAttribute( iResGlobals.defaultKeys.FONTSIZE_KEY ) ),
+		interfaceResource.getExtraAttribute( iResGlobals.defaultKeys.FONTTYPE_KEY ),
+		parseInt( interfaceResource.getExtraAttribute( iResGlobals.defaultKeys.FONT_X_PADDING_KEY ), 10 ),
+		parseInt( interfaceResource.getExtraAttribute( iResGlobals.defaultKeys.FONT_X_PADDING_KEY ), 10  )
+	);
+}
+		
 /****** command factory test *********/
 DragResourceCommand.prototype.execute = function( commandObject )
 {

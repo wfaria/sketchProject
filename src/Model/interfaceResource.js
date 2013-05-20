@@ -11,6 +11,8 @@ iResGlobals.defaultKeys.FONT_Y_PADDING_KEY = "font_y_padding";
 iResGlobals.defaultExtraValues = {};
 iResGlobals.defaultExtraValues.FONTSIZE_KEY = "30";
 iResGlobals.defaultExtraValues.FONTTYPE_KEY = "calibri";
+iResGlobals.defaultExtraValues.FONT_X_PADDING_KEY = "50";
+iResGlobals.defaultExtraValues.FONT_Y_PADDING_KEY = "50";
 
 // This is the object that the other objects will inherit
 function InterfaceResource( posX,posY,posZ,widthVal, heightVal, name, id, initialVersion )
@@ -25,7 +27,7 @@ function InterfaceResource( posX,posY,posZ,widthVal, heightVal, name, id, initia
 	this.createdInVersion = initialVersion;
 	this.id = id;
 	this.parentId = iResGlobals.PARENTLESS;
-	this.extra = [];
+	this.extra = {}; //TODO: Try to use a real array or a hashmap here
 	
 	this.prototypeName = this.constructor.name; // This is only used in local serialization
 }
@@ -67,7 +69,7 @@ InterfaceResource.prototype.setVersion = function( versionNum )
  * @return {string} The value from this attribute, if it does not exist
  * it returns null.
  */
-InterfaceResource.prototype.getExtraAtrribute = function( attributeKey ) 
+InterfaceResource.prototype.getExtraAttribute = function( attributeKey ) 
 {	
 	var attrValue =  this.extra[attributeKey]; 
 	if( typeof attrValue != 'undefined' )
@@ -78,6 +80,15 @@ InterfaceResource.prototype.getExtraAtrribute = function( attributeKey )
 	{
 		return null;
 	}
+}
+
+InterfaceResource.prototype.getIntExtraAttribute = function( attributeKey ) 
+{
+	var ret = this.getExtraAttribute( attributeKey );
+	if( ret != null)
+		return parseInt(ret,10);
+	else
+		return ret;
 }
 
 /**
@@ -91,20 +102,21 @@ InterfaceResource.prototype.getExtraAtrribute = function( attributeKey )
  * 
  * @return {string} The value from this attribute or the given initial value.
  */
-InterfaceResource.prototype.startWithExtraAtrribute = function( attributeKey, attributeInitialValue ) 
+InterfaceResource.prototype.startWithExtraAttribute = function( attributeKey, attributeInitialValue ) 
 {	
-	var ret = this.getExtraAtrribute( attributeKey );
+	var ret = this.getExtraAttribute( attributeKey );
 	if( ret == null )
 	{
 		ret = attributeInitialValue;
-		this.setExtraAtrribute( attributeKey, attributeInitialValue );
+		this.setExtraAttribute( attributeKey, attributeInitialValue );
 	}
 	return ret;
 }
 
-InterfaceResource.prototype.setExtraAtrribute = function( attributeKey, attributeValue ) 
+InterfaceResource.prototype.setExtraAttribute = function( attributeKey, attributeValue ) 
 {	
 	this.extra[attributeKey] = attributeValue+""; 
+	//this.extra.push( attributeValue+"" );
 }
 
 

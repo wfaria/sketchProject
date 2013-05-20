@@ -170,7 +170,7 @@ htmlGen.numberEventToInterMediator = function( numToCheck, min, max, eventKey,  
 
 htmlGen.createSelectInput = function( labelStr, idStr, optionStrArray, onChangeEventStr )
 {
-	var retStr = labelStr + ' <select onchange= '+onSelectEventStr+' >'
+	var retStr = labelStr + ' <select onchange= "'+onChangeEventStr+'" >'
 	var i = 0;
 	var length = optionStrArray.length;
 	for( i = 0; i < length; i++ )
@@ -263,16 +263,20 @@ sideMenu.createResourceBasicSection = function( interfaceResource )
 			
 		newSectionPart.innerHTML +=	htmlGen.createSectionLine();
 		newSectionPart.innerHTML += htmlGen.createTextInputString( "Font Size", 
-			DOMglobals.FONTSIZE_TEXT_ID, 10, ir.getExtraAtrribute( iResGlobals.defaultKeys.FONTSIZE_KEY ),
-			"htmlGen.numberEventToInterMediator( this.value, 10, graphicControllerGlobals.CANVAS_WIDTH, "+
-			" \'ResizeInterfaceResource\', [ ir, ir.getX(), ir.getY(), parseInt(this.value), ir.getHeight() ]);"  );
-		/*TODO FINISH newSectionPart.innerHTML += htmlGen.createSelectInput( "Font Family", DOMglobals.FONTSTYLE_TEXT_ID, 
+			DOMglobals.FONTSIZE_TEXT_ID, 10, ir.getExtraAttribute( iResGlobals.defaultKeys.FONTSIZE_KEY ),
+			"htmlGen.numberEventToInterMediator( this.value, 10, 100, "+
+			" \'FormatInterfaceResource\', " +
+			"[ ir, parseInt( this.value ), "+
+			" ir.getExtraAttribute( iResGlobals.defaultKeys.FONTTYPE_KEY ) , "+
+			" parseInt( ir.getExtraAttribute( iResGlobals.defaultKeys.FONT_X_PADDING_KEY, 10 ) ), "+
+			" parseInt( ir.getExtraAttribute( iResGlobals.defaultKeys.FONT_Y_PADDING_KEY, 10 ) ) ] ) ") ;
+		newSectionPart.innerHTML +=  htmlGen.createSelectInput( "Font Family", DOMglobals.FONTSTYLE_TEXT_ID, 
 			["calibri", "arial", "verdana"], 
-			"globalMediators.internalMediator.publish( \'FormatElement\', "+
-			"[ ir, ir.getExtraAtrribute( iResGlobals.defaultExtraValues.FONTSIZE_KEY ), "+
-			" this.options[this.selectedIndex].value ], "+
-			" ir.getExtraAtrribute( iResGlobals.defaultExtraValues.FONT_X_PADDING_KEY ), "+
-			" ir.getExtraAtrribute( iResGlobals.defaultExtraValues.FONT_Y_PADDING_KEY ) ); ");*/
+			"globalMediators.internalMediator.publish( \'FormatInterfaceResource\', "+
+			"[ ir, parseInt( ir.getExtraAttribute( iResGlobals.defaultKeys.FONTSIZE_KEY, 10 ) ), "+
+			" this.options[this.selectedIndex].value , "+
+			" parseInt( ir.getExtraAttribute( iResGlobals.defaultKeys.FONT_X_PADDING_KEY, 10 ) ), "+
+			" parseInt( ir.getExtraAttribute( iResGlobals.defaultKeys.FONT_Y_PADDING_KEY, 10 ) ) ] ) ") ;
 	}());
 	newSideSection.appendChild(newSectionPart);
 }
