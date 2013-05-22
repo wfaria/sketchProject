@@ -1,7 +1,17 @@
+actionGlobals = {};
+actionGlobals.IGNORE_COMMAND = 0;
+actionGlobals.COMMAND_OK = 1;
+
 function ActionController()
 {
 	this.undoStack = new Stack();
 	this.redoStack = new Stack();
+}
+
+ActionController.prototype.cancelLastCommand = function( targetStack )
+{
+	//Just throw the top away
+	targetStack.undoStack.pop();
 }
 
 ActionController.prototype.generateUndoCommmand = function( commandObject )
@@ -28,7 +38,11 @@ ActionController.prototype.doCommand = function( commandObject )
 	{
 		this.pushUndoCommand( undoCommand );
 	}
-	commandDigest( commandObject );
+	if( commandDigest( commandObject ) == actionGlobals.IGNORE_COMMAND )
+	{
+		this.cancelLastCommand( this.undoStack );
+		return false;
+	}
 	return true;
 }
 
@@ -41,7 +55,11 @@ ActionController.prototype.undo = function()
 		if( redoObject != null )
 		{
 			this.pushRedoCommand( redoObject );
-			commandDigest( undoObject ); 
+			if( commandDigest( undoObject ) == actionGlobals.IGNORE_COMMAND )
+			{
+				this.cancelLastCommand( this.redoStack );
+				return null;
+			}
 			return undoObject;
 		}
 		else
@@ -64,7 +82,11 @@ ActionController.prototype.redo = function()
 		if( undoObject != null )
 		{
 			this.pushUndoCommand( undoObject );
-			commandDigest( redoObject ); 
+			if( commandDigest( redoObject ) == actionGlobals.IGNORE_COMMAND )
+			{
+				this.cancelLastCommand( this.undoStack );
+				return null;
+			}
 			return redoObject;
 		}
 		else

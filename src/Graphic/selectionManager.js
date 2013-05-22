@@ -11,11 +11,6 @@ SelectionManager.prototype.addElement = function( interfaceResourceArray, isAddi
 	var iR;
 	var i;
 	
-	if( !isAdditiveSelection )
-	{
-		this.eraseSelection();
-	}
-	
 	for( i = 0; i < length; i++ )
 	{
 		iR = interfaceResourceArray[i];
@@ -26,6 +21,18 @@ SelectionManager.prototype.addElement = function( interfaceResourceArray, isAddi
 		}
 		this.selectedElements.push( iR );
 	}
+}
+
+SelectionManager.prototype.isSelected = function( interfaceResource )
+{
+	for (var j = 0; j < this.selectedElements.length; j++) 
+    {
+    	if( this.selectedElements[j].getId() == interfaceResource.getId() )
+    	{
+    		return true;
+    	}
+    }
+    return false;
 }
 
 SelectionManager.prototype.removeElement = function( interfaceResourceArray )
@@ -69,7 +76,7 @@ SelectionManager.prototype.onResourceSelected = function( resourceArray )
 	{
 		sideMenu.createResourceBasicSection(resourceArray[0]);
 	}
-	else
+	else if( resourceArray.length > 0 )
 	{
 		alert("Multiple selection isn't working");
 	}
@@ -83,6 +90,8 @@ SelectionManager.prototype.onResourceSelectCanceled = function( resourceArray )
 	}
 }
 
+/******** Internal Mediator functions **********/
+
 SelectionManager.prototype.onProjectCreated = function( projectName, authorName, sketchProject )
 {
 	sideMenu.removeResourceBasicSection();
@@ -92,4 +101,11 @@ SelectionManager.prototype.onInterfaceResourceMoved = function( interfaceResourc
 {
 	sideMenu.updateValue( DOMglobals.X_TEXT_ID, interfaceResource.getX() );
 	sideMenu.updateValue( DOMglobals.Y_TEXT_ID, interfaceResource.getY() );		
+}
+
+SelectionManager.prototype.onResourceFormatted = function( interfaceResource )
+{
+	var fontSize = interfaceResource.getIntExtraAttribute( iResGlobals.defaultKeys.FONTSIZE_KEY );
+	
+	sideMenu.updateValue( DOMglobals.FONTSIZE_TEXT_ID, fontSize );
 }

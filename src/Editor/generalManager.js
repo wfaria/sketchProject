@@ -141,11 +141,33 @@ GeneralManager.prototype.subscribeToMediators = function()
   					onResourceClicked: function( evt, interfaceResource )
   					{
   						var isAdditiveSelection = evt.ctrlKey;
+  						var commands = [];
+  						if( generalGlobals.manager.selectionManager.isSelected( interfaceResource ) )
+  						{
+							/* do nothing */
+							return;
+  						}
+  						else if( !isAdditiveSelection )
+  						{
+  							//NEVER send a reference that can be changed in other place to a command
+  							var removedSelection = [];
+  							var selection = generalGlobals.manager.selectionManager.getSelectedElements();
+  							for( var i = 0 ; i < selection.length; i++ )
+  							{
+  								removedSelection[i] = selection[i];
+  							}
+  							commands.push ( new CancelSelectResourceCommand( basicCommandsGlobals.executionTypeEnum.CMEX_EDITION, 
+  								removedSelection, isAdditiveSelection, generalGlobals.manager.selectionManager ) );
+						}
 
-  						var command = new SelectResourceCommand( 
+  						commands.push( new SelectResourceCommand( 
   							basicCommandsGlobals.executionTypeEnum.CMEX_EDITION, [interfaceResource],
-		 					isAdditiveSelection, generalGlobals.manager.selectionManager );
-		 				generalGlobals.manager.actionController.doCommand( command );
+		 					isAdditiveSelection, generalGlobals.manager.selectionManager ) );
+		 					
+		 				var groupCommand = new CommandGroup( basicCommandsGlobals.executionTypeEnum.CMEX_EDITION, 
+							commands, "Selecting a single element", null );
+		 					
+		 				generalGlobals.manager.actionController.doCommand( groupCommand );
 
   					},
   					onEditorStageChange: function( newState )

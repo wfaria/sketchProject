@@ -18,6 +18,7 @@ Command.prototype.execute = function( commandObject )
 {
 	console.error( "This command object does not have an execute function:\n" +
 	 commandObject.toString() );
+	return actionGlobals.COMMAND_OK;
 }
 
 Command.prototype.undo = function( commandObject )
@@ -232,7 +233,7 @@ CreateResourceCommand.prototype.execute = function( commandObject )
 		default:
 		{
 			console.error( "There is no available function to create a resource with type " +  resourceCode );
-			return;
+			return actionGlobals.IGNORE_COMMAND;
 		}
 	}
 	
@@ -243,6 +244,7 @@ CreateResourceCommand.prototype.execute = function( commandObject )
 		globalMediators.internalMediator.publish( "InterfaceResourceCreated", [ newResource ] );
 	}
 	
+	return actionGlobals.COMMAND_OK;
 }
 
 CreateResourceCommand.prototype.undo = function( commandObject )
@@ -294,7 +296,9 @@ DeleteResourceCommand.prototype.execute = function( commandObject )
 	else
 	{
 		console.error( "Failure while deleting interface resource with id " + interfaceResourceId );
+		return actionGlobals.IGNORE_COMMAND;
 	}
+	return actionGlobals.COMMAND_OK;
 }
 
 DeleteResourceCommand.prototype.undo = function( commandObject )
@@ -361,10 +365,11 @@ RestoreResHistCommand.prototype.execute = function( commandObject )
 		if( interfaceResource != null )
 		{
 			globalMediators.internalMediator.publish( "InterfaceResourceCreated", [ interfaceResource ] );
-			return;
+			return actionGlobals.COMMAND_OK;
 		}
 	}
 	console.error( "Error while trying to restore resource history" );
+	return actionGlobals.IGNORE_COMMAND;
 }
 
 RestoreResHistCommand.prototype.undo = function( commandObject )
@@ -430,6 +435,13 @@ CommandGroup.prototype.execute = function( commandObject )
 		while( actionController.redo() != null )
 		{ /* do nothing */ }
 	}
+	else
+	{
+		console.error("Error while executing a group of commands");
+		return actionGlobals.IGNORE_COMMAND;
+	}
+	
+	return actionGlobals.COMMAND_OK;
 }
 
 CommandGroup.prototype.undo = function( commandObject )
@@ -492,6 +504,7 @@ ResizeResizeCommand.prototype.execute = function( commandObject )
 	interfaceResource.setHeight( newHeight );
 	globalMediators.internalMediator.publish( "InterfaceResourceResized", 
 		[ interfaceResource, oldX, oldY, oldWidth, oldHeight ] );
+	return actionGlobals.COMMAND_OK;
 }
 
 ResizeResizeCommand.prototype.undo = function( commandObject )
@@ -549,6 +562,8 @@ FormatResourceCommand.prototype.execute = function( commandObject )
 	interfaceResource.setExtraAttribute( iResGlobals.defaultKeys.FONT_Y_PADDING_KEY, yPadding );
 				
 	globalMediators.internalMediator.publish( "ResourceFormatted", [ interfaceResource ] );
+	
+	return actionGlobals.COMMAND_OK;
 }
 
 FormatResourceCommand.prototype.undo = function( commandObject )
@@ -573,6 +588,8 @@ DragResourceCommand.prototype.execute = function( commandObject )
 	interfaceResource.setX(x);
 	interfaceResource.setY(y);
 	globalMediators.internalMediator.publish( "InterfaceResourceMoved", [ interfaceResource, oldX, oldY ] );
+	
+	return actionGlobals.COMMAND_OK;
 }
 
 DragResourceCommand.prototype.undo = function( commandObject )
@@ -602,6 +619,8 @@ KineticDragCommand.prototype.execute = function( commandObject )
 	{
 		kineticShape.getLayer().draw();
 	}
+	
+	return actionGlobals.COMMAND_OK;
 }
 
 KineticDragCommand.prototype.undo = function( commandObject )
@@ -621,6 +640,8 @@ RenameResourceCommand.prototype.execute = function( commandObject )
 	var newName = commandObject.argObject.newName;
 	interfaceResource.setName( newName );
 	globalMediators.graphicMediator.publish( "ResourceNameChanged", [ interfaceResource, newName ] );
+	
+	return actionGlobals.COMMAND_OK;
 }
 
 RenameResourceCommand.prototype.undo = function( commandObject )
@@ -639,6 +660,8 @@ SelectResourceCommand.prototype.execute = function( commandObject )
 	var selectionManager = commandObject.argObject.selectionManager;
 	selectionManager.addElement( resourceArrays, isAdditiveSelection );
 	globalMediators.graphicMediator.publish( "ResourceSelected", [ resourceArrays ] );
+	
+	return actionGlobals.COMMAND_OK;
 }
 
 SelectResourceCommand.prototype.undo = function( commandObject )
@@ -659,6 +682,8 @@ CancelSelectResourceCommand.prototype.execute = function( commandObject )
 	var selectionManager = commandObject.argObject.selectionManager;
 	selectionManager.removeElement( resourceArrays );
 	globalMediators.graphicMediator.publish( "ResourceSelectCanceled", [ resourceArrays ] );
+	
+	return actionGlobals.COMMAND_OK;
 }
 
 CancelSelectResourceCommand.prototype.undo = function( commandObject )
@@ -725,6 +750,5 @@ function commandDigest( commandObject )
 	return false;
 	*/
 	console.log( commandObject );
-	commandObject.execute( commandObject );
-	return true;
+	return commandObject.execute( commandObject );
 }
