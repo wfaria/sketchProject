@@ -1,17 +1,18 @@
 actionGlobals = {};
 actionGlobals.IGNORE_COMMAND = 0;
 actionGlobals.COMMAND_OK = 1;
+actionGlobals.MAX_STACK_SIZE = 20;
 
 function ActionController()
 {
-	this.undoStack = new Stack();
-	this.redoStack = new Stack();
+	this.undoStack = new Stack( actionGlobals.MAX_STACK_SIZE ); // represents past
+	this.redoStack = new Stack( actionGlobals.MAX_STACK_SIZE ); // represent future
 }
 
 ActionController.prototype.cancelLastCommand = function( targetStack )
 {
 	//Just throw the top away
-	targetStack.undoStack.pop();
+	targetStack.pop();
 }
 
 ActionController.prototype.generateUndoCommmand = function( commandObject )
@@ -43,6 +44,9 @@ ActionController.prototype.doCommand = function( commandObject )
 		this.cancelLastCommand( this.undoStack );
 		return false;
 	}
+	
+	// if the command is successful all command that represents the "future" are discarted
+	this.redoStack = new Stack( actionGlobals.MAX_STACK_SIZE );
 	return true;
 }
 

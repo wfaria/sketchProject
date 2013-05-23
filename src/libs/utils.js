@@ -1,11 +1,16 @@
-function Stack()
+function Stack( maxSize )
 {
+	this.maxSize = maxSize;
 	this.elements = new Array();
 }
 
 Stack.prototype.push = function( elem )
 {
 	this.elements.push( elem );
+	if( this.elements.length > this.maxSize )
+	{
+		this.elements.splice(0,1);
+	}
 }
 
 Stack.prototype.pop = function()

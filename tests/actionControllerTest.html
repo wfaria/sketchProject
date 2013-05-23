@@ -84,6 +84,59 @@
   		}
   	);
   	
+  	module("Finite Stack Size Test");
+  	test
+  	( 
+  		"Drag Command Overflow", function()
+  		{
+  			var i = 0;
+  			var n = actionGlobals.MAX_STACK_SIZE;
+  			var x = 30;
+			var y = 10;
+			
+			globalMediators.start();
+			
+			var btn1 = new InterfaceResource( x,y,0,100, 50, "Button", 0, 0 );
+  			var actionController = new ActionController();
+  			var dragCommand = new DragResourceCommand( basicCommandsGlobals.executionTypeEnum.CMEX_EDITION, btn1, x+x, y+y );
+  			ok( actionController.undo() == null , "Nothing to be undone");
+  			ok( actionController.redo() == null , "Nothing to be redone");
+  			
+  			ok( btn1.getX() == x, "In the start the button's X position is " + btn1.getX() );
+  			ok( actionController.doCommand(dragCommand) == true, "Dragging this object");
+  			ok( btn1.getX() == x+x, "After this the button's X position is " + btn1.getX() );
+  			ok( actionController.undo() != null , "Undo the last action");
+  			ok( btn1.getX() == x, "And the button is  back to the start X position " + btn1.getX() );
+  			ok( actionController.redo() != null , "Redo the undone action");
+  			ok( btn1.getX() == x+x, "After the redo the button's X position is " + btn1.getX() );
+  			ok( actionController.undo() != null , "Undo the redo action");
+  			ok( btn1.getX() == x, "And the button is  back to the start X position " + btn1.getX() + " again" );
+  			
+  			// Moving the object with n commands, at the end it will be on (x+n*n,y+n*n) position in units
+  			for( i = 1; i <= n; i ++ )
+  			{
+  				dragCommand = new DragResourceCommand( basicCommandsGlobals.executionTypeEnum.CMEX_EDITION, btn1, x+i*n, y+i*n );
+  				actionController.doCommand(dragCommand);
+  			}
+  			ok( btn1.getX() == x+n*n, "After moving "+n+" times (the maximum size of the undo stack) the button's X position is " + (x+n*n) );
+  			ok( actionController.redo() == null , 
+  				"There is Nothing to be redone because a new command sets a new 'future' in the command flow");
+  				
+  				
+  			dragCommand = new DragResourceCommand( basicCommandsGlobals.executionTypeEnum.CMEX_EDITION, btn1, x+i*n, y+i*n );
+  			actionController.doCommand(dragCommand);
+  			ok( btn1.getX() == x+n*(n+1), "After moving one more time, the button's X position is " + (x+n*(n+1)) );
+			while( actionController.undo() != null )
+			{  		/* do nothing */	}
+		  	ok( btn1.getX() == x+n, 
+		  		"Even undoing all commands its not possible to go back to the position " + x + " again since the number of executed commands is greater than the stack size itself" );
+		  	while( actionController.redo() != null )
+			{  		/* do nothing */	}
+			ok( btn1.getX() == x+n*(n+1), "After redoing all one more time, the button's X position is " + (x+n*(n+1)) );
+  		}
+  	);
+  	
+  	
   	module("Rename Resource Test");
   	test
   	( 

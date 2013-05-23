@@ -82,7 +82,7 @@ DataHandler.readFile = function(f)
 	};
 	reader.onloadend = DataHandler.loadEnd;
 
-	// Read in the image file as a data URL.
+	// Read the file
 	reader.readAsText(f);
 
 }

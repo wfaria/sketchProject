@@ -99,13 +99,28 @@ SelectionManager.prototype.onProjectCreated = function( projectName, authorName,
 
 SelectionManager.prototype.onInterfaceResourceMoved = function( interfaceResource, oldX, oldY )
 {
-	sideMenu.updateValue( DOMglobals.X_TEXT_ID, interfaceResource.getX() );
-	sideMenu.updateValue( DOMglobals.Y_TEXT_ID, interfaceResource.getY() );		
+	if( sideMenu.containsId(DOMglobals.BASIC_RESOURCE_ID ) )
+	{
+		sideMenu.updateValue( DOMglobals.X_TEXT_ID, interfaceResource.getX() );
+		sideMenu.updateValue( DOMglobals.Y_TEXT_ID, interfaceResource.getY() );
+	}		
 }
 
 SelectionManager.prototype.onResourceFormatted = function( interfaceResource )
 {
-	var fontSize = interfaceResource.getIntExtraAttribute( iResGlobals.defaultKeys.FONTSIZE_KEY );
-	
-	sideMenu.updateValue( DOMglobals.FONTSIZE_TEXT_ID, fontSize );
+	//TODO: ADD the rest of the changed elements
+	if( sideMenu.containsId(DOMglobals.BASIC_RESOURCE_ID ) )
+	{
+		var fontSize = interfaceResource.getIntExtraAttribute( iResGlobals.defaultKeys.FONTSIZE_KEY );
+		
+		sideMenu.updateValue( DOMglobals.FONTSIZE_TEXT_ID, fontSize );
+	}
+}
+
+SelectionManager.prototype.onResourceNameChanged = function( interfaceResource, newNameStr )
+{
+	if( sideMenu.containsId(DOMglobals.BASIC_RESOURCE_ID ) )
+	{
+		sideMenu.updateValue( DOMglobals.NAME_ID, newNameStr );
+	}
 }

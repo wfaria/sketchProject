@@ -3,6 +3,7 @@
 var DOMglobals = {};
 DOMglobals.SIDE_BAR_ID = "sideBar";
 DOMglobals.BASIC_RESOURCE_ID = "basic resource";
+DOMglobals.NAME_ID = "_resource_name";
 DOMglobals.X_TEXT_ID = "_basic_x_input";
 DOMglobals.Y_TEXT_ID = "_basic_y_input";
 DOMglobals.WIDTH_TEXT_ID = "basic resource";
@@ -184,6 +185,10 @@ htmlGen.createSelectInput = function( labelStr, idStr, optionStrArray, onChangeE
 /** Side menu functions **/
 var sideMenu = {};
 
+sideMenu.containsId = function( idStr )
+{
+	return $(idStr)!=null;
+}
 
 sideMenu.createDiv = function( divId, divClass )
 {
@@ -242,7 +247,7 @@ sideMenu.createResourceBasicSection = function( interfaceResource )
 		/*newSectionPart.innerHTML = 'Name: <input type=\"text\" size =\"10\" value="' + ir.getName() +
 		'" onkeyup=\"globalMediators.internalMediator.publish( \'RenameElement\', [ ir, this.value ] ) \">';*/
 		newSectionPart.innerHTML =	htmlGen.createSectionLine();
-		newSectionPart.innerHTML += htmlGen.createTextInputString( "Name", "change_name", 10, ir.getName(),
+		newSectionPart.innerHTML += htmlGen.createTextInputString( "Name", DOMglobals.NAME_ID, 10, ir.getName(),
 			"globalMediators.internalMediator.publish( \'RenameElement\', [ ir, this.value ] );"  );
 		newSectionPart.innerHTML += htmlGen.createTextInputString( "Width", "change_width", 10, ir.getWidth(),
 			"htmlGen.numberEventToInterMediator( this.value, 10, graphicControllerGlobals.CANVAS_WIDTH, "+
