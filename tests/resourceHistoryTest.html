@@ -58,6 +58,35 @@
 	
 	test
 	(
+		"Clone testing", function()
+		{
+			var x = 30;
+			var y = 10;
+			var version = 0;
+			var btn1 = new ButtonResource( x,y,0,100, 50, "Button", 0, version );
+			var resourceHistory1 = new ResourceHistory( btn1 );
+			ok( resourceHistory1.getHistoryLength() == 1, "Start length == 1 OK" );
+			ok( (resourceHistory1.cloneVersion(42,42) == null), "Trying to clone an unexistent object returns null" );
+			ok( (resourceHistory1.cloneVersion( version, version+1) != null), "Trying to clone an existent object returns its clone" );
+			ok( resourceHistory1.getHistoryLength() == 2, "Length changed to 2" );
+			
+			var btn2 = resourceHistory1.cloneVersion(version, version + 1 );
+			ok( btn2.getId() == resourceHistory1.getResourceFromVersion( version + 1 ).getId(), 
+				"Checking the id from the clonned element");
+			ok( btn2.getVersion() == resourceHistory1.getResourceFromVersion( version + 1 ).getVersion(), 
+				"Checking the version from the clonned element");
+			btn2.setX(2*x);
+			ok( btn2.getX() != btn1.getX(), "Checking if some change in the clonned element does not reflectt on the original one" );
+			
+			var btn3 = resourceHistory1.cloneVersion( version+1, version + 2 );
+			ok( resourceHistory1.getHistoryLength() == 3, "Length changed to 3" );
+			ok( btn3.getX() != btn1.getX(), "The element from the version 0 is different from the version 2" );
+			ok( btn3.getX() == btn2.getX(), "The element from the version 1 is equal from the version 2" );
+		}
+	);
+	
+	test
+	(
 		"Remotion testing", function()
 		{
 			var x = 30;

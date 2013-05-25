@@ -3,7 +3,8 @@ var basicCommandsGlobals = {};
 basicCommandsGlobals.commandTypeEnum = { CMD_UNDEFINED: -1, CMD_DRAG: 0, 
 	CMD_KINETIC_DRAG: 1, CMD_RENAME_RES: 2, CMD_SELECT_RES: 3, CMD_CANC_SELECT_RES: 4,
 	CMD_CREATE_RES: 5, CMD_DELETE_RES: 6, CMD_RESTORE_RES: 7, CMD_GROUP_EXEC: 8,
-	CMD_RESIZE_RES: 9, CMD_FORMAT_RES: 10 };
+	CMD_RESIZE_RES: 9, CMD_FORMAT_RES: 10, CMD_CLONE_VERSION: 11, 
+	CMD_REMOVE_VERSION: 12, CMD_ADD_VERSION: 13 };
 basicCommandsGlobals.executionTypeEnum = { CMEX_UNDEFINED: -1, CMEX_EDITION: 0, CMEX_SIMULATION: 1 };
 
 function Command()
@@ -576,6 +577,155 @@ FormatResourceCommand.prototype.undo = function( commandObject )
 		parseInt( interfaceResource.getExtraAttribute( iResGlobals.defaultKeys.FONT_X_PADDING_KEY ), 10  )
 	);
 }
+
+/* test */
+function CloneResourceVersionCommand( executionMode, resourceId, baseVersion, targetVersion, sketchObj )
+{
+	Command.call(this);
+	this.commandCode = basicCommandsGlobals.commandTypeEnum.CMD_CLONE_VERSION;
+	this.executionMode = executionMode;
+	this.setArgs(
+		{
+			sketchObject: sketchObj,
+			baseVers: baseVersion,
+			targetVers: targetVersion,
+			id: resourceId
+		}
+	);
+}
+
+CloneResourceVersionCommand.prototype = new Command;
+CloneResourceVersionCommand.prototype.constructor = CloneResourceVersionCommand;
+
+CloneResourceVersionCommand.prototype.toString = function()
+{
+	var baseVersion = this.argObject.baseVers;
+	var targetVersion = this.argObject.targetVers;
+	var resourceId = this.argObject.id;
+	var sketchObj = this.argObject.sketchObject;
+	return 		"Clone resource " + Command.prototype.toString.call( this ) + "\n" +
+		"Parameters: from version " +baseVersion+ " to version " +targetVersion +
+		"\n based on resource with id " + resourceId + " from the sketch project " + sketchObj;
+}
+
+
+CloneResourceVersionCommand.prototype.execute = function( commandObject )
+{
+	var baseVersion = this.argObject.baseVers;
+	var targetVersion = this.argObject.targetVers;
+	var resourceId = this.argObject.id;
+	var sketchObj = this.argObject.sketchObject;
+	
+	var currentScreen = sketchProject.getCurrentScreen();
+	
+	var resourceHistory = currentScreen.getResourceHistory( resourceId );
+	if( resourceHistory != null )
+	{
+		if( resourceHistory1.cloneVersion( baseVersion, targetVersion ) != null )
+		{
+			globalMediators.internalMediator.publish( "ResourceVersionClonned", [ interfaceResource ] );
+			return actionGlobals.COMMAND_OK;
+		}
+		else
+		{
+			console.error("Error while clonning version in the clone command");
+		}
+	}
+	else
+	{
+		console.error( "There is no element with id  " + resourceId + " on this project " );
+	}
+	return actionGlobals.IGNORE_COMMAND;
+}
+
+CloneResourceVersionCommand.prototype.undo = function( commandObject )
+{
+	var targetVersion = this.argObject.targetVers;
+	var resourceId = this.argObject.id;
+	var sketchObj = this.argObject.sketchObject;
+	
+	return new RemoveResourceVersionCommand( basicCommandsGlobals.executionTypeEnum.CMEX_EDITION,
+		resourceId, versionNum, sketchObj );
+}
+
+function RemoveResourceVersionCommand( executionMode, resourceId, versionNum, sketchObj )
+{
+	Command.call(this);
+	this.commandCode = basicCommandsGlobals.commandTypeEnum.CMD_REMOVE_VERSION;
+	this.executionMode = executionMode;
+	this.setArgs(
+		{
+			sketchObject: sketchObj,
+			targetVers: versionNum,
+			id: resourceId
+		}
+	);
+}
+
+RemoveResourceVersionCommand.prototype = new Command;
+RemoveResourceVersionCommand.prototype.constructor = RemoveResourceVersionCommand;
+
+RemoveResourceVersionCommand.prototype.toString = function()
+{
+	var resourceId = this.argObject.id;
+	var versionNum = this.argObject.targetVers;
+	var sketchObj = this.argObject.sketchObject;
+	return 		"Remove resource version " + Command.prototype.toString.call( this ) + "\n" +
+		"Parameters: version " +versionNum+  +
+		"\n based on resource with id " + resourceId + " from the sketch project " + sketchObj;
+}
+
+
+RemoveResourceVersionCommand.prototype.execute = function( commandObject )
+{
+	var resourceId = this.argObject.id;
+	var versionNum = this.argObject.targetVers;
+	var sketchObj = this.argObject.sketchObject;
+	
+	var currentScreen = sketchProject.getCurrentScreen();
+	
+	var resourceHistory = currentScreen.getResourceHistory( resourceId );
+	if( resourceHistory != null )
+	{
+		if( resourceHistory1.removeVersion( versionNum ) != null )
+		{
+			globalMediators.internalMediator.publish( "ResourceVersionRemoved", [ interfaceResource ] );
+			return actionGlobals.COMMAND_OK;
+		}
+		else
+		{
+			console.error("Error while removing version");
+		}
+	}
+	else
+	{
+		console.error( "There is no element with id  " + resourceId + " on this project " );
+	}
+	
+	return actionGlobals.IGNORE_COMMAND;
+}
+
+RemoveResourceVersionCommand.prototype.undo = function( commandObject )
+{
+	var targetVersion = this.argObject.targetVers;
+	var resourceId = this.argObject.id;
+	var sketchObj = this.argObject.sketchObject;
+	
+	var resourceHistory = currentScreen.getResourceHistory( resourceId );
+	if( resourceHistory != null )
+	{
+		var savedResource = resourceHistory.getResourceFromVersion( targetVersion );
+		return new AddResourceFromVersionCommand( basicCommandsGlobals.executionTypeEnum.CMEX_EDITION,
+			savedResource, sketchObj );
+	}
+	else
+	{
+		console.error( "There is no version " + targetVersion + " in the resource with id " + resourceId );
+		return null;
+	}
+}
+
+/* test */
 		
 /****** command factory test *********/
 DragResourceCommand.prototype.execute = function( commandObject )
