@@ -1,0 +1,26 @@
+This application use a special array called "Resource History". 
+It represents an existent resource in some screen. 
+Each element of this array represents this resource at the indicated version.
+
+| v1 | v3 | v7 | v8 |...
+
+Operations:
+
+* addClone - Creates a clone from some existing version from the resource, 
+after this these resources will be considerated as separeted objects;
+EX: 
+| v1 | v3 |   ---> addClone(1,6) ---> | v1 | v3 | v6 |
+
+* removeVersion - Removes an element from this array, after this it'll get as the actual element
+from the screen the resource with the biggest version after the removed version;
+EX:
+| v1 | v3 | v6 | ---> removeClone(3) ---> | v1 | v6 |
+
+* deleteVersion - Set the resource as inexistent on that version, in this case there is not
+actual element, in this version this resource does not exist, but it can exist in the past and exist in the future;
+EX:
+| v1 | v3 | v6 | ---> deleteVersion(3) ---> | v1 | v3(deleted) | v6 |
+
+* historyDelete - It erases the element from the application, it erases all versions and the resource history of its;
+EX:
+| v1 | v3 | v6 | ---> historyDelete(3) ---> null
