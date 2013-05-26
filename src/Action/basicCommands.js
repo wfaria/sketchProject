@@ -683,12 +683,12 @@ RemoveResourceVersionCommand.prototype.execute = function( commandObject )
 	var versionNum = this.argObject.targetVers;
 	var sketchObj = this.argObject.sketchObject;
 	
-	var currentScreen = sketchProject.getCurrentScreen();
+	var currentScreen = sketchObj.getCurrentScreen();
 	
 	var resourceHistory = currentScreen.getResourceHistory( resourceId );
 	if( resourceHistory != null )
 	{
-		var removedResource = resourceHistory1.removeVersion( versionNum );
+		var removedResource = resourceHistory.removeVersion( versionNum );
 		if(  removedResource != null )
 		{
 			globalMediators.internalMediator.publish( "ResourceVersionRemoved", [ removedResource, versionNum ] );
@@ -712,6 +712,8 @@ RemoveResourceVersionCommand.prototype.undo = function( commandObject )
 	var targetVersion = this.argObject.targetVers;
 	var resourceId = this.argObject.id;
 	var sketchObj = this.argObject.sketchObject;
+	
+	var currentScreen = sketchObj.getCurrentScreen();
 	
 	var resourceHistory = currentScreen.getResourceHistory( resourceId );
 	if( resourceHistory != null )

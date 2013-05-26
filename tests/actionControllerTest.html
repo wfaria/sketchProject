@@ -491,6 +491,8 @@
 			var currentScreen = sketchObj.getCurrentScreen();
 			var targetVersion = 5;
 			var startId = 0;
+			var newX = 100;
+			var startX = 0;
 			
 			globalMediators.start();
 			var actionController = new ActionController();
@@ -525,6 +527,25 @@
   			
   			ok( currentScreen.getResourceHistory( startId ).getHistoryLength() == 2,
   				"Now this button have 2 different versions" );
+  				
+  			currentScreen.getResourceHistory( startId ).getResourceFromVersion( targetVersion ).setX( newX );
+  			
+  			ok( currentScreen.getResourceHistory( startId ).getResourceFromVersion( targetVersion ).getX() ==  newX ,
+  				"Changing the X position of the version " + targetVersion + " to make it different from the first version");
+  				
+  			command = new CloneResourceVersionCommand( 	basicCommandsGlobals.executionTypeEnum.CMEX_EDITION, 
+  				startId, sketchObj.getActiveVersionNumber(), 2*targetVersion, sketchObj );
+  				
+  			ok( actionController.doCommand( command ) == true, "Cloning version, from " +
+  			 	sketchObj.getActiveVersionNumber()+ " to " + 2*targetVersion );
+  			 	
+  			ok( currentScreen.getResourceHistory( startId ).getHistoryLength() == 3,
+  				"Now this button have 3 different versions" );
+  			
+  			ok( currentScreen.getResourceHistory( startId ).getResourceFromVersion( 2*targetVersion ).getX() ==  startX ,
+  				"The version " + targetVersion + " is in the position X " + startX  + " like the first version");
+  				
+  			ok( actionController.undo( ) != null, "Undoing the last command." );
   			 
   			 
 		}
