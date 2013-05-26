@@ -481,6 +481,55 @@
   		}
   	);
   	
+  	module("Time Manipulation Test");
+  	test(
+  		"Clone Resource Version tests", function()
+  		{
+			var sketchName = "test";
+			var sketchAuthor = "tester";
+			var sketchObj = new Sketch( sketchName, sketchAuthor );
+			var currentScreen = sketchObj.getCurrentScreen();
+			var targetVersion = 5;
+			var startId = 0;
+			
+			globalMediators.start();
+			var actionController = new ActionController();
+			
+			var command = new CreateResourceCommand( 
+					basicCommandsGlobals.executionTypeEnum.CMEX_EDITION, 
+					resourceTypeEnum.IR_BUTTON, sketchObj );
+					
+			ok( currentScreen.getResources().length == 0, "There are no elements on the current screen");	
+			ok( actionController.undo() == null , "Nothing to be undone");
+  			ok( actionController.redo() == null , "Nothing to be redone");
+  			
+  			ok( actionController.doCommand( command ) == true, "Creating a button");
+  			
+  			ok( currentScreen.getResourceHistory( startId ).getResourceFromVersion( sketchObj.getActiveVersionNumber() ) != null,
+  			"It starts with one element in the active version" );
+  			
+  		  	ok( currentScreen.getResourceHistory( startId ).getHistoryLength() == 1,
+  				"Also it starts with one version only" );
+  			
+  			ok( currentScreen.getResourceHistory( startId ).getResourceFromVersion( targetVersion ) == null,
+  			"This button doesn't have a new time slot in the version " + targetVersion );
+  			
+  			command = new CloneResourceVersionCommand( 	basicCommandsGlobals.executionTypeEnum.CMEX_EDITION, 
+  				startId, sketchObj.getActiveVersionNumber(), targetVersion, sketchObj );
+  				
+  			 ok( actionController.doCommand( command ) == true, "Cloning version, from " +
+  			 	sketchObj.getActiveVersionNumber()+ " to " + targetVersion );
+  			 
+  			ok( currentScreen.getResourceHistory( startId ).getResourceFromVersion( targetVersion ) != null,
+  			"Now this button have a new time slot in the version " + targetVersion );
+  			
+  			ok( currentScreen.getResourceHistory( startId ).getHistoryLength() == 2,
+  				"Now this button have 2 different versions" );
+  			 
+  			 
+		}
+	);
+  	
   </script>
 </body>
 </html>

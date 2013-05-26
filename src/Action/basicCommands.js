@@ -616,12 +616,12 @@ CloneResourceVersionCommand.prototype.execute = function( commandObject )
 	var resourceId = this.argObject.id;
 	var sketchObj = this.argObject.sketchObject;
 	
-	var currentScreen = sketchProject.getCurrentScreen();
+	var currentScreen = sketchObj.getCurrentScreen();
 	
 	var resourceHistory = currentScreen.getResourceHistory( resourceId );
 	if( resourceHistory != null )
 	{
-		var clonedObj = resourceHistory1.cloneVersion( baseVersion, targetVersion );
+		var clonedObj = resourceHistory.cloneVersion( baseVersion, targetVersion );
 		if( clonedObj != null )
 		{
 			globalMediators.internalMediator.publish( "ResourceVersionCloned", [ clonedObj, baseVersion ] );
@@ -646,7 +646,7 @@ CloneResourceVersionCommand.prototype.undo = function( commandObject )
 	var sketchObj = this.argObject.sketchObject;
 	
 	return new RemoveResourceVersionCommand( basicCommandsGlobals.executionTypeEnum.CMEX_EDITION,
-		resourceId, versionNum, sketchObj );
+		resourceId, targetVersion, sketchObj );
 }
 
 function RemoveResourceVersionCommand( executionMode, resourceId, versionNum, sketchObj )
