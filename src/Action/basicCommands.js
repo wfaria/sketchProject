@@ -4,7 +4,7 @@ basicCommandsGlobals.commandTypeEnum = { CMD_UNDEFINED: -1, CMD_DRAG: 0,
 	CMD_KINETIC_DRAG: 1, CMD_RENAME_RES: 2, CMD_SELECT_RES: 3, CMD_CANC_SELECT_RES: 4,
 	CMD_CREATE_RES: 5, CMD_DELETE_RES: 6, CMD_RESTORE_RES: 7, CMD_GROUP_EXEC: 8,
 	CMD_RESIZE_RES: 9, CMD_FORMAT_RES: 10, CMD_CLONE_VERSION: 11, 
-	CMD_REMOVE_VERSION: 12, CMD_ADD_VERSION: 13 };
+	CMD_REMOVE_VERSION: 12, CMD_ADD_VERSION: 13, CMD_DELETE_VERSION: 14 };
 basicCommandsGlobals.executionTypeEnum = { CMEX_UNDEFINED: -1, CMEX_EDITION: 0, CMEX_SIMULATION: 1 };
 
 function Command()
@@ -621,9 +621,10 @@ CloneResourceVersionCommand.prototype.execute = function( commandObject )
 	var resourceHistory = currentScreen.getResourceHistory( resourceId );
 	if( resourceHistory != null )
 	{
-		if( resourceHistory1.cloneVersion( baseVersion, targetVersion ) != null )
+		var clonedObj = resourceHistory1.cloneVersion( baseVersion, targetVersion );
+		if( clonedObj != null )
 		{
-			globalMediators.internalMediator.publish( "ResourceVersionClonned", [ interfaceResource ] );
+			globalMediators.internalMediator.publish( "ResourceVersionCloned", [ clonedObj, baseVersion ] );
 			return actionGlobals.COMMAND_OK;
 		}
 		else
@@ -687,9 +688,10 @@ RemoveResourceVersionCommand.prototype.execute = function( commandObject )
 	var resourceHistory = currentScreen.getResourceHistory( resourceId );
 	if( resourceHistory != null )
 	{
-		if( resourceHistory1.removeVersion( versionNum ) != null )
+		var removedResource = resourceHistory1.removeVersion( versionNum );
+		if(  removedResource != null )
 		{
-			globalMediators.internalMediator.publish( "ResourceVersionRemoved", [ interfaceResource ] );
+			globalMediators.internalMediator.publish( "ResourceVersionRemoved", [ removedResource, versionNum ] );
 			return actionGlobals.COMMAND_OK;
 		}
 		else
@@ -715,7 +717,7 @@ RemoveResourceVersionCommand.prototype.undo = function( commandObject )
 	if( resourceHistory != null )
 	{
 		var savedResource = resourceHistory.getResourceFromVersion( targetVersion );
-		return new AddResourceFromVersionCommand( basicCommandsGlobals.executionTypeEnum.CMEX_EDITION,
+		return new AddResourceTimeSlotCommand( basicCommandsGlobals.executionTypeEnum.CMEX_EDITION,
 			savedResource, sketchObj );
 	}
 	else
@@ -724,6 +726,147 @@ RemoveResourceVersionCommand.prototype.undo = function( commandObject )
 		return null;
 	}
 }
+
+
+/******/
+
+
+function AddResourceTimeSlotCommand( executionMode, resourceTimeSlotObj, sketchObj )
+{
+	Command.call(this);
+	this.commandCode = basicCommandsGlobals.commandTypeEnum.CMD_ADD_VERSION;
+	this.executionMode = executionMode;
+	this.setArgs(
+		{
+			sketchObject: sketchObj,
+			res: resourceTimeSlotObj,
+		}
+	);
+}
+
+AddResourceTimeSlotCommand.prototype = new Command;
+AddResourceTimeSlotCommand.prototype.constructor = AddResourceTimeSlotCommand;
+
+AddResourceTimeSlotCommand.prototype.toString = function()
+{
+	var resourceTimeSlotObj = this.argObject.res;
+	var sketchObj = this.argObject.sketchObject;
+	return 		"Add Time Slot Command " + Command.prototype.toString.call( this ) + "\n" +
+		"Parameters: time slot resource: " +resourceTimeSlotObj+  +
+		"\nfrom the sketch project " + sketchObj;
+}
+
+AddResourceTimeSlotCommand.prototype.execute = function( commandObject )
+{
+	var resourceTimeSlotObj = this.argObject.res;
+	var sketchObj = this.argObject.sketchObject;
+	
+	var currentScreen = sketchProject.getCurrentScreen();
+	
+	var resourceHistory = currentScreen.getResourceHistory( resourceTimeSlotObj.getId() );
+	if( resourceHistory != null )
+	{
+		// This function will overwrite any object with the same version
+		resourceHistory.addVersion( resourceTimeSlotObj );
+		globalMediators.internalMediator.publish( "ResourceVersionAdded", [ resourceTimeSlotObj, resourceTimeSlotObj.getVersion() ] );
+		return actionGlobals.COMMAND_OK;
+	}
+	else
+	{
+		console.error( "There is no element with id  " + resourceTimeSlotObj.getId() + " on this project " );
+	}
+	
+	return actionGlobals.IGNORE_COMMAND;
+}
+
+AddResourceTimeSlotCommand.prototype.undo = function( commandObject )
+{
+	var resourceTimeSlotObj = this.argObject.res;
+	var sketchObj = this.argObject.sketchObject;
+	
+	return new RemoveResourceVersionCommand( executionMode, resourceTimeSlotObj.getId(), resourceTimeSlotObj.getVersion(), sketchObj );
+}
+/***/
+
+
+function DeleteResourceVersionCommand( executionMode, resourceTimeSlotObj, sketchObj )
+{
+	Command.call(this);
+	this.commandCode = basicCommandsGlobals.commandTypeEnum.CMD_DELETE_VERSION;
+	this.executionMode = executionMode;
+	this.setArgs(
+		{
+			sketchObject: sketchObj,
+			targetVers: versionNum,
+			id: resourceId
+		}
+	);
+}
+
+DeleteResourceVersionCommand.prototype = new Command;
+DeleteResourceVersionCommand.prototype.constructor = DeleteResourceVersionCommand;
+
+DeleteResourceVersionCommand.prototype.toString = function()
+{
+	var resourceId = this.argObject.id;
+	var versionNum = this.argObject.targetVers;
+	var sketchObj = this.argObject.sketchObject;
+	return 		"Delete resource version command " + Command.prototype.toString.call( this ) + "\n" +
+		"Parameters: version " +versionNum+  +
+		"\n based on resource with id " + resourceId + " from the sketch project " + sketchObj;
+}
+
+DeleteResourceVersionCommand.prototype.execute = function( commandObject )
+{
+	var resourceId = this.argObject.id;
+	var versionNum = this.argObject.targetVers;
+	var sketchObj = this.argObject.sketchObject;
+	
+	var currentScreen = sketchProject.getCurrentScreen();
+	
+	var resourceHistory = currentScreen.getResourceHistory( resourceId );
+	if( resourceHistory != null )
+	{
+		var deletedResource = resourceHistory.deleteVersion( versionNum );
+		if( deletedResource != null )
+		{
+			globalMediators.internalMediator.publish( "ResourceVersionRemoved", [ deletedResource, versionNum ] );
+			return actionGlobals.COMMAND_OK;
+		}
+		else
+		{
+			console.error("Error while deleting version");
+		}
+	}
+	else
+	{
+		console.error( "There is no element with id  " + resourceId + " on this project " );
+	}
+	
+	return actionGlobals.IGNORE_COMMAND;
+}
+
+DeleteResourceVersionCommand.prototype.undo = function( commandObject )
+{
+	var targetVersion = this.argObject.targetVers;
+	var resourceId = this.argObject.id;
+	var sketchObj = this.argObject.sketchObject;
+	
+	var resourceHistory = currentScreen.getResourceHistory( resourceId );
+	if( resourceHistory != null )
+	{
+		var savedResource = resourceHistory.getResourceFromVersion( targetVersion );
+		return new AddResourceTimeSlotCommand( basicCommandsGlobals.executionTypeEnum.CMEX_EDITION,
+			savedResource, sketchObj );
+	}
+	else
+	{
+		console.error( "There is no version " + targetVersion + " in the resource with id " + resourceId );
+		return null;
+	}
+}
+
+
 
 /* test */
 		
