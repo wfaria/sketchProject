@@ -763,7 +763,7 @@ AddResourceTimeSlotCommand.prototype.execute = function( commandObject )
 	var resourceTimeSlotObj = this.argObject.res;
 	var sketchObj = this.argObject.sketchObject;
 	
-	var currentScreen = sketchProject.getCurrentScreen();
+	var currentScreen = sketchObj.getCurrentScreen();
 	
 	var resourceHistory = currentScreen.getResourceHistory( resourceTimeSlotObj.getId() );
 	if( resourceHistory != null )
@@ -786,7 +786,8 @@ AddResourceTimeSlotCommand.prototype.undo = function( commandObject )
 	var resourceTimeSlotObj = this.argObject.res;
 	var sketchObj = this.argObject.sketchObject;
 	
-	return new RemoveResourceVersionCommand( executionMode, resourceTimeSlotObj.getId(), resourceTimeSlotObj.getVersion(), sketchObj );
+	return new RemoveResourceVersionCommand( basicCommandsGlobals.executionTypeEnum.CMEX_EDITION,
+		 resourceTimeSlotObj.getId(), resourceTimeSlotObj.getVersion(), sketchObj );
 }
 /***/
 
