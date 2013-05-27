@@ -28,6 +28,7 @@ function InterfaceResource( posX,posY,posZ,widthVal, heightVal, name, id, initia
 	this.id = id;
 	this.parentId = iResGlobals.PARENTLESS;
 	this.extra = {}; //TODO: Try to use a real array or a hashmap here
+	this.isDeleted = false;
 	
 	this.prototypeName = this.constructor.name; // This is only used in local serialization
 }
@@ -48,6 +49,7 @@ InterfaceResource.prototype.getParentId = function() {	return this.parentId; }
 InterfaceResource.prototype.getName = function() {	return this.name; }
 InterfaceResource.prototype.getResourceType = function() {	return this.resourceType; }
 InterfaceResource.prototype.getVersion = function() {	return this.createdInVersion; }
+InterfaceResource.prototype.getDeleted = function() { return this.isDeleted; }
 
 InterfaceResource.prototype.setX = function(num) { this.x = num; }
 InterfaceResource.prototype.setY = function(num) { this.y = num; }
@@ -55,6 +57,7 @@ InterfaceResource.prototype.setWidth = function(num) { this.width = num; }
 InterfaceResource.prototype.setHeight = function(num) { this.height = num; }
 InterfaceResource.prototype.setParentId = function(num) { this.parentId = num; }
 InterfaceResource.prototype.setName = function( nameStr ) { this.name = nameStr; }
+InterfaceResource.prototype.setDeleted = function( boolVal ) { this.isDeleted = boolVal; }
 
 InterfaceResource.prototype.setVersion = function( versionNum ) 
 {	

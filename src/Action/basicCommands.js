@@ -830,7 +830,7 @@ DeleteResourceVersionCommand.prototype.execute = function( commandObject )
 	var resourceHistory = currentScreen.getResourceHistory( resourceId );
 	if( resourceHistory != null )
 	{
-		var deletedResource = resourceHistory.deleteVersion( versionNum );
+		var deletedResource = resourceHistory.changeDeletedFlag( versionNum );
 		if( deletedResource != null )
 		{
 			globalMediators.internalMediator.publish( "ResourceVersionRemoved", [ deletedResource, versionNum ] );
@@ -855,20 +855,8 @@ DeleteResourceVersionCommand.prototype.undo = function( commandObject )
 	var resourceId = this.argObject.id;
 	var sketchObj = this.argObject.sketchObject;
 	
-	var currentScreen = sketchObj.getCurrentScreen();
-	
-	var resourceHistory = currentScreen.getResourceHistory( resourceId );
-	if( resourceHistory != null )
-	{
-		var savedResource = resourceHistory.getResourceFromVersion( targetVersion );
-		return new AddResourceTimeSlotCommand( basicCommandsGlobals.executionTypeEnum.CMEX_EDITION,
-			savedResource, sketchObj );
-	}
-	else
-	{
-		console.error( "There is no version " + targetVersion + " in the resource with id " + resourceId );
-		return null;
-	}
+	return new DeleteResourceVersionCommand( basicCommandsGlobals.executionTypeEnum.CMEX_EDITION,
+  				 resourceId, targetVersion, sketchObj );
 }
 
 

@@ -689,13 +689,31 @@
   		  	currentScreen.getResourceHistory( startId ).getResourceFromVersion( 2*targetVersion ).setX( newX );
   		   	ok( currentScreen.getResourceHistory( startId ).getResourceFromVersion( 2*targetVersion ).getX() ==  newX ,
   				"Changing the X position of the version " + (2*targetVersion) + " to make it different from the first version");
-  				
+  		
+  			ok( currentScreen.getResourceHistory( startId ).getResourceFromVersion(targetVersion).getDeleted() == false,
+			"The version " +targetVersion+ " is with the deleted tag off" );
+  	
   			command = new DeleteResourceVersionCommand( basicCommandsGlobals.executionTypeEnum.CMEX_EDITION,
   				 startId, targetVersion, sketchObj );
   				 
   			ok( actionController.doCommand( command ) == true, 
   				"Deleting the resource version " + targetVersion );
   				 
+  			ok( currentScreen.getResourceHistory( startId ).getResourceFromVersion(targetVersion).getDeleted() == true,
+  				"Now the version " +targetVersion+ " is with the deleted tag on" );
+  				
+  		  	ok( actionController.undo() != null, "Undoing the last command" );
+  		  	
+  			ok( currentScreen.getResourceHistory( startId ).getResourceFromVersion(targetVersion).getDeleted() == false,
+				"Now the version " +targetVersion+ " is with the deleted tag off again" );
+				
+		  	ok( actionController.redo() != null, "Undoing the last command" );
+		  	
+			ok( currentScreen.getResourceHistory( startId ).getResourceFromVersion(targetVersion).getDeleted() == true,
+  				"Now the version " +targetVersion+ " is with the deleted tag on" );
+  				
+  			ok( currentScreen.getResourceHistory( startId ).getResourceFromVersion(2*targetVersion).getDeleted() == false,
+  				"The other versions aren't deleted" );
   			
   				
   		}

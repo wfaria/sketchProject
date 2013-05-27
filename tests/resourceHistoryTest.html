@@ -118,11 +118,13 @@
 			ok( resourceHistory1.getHistoryLength() == 1, "Start length == 1 OK" );
 			ok( (resourceHistory1.cloneVersion( version, version+1) != null), "Trying to clone an existent object returns its clone" );
 			ok( resourceHistory1.getHistoryLength() == 2, "Length changed to 2" );
-			ok( (resourceHistory1.deleteVersion( version ).getResourceType() == resourceTypeEnum.IR_DELETED),
+			ok( (resourceHistory1.changeDeletedFlag( version ).getDeleted() == true ),
 			"Deleting a version from the timeline returns a deleted resource");
 			ok( resourceHistory1.getHistoryLength() == 2, "The length continues 2" );
-			ok( (resourceHistory1.getResourceFromVersion( version ).getResourceType() == resourceTypeEnum.IR_DELETED),
+			ok( (resourceHistory1.getResourceFromVersion( version ).getDeleted() == true),
 			"Now the resource from the deleted version is a deleted resource");
+			ok( (resourceHistory1.changeDeletedFlag( version ).getDeleted() == false ),
+			"Restoring deleted version");
 		}
 	);
 	

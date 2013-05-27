@@ -65,21 +65,14 @@ ResourceHistory.prototype.removeVersion = function ( versionNum  )
     return null;
 }
 
-ResourceHistory.prototype.deleteVersion = function( versionNum )
+ResourceHistory.prototype.changeDeletedFlag = function( versionNum )
 {
-	//TODO: Decide if addVersion will remove double elements and remove this line or not
-	var objToDel = this.removeVersion( versionNum );
+	var objToDel = this.getResourceFromVersion( versionNum );
 	if( objToDel != null )
 	{
-		var deletedObj = new DeletedResource( 0,0,0,0,0,
-			objToDel.getName(), objToDel.getId(), objToDel.getVersion()  );
-		this.addVersion( deletedObj );
-		return deletedObj;
+		objToDel.setDeleted( !objToDel.getDeleted() );
 	}
-	else
-	{
-		return null;
-	}
+	return objToDel;
 }
 
 ResourceHistory.prototype.addVersion = function ( resource )
