@@ -792,7 +792,7 @@ AddResourceTimeSlotCommand.prototype.undo = function( commandObject )
 /***/
 
 
-function DeleteResourceVersionCommand( executionMode, resourceTimeSlotObj, sketchObj )
+function DeleteResourceVersionCommand( executionMode, resourceId, versionNum, sketchObj )
 {
 	Command.call(this);
 	this.commandCode = basicCommandsGlobals.commandTypeEnum.CMD_DELETE_VERSION;
@@ -825,7 +825,7 @@ DeleteResourceVersionCommand.prototype.execute = function( commandObject )
 	var versionNum = this.argObject.targetVers;
 	var sketchObj = this.argObject.sketchObject;
 	
-	var currentScreen = sketchProject.getCurrentScreen();
+	var currentScreen = sketchObj.getCurrentScreen();
 	
 	var resourceHistory = currentScreen.getResourceHistory( resourceId );
 	if( resourceHistory != null )
@@ -854,6 +854,8 @@ DeleteResourceVersionCommand.prototype.undo = function( commandObject )
 	var targetVersion = this.argObject.targetVers;
 	var resourceId = this.argObject.id;
 	var sketchObj = this.argObject.sketchObject;
+	
+	var currentScreen = sketchObj.getCurrentScreen();
 	
 	var resourceHistory = currentScreen.getResourceHistory( resourceId );
 	if( resourceHistory != null )

@@ -626,6 +626,78 @@
   		   	ok( currentScreen.getResourceHistory( startId ).getResourceBeforeVersion( 2*targetVersion ).getX() ==  
   		   		currentScreen.getResourceHistory( startId ).getResourceBeforeVersion( (targetVersion - 1) ).getX() ,
   				"This returned resource has the same X position from the first version");
+  				
+  			ok( actionController.undo( ) != null, "Undoing the version remotion" );
+  			
+  			ok( currentScreen.getResourceHistory( startId ).getHistoryLength() == 3,
+  				"Now this button has 3 different versions again" );
+  			ok( currentScreen.getResourceHistory( startId ).getResourceBeforeVersion( 2*targetVersion + 1 ).getVersion() == 2*targetVersion,
+  		  		"Trying to get a time slot from the version " +( 2*targetVersion + 1 )+ 
+  		  		" returns the time slot from version " + ( 2*targetVersion) );	
+		   	ok( currentScreen.getResourceHistory( startId ).getResourceFromVersion( 2*targetVersion ).getX() ==  newX ,
+  				"The recovered version " + (2*targetVersion) + " has a different X position " +newX+ " like before");
+  				
+  		  	ok( actionController.undo( ) != null, "Redoing the version remotion" );
+			ok( currentScreen.getResourceHistory( startId ).getHistoryLength() == 2,
+  				"Now this button has 2 different versions" );
+  		  	ok( currentScreen.getResourceHistory( startId ).getResourceBeforeVersion( 2*targetVersion + 1 ).getVersion() == targetVersion,
+  		  		"Now trying to get a time slot from the version " +( 2*targetVersion + 1 )+ 
+  		  		" returns the time slot from version " + ( targetVersion) );	
+  		}
+  	);
+  	
+  	test(
+  		"Delete Resource Version test", function()
+  		{
+			var sketchName = "test";
+			var sketchAuthor = "tester";
+			var sketchObj = new Sketch( sketchName, sketchAuthor );
+			var currentScreen = sketchObj.getCurrentScreen();
+			var targetVersion = 5;
+			var startId = 0;
+			var newX = 100;
+			var startX = 0;
+			
+			globalMediators.start();
+			var actionController = new ActionController();
+			
+			var command = new CreateResourceCommand( 
+					basicCommandsGlobals.executionTypeEnum.CMEX_EDITION, 
+					resourceTypeEnum.IR_BUTTON, sketchObj );
+					
+			ok( currentScreen.getResources().length == 0, "There are no elements on the current screen");	
+			ok( actionController.undo() == null , "Nothing to be undone");
+  			ok( actionController.redo() == null , "Nothing to be redone");
+  			
+  			ok( actionController.doCommand( command ) == true, "Creating a button");
+  			
+  			command = new CloneResourceVersionCommand( 	basicCommandsGlobals.executionTypeEnum.CMEX_EDITION, 
+  				startId, sketchObj.getActiveVersionNumber(), targetVersion, sketchObj );
+  				
+  			ok( actionController.doCommand( command ) == true, "Cloning version, from " +
+  			 	sketchObj.getActiveVersionNumber()+ " to " + targetVersion );
+  			 	
+  			command = new CloneResourceVersionCommand( 	basicCommandsGlobals.executionTypeEnum.CMEX_EDITION, 
+  				startId, sketchObj.getActiveVersionNumber(), 2*targetVersion, sketchObj );
+  				
+  			ok( actionController.doCommand( command ) == true, "Cloning version, from " +
+  			 	sketchObj.getActiveVersionNumber()+ " to " + 2*targetVersion );
+  			 	
+  			ok( currentScreen.getResourceHistory( startId ).getHistoryLength() == 3,
+  				"Now this button has 3 different versions" );
+  				
+  		  	currentScreen.getResourceHistory( startId ).getResourceFromVersion( 2*targetVersion ).setX( newX );
+  		   	ok( currentScreen.getResourceHistory( startId ).getResourceFromVersion( 2*targetVersion ).getX() ==  newX ,
+  				"Changing the X position of the version " + (2*targetVersion) + " to make it different from the first version");
+  				
+  			command = new DeleteResourceVersionCommand( basicCommandsGlobals.executionTypeEnum.CMEX_EDITION,
+  				 startId, targetVersion, sketchObj );
+  				 
+  			ok( actionController.doCommand( command ) == true, 
+  				"Deleting the resource version " + targetVersion );
+  				 
+  			
+  				
   		}
   	);
   	
