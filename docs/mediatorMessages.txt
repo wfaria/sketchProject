@@ -124,6 +124,30 @@ onUploadProject = function(){}
  */
 onProjectUploaded = function( JSONString ){}
 
+/**
+ * EventKey: ResourceDeleteTagChanged
+ * Sent when some resource have its delete tag changed, this tag can be true or false.
+ *
+ * @param {InterfaceResource} interfaceResource - The interface resource from the version where the deleted tag has been changed
+ */
+onResourceDeleteTagChanged = function( interfaceResource ){}
+
+/**
+ * EventKey: ResourceVersionAdded
+ * Sent when some resource have a version added
+ *
+ * @param {InterfaceResource} resourceTimeSlotObj - The added element in the resouce's history object.
+ */
+onResourceVersionAdded = function( resourceTimeSlotObj ){}
+
+/**
+ * EventKey: ResourceVersionRemoved
+ * Sent when some resource have a version removed
+ *
+ * @param {InterfaceResource} removedResource - The removed element from the resouce's history object.
+ */
+onResourceVersionRemoved = function( removedResource ){}
+
 
  /**
  * EventKey: ResourceSelected
@@ -132,6 +156,15 @@ onProjectUploaded = function( JSONString ){}
  * @param {Array} resourceArray - An array with the selected elements
  */
 onResourceSelected = function( resourceArray ){}
+
+/**
+ * EventKey: ResourceVersionCloned
+ * Sent when some resource have a version cloned
+ *
+ * @param {InterfaceResource} clonedObj - The clone object from the new version.
+ * @param {int} baseVersion - A number indicating the base version from the clone.
+ */
+onResourceVersionCloned = function( clonedObj, baseVersion ){}
 
  /**
  * EventKey: ResourceSelectCanceled

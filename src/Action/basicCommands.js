@@ -691,7 +691,7 @@ RemoveResourceVersionCommand.prototype.execute = function( commandObject )
 		var removedResource = resourceHistory.removeVersion( versionNum );
 		if(  removedResource != null )
 		{
-			globalMediators.internalMediator.publish( "ResourceVersionRemoved", [ removedResource, versionNum ] );
+			globalMediators.internalMediator.publish( "ResourceVersionRemoved", [ removedResource ] );
 			return actionGlobals.COMMAND_OK;
 		}
 		else
@@ -770,7 +770,7 @@ AddResourceTimeSlotCommand.prototype.execute = function( commandObject )
 	{
 		// This function will overwrite any object with the same version
 		resourceHistory.addVersion( resourceTimeSlotObj );
-		globalMediators.internalMediator.publish( "ResourceVersionAdded", [ resourceTimeSlotObj, resourceTimeSlotObj.getVersion() ] );
+		globalMediators.internalMediator.publish( "ResourceVersionAdded", [ resourceTimeSlotObj ] );
 		return actionGlobals.COMMAND_OK;
 	}
 	else
@@ -833,7 +833,7 @@ DeleteResourceVersionCommand.prototype.execute = function( commandObject )
 		var deletedResource = resourceHistory.changeDeletedFlag( versionNum );
 		if( deletedResource != null )
 		{
-			globalMediators.internalMediator.publish( "ResourceVersionRemoved", [ deletedResource, versionNum ] );
+			globalMediators.internalMediator.publish( "ResourceDeleteTagChanged", [ deletedResource ] );
 			return actionGlobals.COMMAND_OK;
 		}
 		else
