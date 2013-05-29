@@ -13,6 +13,10 @@ DOMglobals.FONTSTYLE_TEXT_ID = "font size";
 DOMglobals.SIDE_SECTION_CLASS = "sideMenuSection";
 DOMglobals.SECTION_PART_CLASS = "sectionPart";
 
+DOMglobals.DELETE_VERSION_ID = "del_version_btn";
+
+DOMglobals.MEDIA_PATH = "../media/img/";
+
 function $( idStr )
 {
 	return document.getElementById( idStr );
@@ -182,8 +186,18 @@ htmlGen.createSelectInput = function( labelStr, idStr, optionStrArray, onChangeE
 	return retStr;
 }
 
+htmlGen.createSmallButton = function( idStr, onClickEventFunctionName ) 
+{
+	var retStr = '<a class="sectionSmallButton" id="'+idStr+
+		'" onclick = "'+onClickEventFunctionName+'(sideMenu.singleResource)" > <img src="'+DOMglobals.MEDIA_PATH+idStr+
+		'.jpg" alt="'+idStr+'"/> </a>';
+	return retStr;
+}
+
 /** Side menu functions **/
 var sideMenu = {};
+sideMenu.singleResource = null; // This one is setted when a single element is selected
+sideMenu.multipleResources = {};
 
 sideMenu.containsId = function( idStr )
 {
@@ -238,6 +252,9 @@ sideMenu.createSectionPart = function ( divId )
 sideMenu.createResourceBasicSection = function( interfaceResource )
 {
 	sideMenu.removeSideMenuSection( DOMglobals.BASIC_RESOURCE_ID );
+	
+	sideMenu.singleResource = interfaceResource;
+	
 	var newSideSection = sideMenu.createSideMenuSection ( DOMglobals.BASIC_RESOURCE_ID );
 	var newSectionPart = sideMenu.createSectionPart( "namePart" );
 	var a = 1111;
@@ -282,6 +299,14 @@ sideMenu.createResourceBasicSection = function( interfaceResource )
 			" this.options[this.selectedIndex].value , "+
 			" parseInt( ir.getExtraAttribute( iResGlobals.defaultKeys.FONT_X_PADDING_KEY, 10 ) ), "+
 			" parseInt( ir.getExtraAttribute( iResGlobals.defaultKeys.FONT_Y_PADDING_KEY, 10 ) ) ] ) ") ;
+		
+		/* time manipulation buttons */	
+		newSectionPart.innerHTML +=	htmlGen.createSectionLine();
+		newSectionPart.innerHTML +=	 htmlGen.createSmallButton(	DOMglobals.DELETE_VERSION_ID, 
+			"sideMenu.deleteVersionAction" );
+			
+		alert( htmlGen.createSmallButton(	DOMglobals.DELETE_VERSION_ID, 
+			"sideMenu.deleteVersionAction" ) ); 
 	}());
 	newSideSection.appendChild(newSectionPart);
 }
@@ -296,4 +321,11 @@ sideMenu.updateValue = function( valueID, updatedValue )
 sideMenu.removeResourceBasicSection = function()
 {
 	sideMenu.removeSideMenuSection( DOMglobals.BASIC_RESOURCE_ID );
+	sideMenu.singleResource = null;
 } 
+
+
+sideMenu.deleteVersionAction = function( interfaceResource )
+{
+	globalMediators.internalMediator.publish( "DeleteResourceVersion", [ interfaceResource ] );
+}

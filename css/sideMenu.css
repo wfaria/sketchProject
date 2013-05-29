@@ -11,3 +11,9 @@
 .sectionLine{
 	background-color: #669969;
 }
+
+.sectionSmallButton{
+	background-color: #6B9909;	
+	height: 40px;
+	width: 40px;	
+}

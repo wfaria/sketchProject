@@ -69,6 +69,14 @@ onMoveInterfaceResource = function( interfaceResource, toX, toY ){}
  */
 
  /**
+ * EventKey: DeleteResourceVersion
+ * Order to turn on the deleted tag from one resource version
+ *
+ * @param {InterfaceResource} interfaceResource - The object that contains the data from an interface resource.
+ */
+onDeleteResourceVersion = function( interfaceResource ){}
+
+ /**
  * EventKey: RenameElement
  * Order to rename an element
  *

@@ -32,6 +32,10 @@ GeneralManager.prototype.subscribeToMediators = function()
   					{
   						//TODO: kill the graphic canvas and free the manager object
   					},
+  					onDeleteResourceVersion: function( interfaceResource )
+  					{
+  						alert("yeah");
+  					},
   					onUploadProject: function()
   					{
 						var innerHTMLText = '<h2>Open Sketch Project<\/h2>\n<input type=\"file\" id=\"files\" name=\"files[]\" multiple onchange=\"DataHandler.handleFileSelect(event)\" \/>';
