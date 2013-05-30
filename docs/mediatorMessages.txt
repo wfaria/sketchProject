@@ -69,6 +69,14 @@ onMoveInterfaceResource = function( interfaceResource, toX, toY ){}
  */
 
  /**
+ * EventKey: ResourceHistoryDeleted
+ * Sent when an entire resource history is deleted
+ *
+ * @param {InterfaceResource} interfaceResourceHistory - The object that contains the data from an interface resource history.
+ */
+onResourceHistoryDeleted = function( interfaceResourceHistory ){}
+
+ /**
  * EventKey: DeleteResourceVersion
  * Order to turn on the deleted tag from one resource version
  *

@@ -2,7 +2,8 @@ var EventManagerGlobals = {};
 
 function EventManager( baseObject )
 {
-	this.id = 0;
+	this.id = -1;
+	this.version = -1;
 	this.base = baseObject;
 	this.funcArray = new Array();
 }
@@ -27,6 +28,11 @@ EventManager.prototype.getBaseObject = function( )
 EventManager.prototype.getId = function( )
 {
 	return this.id;
+} 
+
+EventManager.prototype.getVersion = function( )
+{
+	return this.version;
 } 
 
 /*******************************************************/
@@ -164,6 +170,7 @@ function GenericKineticEventManager( baseObj )
 	this.addFunction( "mouseover", mouseOver );
 	this.addFunction( "mouseout", mouseOut );
 	this.id = baseObj.interfaceResource.getId();
+	this.version = baseObj.interfaceResource.getVersion();
 	bindGenericEventManager( baseObj.kineticShape, this );
 }
 

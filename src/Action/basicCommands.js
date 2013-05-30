@@ -292,7 +292,7 @@ DeleteResourceCommand.prototype.execute = function( commandObject )
 	
 	if( deletedResource != null )
 	{
-		globalMediators.internalMediator.publish( "InterfaceResourceDeleted", [ deletedResource ] );
+		globalMediators.internalMediator.publish( "ResourceHistoryDeleted", [ deletedResource ] );
 	}
 	else
 	{

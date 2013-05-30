@@ -83,10 +83,31 @@ GraphicController.prototype.renderScreen = function ( sketchObject )
 	for ( i = 0;  i < length; i++ )
 	{
 		interfaceResource = resources[i].getResourceBeforeVersion( activeVersion );
-		this.addInterfaceResource( interfaceResource );
+		if( interfaceResource.getDeleted() == false )
+		{
+			this.addInterfaceResource( interfaceResource );
+		}
 	}
 }
 
+// This function should be used for events that can manipulate resources in different points of time
+// It checks if a resource is already rendered on the canvas
+GraphicController.prototype.existEventManagerFor = function( interfaceResource )
+{
+	var id = interfaceResource.getId();
+	var version = interfaceResource.getVersion();
+	var length = this.eventManagers.length;
+	var i;
+	
+	for ( i = 0;  i < length; i ++ )
+	{
+		if( this.eventManagers[i].getId() == id && this.eventManagers[i].getVersion() == version )
+		{
+			return true;
+		}
+	}
+	return false;
+}
 
 GraphicController.prototype.addInterfaceResource = function ( interfaceRes )
 {
@@ -428,11 +449,30 @@ GraphicController.prototype.onInterfaceResourceCreated = function( interfaceReso
 	this.addInterfaceResource( interfaceResource );
 }
 
-GraphicController.prototype.onInterfaceResourceDeleted = function( interfaceResource )
+GraphicController.prototype.onResourceHistoryDeleted = function( interfaceResourceHistory )
 {
-	if( this.deleteInterfaceResource( interfaceResource ) == null )
+	if( interfaceResourceHistory.getResources().length > 0 )
+	this.deleteInterfaceResource( interfaceResourceHistory.getResources()[0] ) ;
+}
+
+GraphicController.prototype.onResourceDeleteTagChanged = function( interfaceResource )
+{
+	if( interfaceResource.getDeleted() == true ) 
 	{
-		console.error( "Trying to delete an unexistent element on the graphic canvas." );
+		if( this.existEventManagerFor(interfaceResource) )
+		{
+			if( this.deleteInterfaceResource( interfaceResource ) == null )
+			{
+				/*this is not an error anymore, in the future you may be able to delete resource from the
+				 * past or future version without being the edition that you are editing
+				 */
+				console.alert( "Alert: Trying to delete an unexistent element on the graphic canvas." );
+			}
+		}
+	}
+	else
+	{
+		this.addInterfaceResource( interfaceResource );	
 	}
 }
 

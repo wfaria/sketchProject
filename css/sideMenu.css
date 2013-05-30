@@ -12,8 +12,18 @@
 	background-color: #669969;
 }
 
+
 .sectionSmallButton{
-	background-color: #6B9909;	
-	height: 40px;
-	width: 40px;	
+	background-color: #6A9999;	
+  	outline: none;
+  	display:inline-block;
+  	border: 1px solid #FFFFFF;
+}
+
+.sectionSmallButton:active{
+	background-color: #AB9909;	
+	background-position: left -38px;
+	border: 1px solid #ddd;
+	height: 32px;
+	width: 32px;	
 }

@@ -34,7 +34,18 @@ GeneralManager.prototype.subscribeToMediators = function()
   					},
   					onDeleteResourceVersion: function( interfaceResource )
   					{
-  						alert("yeah");
+	  					var commands = new Array();
+						commands.push ( new CancelSelectResourceCommand( basicCommandsGlobals.executionTypeEnum.CMEX_EDITION, 
+							[interfaceResource], false, generalGlobals.manager.selectionManager ) );
+	  					commands.push( 
+	  						new DeleteResourceVersionCommand( basicCommandsGlobals.executionTypeEnum.CMEX_EDITION,
+	  				 			interfaceResource.getId(), interfaceResource.getVersion(), 
+	  				 			generalGlobals.manager.sketchProject ) 
+	  				 			);
+		 				
+					var groupCommand = new CommandGroup( basicCommandsGlobals.executionTypeEnum.CMEX_EDITION, 
+							commands, "Changing deleted flag and removing selection", null );
+					generalGlobals.manager.actionController.doCommand( groupCommand );
   					},
   					onUploadProject: function()
   					{

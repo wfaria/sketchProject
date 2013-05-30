@@ -190,7 +190,7 @@ htmlGen.createSmallButton = function( idStr, onClickEventFunctionName )
 {
 	var retStr = '<a class="sectionSmallButton" id="'+idStr+
 		'" onclick = "'+onClickEventFunctionName+'(sideMenu.singleResource)" > <img src="'+DOMglobals.MEDIA_PATH+idStr+
-		'.jpg" alt="'+idStr+'"/> </a>';
+		'.png" alt="'+idStr+'"/> </a>';
 	return retStr;
 }
 
@@ -304,9 +304,6 @@ sideMenu.createResourceBasicSection = function( interfaceResource )
 		newSectionPart.innerHTML +=	htmlGen.createSectionLine();
 		newSectionPart.innerHTML +=	 htmlGen.createSmallButton(	DOMglobals.DELETE_VERSION_ID, 
 			"sideMenu.deleteVersionAction" );
-			
-		alert( htmlGen.createSmallButton(	DOMglobals.DELETE_VERSION_ID, 
-			"sideMenu.deleteVersionAction" ) ); 
 	}());
 	newSideSection.appendChild(newSectionPart);
 }
