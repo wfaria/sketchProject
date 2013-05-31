@@ -14,6 +14,21 @@ function GeneralManager()
 
 GeneralManager.prototype.constructor = GeneralManager;
 
+GeneralManager.prototype.createCancelSelectionCommand = function()
+{
+	var removedSelection = [];
+	var selection = generalGlobals.manager.selectionManager.getSelectedElements();
+	for( var i = 0 ; i < selection.length; i++ )
+	{
+		removedSelection[i] = selection[i];
+	}
+	if( removedSelection.length == 0)
+		return null;
+	else
+		return new CancelSelectResourceCommand( basicCommandsGlobals.executionTypeEnum.CMEX_EDITION, 
+		removedSelection, false, generalGlobals.manager.selectionManager );
+}
+
 GeneralManager.prototype.subscribeToMediators = function()
 {
 	generalGlobals.manager.graphicController.subscribeToMediators();
@@ -24,6 +39,26 @@ GeneralManager.prototype.subscribeToMediators = function()
   			{	
   				return	{ // The real object (mediator component) with callback functions
 
+					onChangeActiveVersion: function( versionNumber )
+					{
+						var unselectCommand = generalGlobals.manager.createCancelSelectionCommand();
+						var changeVersionCommand = new ChangeActiveVersionCommand( 
+							basicCommandsGlobals.executionTypeEnum.CMEX_EDITION, versionNumber, 
+							generalGlobals.manager.sketchProject );
+						if( unselectCommand == null )
+						{
+							generalGlobals.manager.actionController.doCommand( changeVersionCommand );
+						}
+						else
+						{
+							var commands = new Array();
+							commands.push( unselectCommand );
+							commands.push( changeVersionCommand );
+							var groupCommand = new CommandGroup( basicCommandsGlobals.executionTypeEnum.CMEX_EDITION, 
+								commands, "Changing project version and removing selection", null );
+							generalGlobals.manager.actionController.doCommand( groupCommand );
+						}
+					},
   					onProjectCreated: function( projectName, authorName, sketchProject )
   					{
   						//TODO: kill the graphic canvas and free the manager object
@@ -43,9 +78,9 @@ GeneralManager.prototype.subscribeToMediators = function()
 	  				 			generalGlobals.manager.sketchProject ) 
 	  				 			);
 		 				
-					var groupCommand = new CommandGroup( basicCommandsGlobals.executionTypeEnum.CMEX_EDITION, 
-							commands, "Changing deleted flag and removing selection", null );
-					generalGlobals.manager.actionController.doCommand( groupCommand );
+						var groupCommand = new CommandGroup( basicCommandsGlobals.executionTypeEnum.CMEX_EDITION, 
+								commands, "Changing deleted flag and removing selection", null );
+						generalGlobals.manager.actionController.doCommand( groupCommand );
   					},
   					onUploadProject: function()
   					{

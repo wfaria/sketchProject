@@ -16,6 +16,7 @@ DOMglobals.SECTION_PART_CLASS = "sectionPart";
 DOMglobals.DELETE_VERSION_ID = "del_version_btn";
 
 DOMglobals.PROJECT_SECTION_ID = "project_section";
+DOMglobals.PROJECT_VERSION_ID = "project_version_btn";
 
 DOMglobals.MEDIA_PATH = "../media/img/";
 
@@ -114,9 +115,10 @@ htmlGen.createSectionLine = function()
 	return '<hr class = "sectionLine">';
 }
 
-htmlGen.createTextButton = function( idStr, labelStr, onClickEventStr )
+htmlGen.createTextButton = function( idStr, labelStr, valueStr, onClickEventStr )
 {
-	return '<a class="sectionTextButton" id ="'+idStr+'" onclick="'+onClickEventStr+'"> '+labelStr+'</a>';
+	return '<a class="sectionTextButton" id ="'+idStr+'container" onclick="'+onClickEventStr+
+		'"> '+labelStr+' <input type="text" id ="'+idStr+'" value="'+valueStr+'" disabled="disabled"/></a>';
 }
 
 /**
@@ -134,7 +136,7 @@ htmlGen.createTextInputString = function( labelStr, idStr, sizeNum, initialValue
 {
 	return labelStr + ': <input type=\"text\"  id = \"'+idStr+
 		'\" size =\"'+sizeNum+'\" value="' + initialValue +
-		'" onkeyup=\"'+onKeyUpEventStr+'\" > <br\>';
+		'" onkeyup=\"'+onKeyUpEventStr+'\" /> <br\>';
 }
 
 /**
@@ -261,11 +263,11 @@ sideMenu.createProjectSection = function( sketchObj )
 	var projectSectionDOM = sideMenu.createSideMenuSection( DOMglobals.PROJECT_SECTION_ID );
 	var projectSectionPartDom = sideMenu.createSectionPart( "project_info" );
 	
-	projectSectionPartDom.innerHTML += htmlGen.createTextButton( "aaa", "Project Name: " + sideMenu.currentSketchProject.getName(), 
+	projectSectionPartDom.innerHTML += htmlGen.createTextButton( "aaa", "Project Name:", sideMenu.currentSketchProject.getName(), 
 		"alert('aaaaa')" );
-	projectSectionPartDom.innerHTML += htmlGen.createTextButton( "bbb", "Version: " + sideMenu.currentSketchProject.getActiveVersionNumber(),
+	projectSectionPartDom.innerHTML += htmlGen.createTextButton( DOMglobals.PROJECT_VERSION_ID, "Version:", sideMenu.currentSketchProject.getActiveVersionNumber(),
 		 "sideMenu.changeVersionAction( sideMenu.currentSketchProject )" );
-	projectSectionPartDom.innerHTML += htmlGen.createTextButton( "ccc", "Screen: " + sideMenu.currentSketchProject.getCurrentScreenName(),
+	projectSectionPartDom.innerHTML += htmlGen.createTextButton( "ccc", "Screen:", sideMenu.currentSketchProject.getCurrentScreenName(),
 		 "alert('aaaaa')" );
 
 	projectSectionDOM.appendChild(projectSectionPartDom);
@@ -369,7 +371,7 @@ sideMenu.changeVersionAction = function( sketchObj )
 			}
 			else
 			{
-				alert( "Version changed" );
+				globalMediators.internalMediator.publish( "ChangeActiveVersion", [ num ] );
 				return;
 			}
 		}

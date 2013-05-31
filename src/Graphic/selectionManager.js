@@ -92,6 +92,12 @@ SelectionManager.prototype.onResourceSelectCanceled = function( resourceArray )
 
 /******** Internal Mediator functions **********/
 
+SelectionManager.prototype.onActiveVersionChanged = function( oldVersionNumber, sketchProject )
+{
+	var versionNumber = sketchProject.getActiveVersionNumber();
+	sideMenu.updateValue( DOMglobals.PROJECT_VERSION_ID,  versionNumber );
+}
+
 SelectionManager.prototype.onProjectCreated = function( projectName, authorName, sketchProject )
 {
 	sideMenu.removeResourceBasicSection();

@@ -4,7 +4,8 @@ basicCommandsGlobals.commandTypeEnum = { CMD_UNDEFINED: -1, CMD_DRAG: 0,
 	CMD_KINETIC_DRAG: 1, CMD_RENAME_RES: 2, CMD_SELECT_RES: 3, CMD_CANC_SELECT_RES: 4,
 	CMD_CREATE_RES: 5, CMD_DELETE_RES: 6, CMD_RESTORE_RES: 7, CMD_GROUP_EXEC: 8,
 	CMD_RESIZE_RES: 9, CMD_FORMAT_RES: 10, CMD_CLONE_VERSION: 11, 
-	CMD_REMOVE_VERSION: 12, CMD_ADD_VERSION: 13, CMD_DELETE_VERSION: 14 };
+	CMD_REMOVE_VERSION: 12, CMD_ADD_VERSION: 13, CMD_DELETE_VERSION: 14,
+	CMD_CHANGE_ACTIVE_VERSION: 15 };
 basicCommandsGlobals.executionTypeEnum = { CMEX_UNDEFINED: -1, CMEX_EDITION: 0, CMEX_SIMULATION: 1 };
 
 function Command()
@@ -862,6 +863,50 @@ DeleteResourceVersionCommand.prototype.undo = function( commandObject )
 
 
 /* test */
+
+//TODO: It needs unitary tests
+function ChangeActiveVersionCommand( executionMode, versionNumber, sketchObj )
+{
+	Command.call(this);
+	this.commandCode = basicCommandsGlobals.commandTypeEnum.CMD_CHANGE_ACTIVE_VERSION;
+	this.executionMode = executionMode;
+	this.setArgs(
+		{
+			versionNum: versionNumber,
+			sketchObject: sketchObj
+		}
+	);
+}
+ChangeActiveVersionCommand.prototype = new Command;
+ChangeActiveVersionCommand.prototype.constructor = ChangeActiveVersionCommand;
+
+ChangeActiveVersionCommand.prototype.toString = function()
+{
+	var versionNumber = this.argObject.versionNum;
+	var sketchProject = this.argObject.newResourceCode;
+	return 		"Change project's active version " + Command.prototype.toString.call( this ) + "\n" +
+		"Parameters: New version number " +  versionNumber +"\n" +
+		"sketch project: " + sketchProject ;
+}
+
+ChangeActiveVersionCommand.prototype.execute = function( commandObject )
+{
+	var versionNumber = this.argObject.versionNum;
+	var sketchProject = this.argObject.sketchObject;
+	var oldVersionNumber = sketchProject.getActiveVersionNumber;
+	sketchProject.setActiveVersionNumber( versionNumber );
+	globalMediators.internalMediator.publish( "ActiveVersionChanged", [ oldVersionNumber, sketchProject ] );
+	return actionGlobals.COMMAND_OK;
+}
+
+ChangeActiveVersionCommand.prototype.undo = function( commandObject )
+{
+	var sketchProject = this.argObject.sketchObject;
+	var versionNumber = sketchProject.getActiveVersionNumber()
+	return new ChangeActiveVersionCommand( 
+		basicCommandsGlobals.executionTypeEnum.CMEX_EDITION, versionNumber, sketchProject );
+}
+
 		
 /****** command factory test *********/
 DragResourceCommand.prototype.execute = function( commandObject )

@@ -253,6 +253,11 @@ function Sketch( name, author )
 	 */
 }
 
+Sketch.prototype.setActiveVersionNumber = function( number )
+{
+	this.activeVersion = number;
+}
+
 Sketch.prototype.getActiveVersionNumber = function()
 {
 	return this.activeVersion;

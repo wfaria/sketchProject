@@ -10,6 +10,7 @@ graphicControllerGlobals.styleChangers = {};
 graphicControllerGlobals.defaultNames = {};
 graphicControllerGlobals.defaultNames.NAME = "_NAME";
 graphicControllerGlobals.defaultNames.MAIN_SHAPE = "_MAIN_ELEMENT";
+graphicControllerGlobals.defaultNames.NOT_RESIZE = "_NO_RZ";
 
 
 /**
@@ -69,6 +70,7 @@ GraphicController.prototype.subscribeToMediators = function ( )
 GraphicController.prototype.renderScreen = function ( sketchObject )
 {
 	this.stage.clear();
+	this.stage.removeChildren();
 	this.stage.draw();
 
 	this.initializeVariables();
@@ -83,7 +85,7 @@ GraphicController.prototype.renderScreen = function ( sketchObject )
 	for ( i = 0;  i < length; i++ )
 	{
 		interfaceResource = resources[i].getResourceBeforeVersion( activeVersion );
-		if( interfaceResource.getDeleted() == false )
+		if( interfaceResource != null && interfaceResource.getDeleted() == false )
 		{
 			this.addInterfaceResource( interfaceResource );
 		}
@@ -225,6 +227,44 @@ GraphicController.prototype.createGraphicObject = function ( interfaceResource )
 	return kineticShape;
 }
 
+GraphicController.prototype.createKineticVersionTag = function( interfaceResource )
+{
+	var kineticGroup = new Kinetic.Group(  { 
+	x:0, y:0, 
+	draggable:false, dragOnTop: false,
+	name: graphicControllerGlobals.defaultNames.NOT_RESIZE,
+	id:interfaceResource.getId()+"version_Tag"});
+	
+	var backRect = new Kinetic.Rect({
+	  fill: "#FFCC99",
+	  stroke: "#330000",
+	  name: graphicControllerGlobals.defaultNames.NOT_RESIZE,
+	  strokeWidth: 1,
+	  draggable: false,
+	  dragOnTop: false,
+	  width: 16, height: 16
+	});
+	
+	var simpleText = new Kinetic.Text({
+	    x: 0,
+	    y: 0,
+	    text: 'V'+interfaceResource.getVersion(),
+	   	name: graphicControllerGlobals.defaultNames.NOT_RESIZE,
+		fontSize: 12,
+		fontFamily: 'Calibri',
+		fill: 'black'
+	});
+	kineticGroup.add(backRect);
+	kineticGroup.add(simpleText);
+	return kineticGroup;
+}
+
+GraphicController.prototype.containsNameElement = function( kineticObject, strToCheck )
+{
+	var name = kineticObject.getName();
+	return ( name.indexOf( strToCheck ) != -1 );
+}
+
 GraphicController.prototype.resizeKineticObject = function( kineticObject, newX, newY, newWidth, newHeight ) 
 {
 	var mainElementArray = this.getKineticChildrenByName( kineticObject,
@@ -249,7 +289,8 @@ GraphicController.prototype.resizeKineticObject = function( kineticObject, newX,
 			// Scaling the distance between the parent and its children
 			elementArray[i].setX( resizeXFactor*( elementArray[i].getX() ) );
 			elementArray[i].setY( resizeYFactor*( elementArray[i].getY() ) );
-			if( elementArray[i].getName() != ( graphicControllerGlobals.defaultNames.NAME ) )
+			if( elementArray[i].getName() != ( graphicControllerGlobals.defaultNames.NAME ) 
+				&& !this.containsNameElement( elementArray[i], graphicControllerGlobals.defaultNames.NOT_RESIZE ) )
 				elementArray[i].setSize( resizeXFactor*elementArray[i].getWidth(), resizeYFactor*elementArray[i].getHeight() );
 		}
 	}
@@ -341,6 +382,7 @@ GraphicController.prototype.defaultKineticFactory = function( interfaceResource 
 			break;
 		}
 	} // END switch( interfaceResource.getResourceType() )
+	kineticRet.add( this.createKineticVersionTag( interfaceResource ) );
 	return kineticRet;
 }
 
@@ -424,6 +466,11 @@ AndroidStyleChanger.prototype.modifyButton = function ( kineticShape )
 
 /******** Internal Mediator functions **********/
 GraphicController.prototype.onProjectCreated = function( projectName, authorName, sketchProject )
+{
+	this.renderScreen( sketchProject );
+}
+
+GraphicController.prototype.onActiveVersionChanged = function( oldVersionNumber, sketchProject )
 {
 	this.renderScreen( sketchProject );
 }

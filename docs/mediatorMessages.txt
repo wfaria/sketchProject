@@ -10,6 +10,24 @@ event comments ends with a past verb, they should ALWAYS be sent when the event 
 ***/
 
 /****** Internal messages ********/
+/**
+ * EventKey: ActiveVersionChanged
+ * Sent when a project has its active version number changed
+ *
+ * @param {int} oldVersionNumber - Project's last version
+ * @param {Sketch} sketchProject - Project's object with the version changed
+ */
+onActiveVersionChanged = function( oldVersionNumber, sketchProject ){}
+
+
+/**
+ * EventKey: ChangeActiveVersion
+ * Order to change a project's active version number
+ *
+ * @param {int} versionNumber - Project's new active version
+ */
+onChangeActiveVersion = function( versionNumber ){}
+
 
 /**
  * EventKey: FormatInterfaceResource
