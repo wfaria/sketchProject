@@ -9,9 +9,14 @@
 }
 
 .sectionLine{
-	background-color: #669969;
+	background-color: #FFFFFF;
 }
 
+.sectionTextButton{
+	background-color: #6699CC;
+	display:block;
+	border: 1px solid #FFFFFF;
+}
 
 .sectionSmallButton{
 	background-color: #6A9999;	

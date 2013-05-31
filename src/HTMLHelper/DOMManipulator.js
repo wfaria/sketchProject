@@ -15,6 +15,8 @@ DOMglobals.SECTION_PART_CLASS = "sectionPart";
 
 DOMglobals.DELETE_VERSION_ID = "del_version_btn";
 
+DOMglobals.PROJECT_SECTION_ID = "project_section";
+
 DOMglobals.MEDIA_PATH = "../media/img/";
 
 function $( idStr )
@@ -112,6 +114,11 @@ htmlGen.createSectionLine = function()
 	return '<hr class = "sectionLine">';
 }
 
+htmlGen.createTextButton = function( idStr, labelStr, onClickEventStr )
+{
+	return '<a class="sectionTextButton" id ="'+idStr+'" onclick="'+onClickEventStr+'"> '+labelStr+'</a>';
+}
+
 /**
  * Creates a string that represents a text input.
  *
@@ -197,6 +204,7 @@ htmlGen.createSmallButton = function( idStr, onClickEventFunctionName )
 /** Side menu functions **/
 var sideMenu = {};
 sideMenu.singleResource = null; // This one is setted when a single element is selected
+sideMenu.currentSketchProject = null;
 sideMenu.multipleResources = {};
 
 sideMenu.containsId = function( idStr )
@@ -246,9 +254,23 @@ sideMenu.createSectionPart = function ( divId )
 	return newPartDom;
 }
 
+sideMenu.createProjectSection = function( sketchObj )
+{
+	sideMenu.removeSideMenuSection( DOMglobals.PROJECT_SECTION_ID );
+	sideMenu.currentSketchProject = sketchObj;
+	var projectSectionDOM = sideMenu.createSideMenuSection( DOMglobals.PROJECT_SECTION_ID );
+	var projectSectionPartDom = sideMenu.createSectionPart( "project_info" );
+	
+	projectSectionPartDom.innerHTML += htmlGen.createTextButton( "aaa", "Project Name: " + sideMenu.currentSketchProject.getName(), 
+		"alert('aaaaa')" );
+	projectSectionPartDom.innerHTML += htmlGen.createTextButton( "bbb", "Version: " + sideMenu.currentSketchProject.getActiveVersionNumber(),
+		 "sideMenu.changeVersionAction( sideMenu.currentSketchProject )" );
+	projectSectionPartDom.innerHTML += htmlGen.createTextButton( "ccc", "Screen: " + sideMenu.currentSketchProject.getCurrentScreenName(),
+		 "alert('aaaaa')" );
 
-// TODO: Create a way to associate a sideMenu with an interface resource
-// Maybe associate the section with one ID
+	projectSectionDOM.appendChild(projectSectionPartDom);
+}
+
 sideMenu.createResourceBasicSection = function( interfaceResource )
 {
 	sideMenu.removeSideMenuSection( DOMglobals.BASIC_RESOURCE_ID );
@@ -321,8 +343,36 @@ sideMenu.removeResourceBasicSection = function()
 	sideMenu.singleResource = null;
 } 
 
+/* Function to react some events */
 
 sideMenu.deleteVersionAction = function( interfaceResource )
 {
 	globalMediators.internalMediator.publish( "DeleteResourceVersion", [ interfaceResource ] );
+}
+
+sideMenu.changeVersionAction = function( sketchObj )
+{
+	var numToCheck = prompt("Enter the version number where you want to go:", "Insert a number here");
+	if(numToCheck == null)
+	{
+		return
+	}
+	else if( /^\d+$/.test( numToCheck ) )
+	{
+		var num = parseInt( numToCheck, 10 );
+		if( !isNaN(num) && num >= 0 )
+		{
+			if( num == sketchObj.getActiveVersionNumber() )
+			{
+				alert( "You are already on this version" );
+				return;
+			}
+			else
+			{
+				alert( "Version changed" );
+				return;
+			}
+		}
+	}
+	alert("Please enter a valid number");
 }

@@ -62,6 +62,15 @@ onInterfaceResourceMoved = function( interfaceResource, oldX, oldY ){}
  */
 onMoveInterfaceResource = function( interfaceResource, toX, toY ){}
  
+ 
+ /**
+ * EventKey: ChangeActiveVersion
+ * Order to change project's active version, the version that is in edition on the graphic canvas
+ *
+ * @param {int} toVersion - The new active version from the project
+ */
+onChangeActiveVersion = function( toVersion ){}
+ 
  /**
  * EventKey: CreateButton
  * Order to create a button

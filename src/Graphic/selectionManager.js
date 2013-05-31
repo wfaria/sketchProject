@@ -95,6 +95,7 @@ SelectionManager.prototype.onResourceSelectCanceled = function( resourceArray )
 SelectionManager.prototype.onProjectCreated = function( projectName, authorName, sketchProject )
 {
 	sideMenu.removeResourceBasicSection();
+	sideMenu.createProjectSection( sketchProject );
 }
 
 SelectionManager.prototype.onInterfaceResourceMoved = function( interfaceResource, oldX, oldY )

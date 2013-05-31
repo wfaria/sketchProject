@@ -314,6 +314,11 @@ Sketch.prototype.getCurrentScreen = function()
 	return this.getScreen( this.currentScreenName );
 }
 
+Sketch.prototype.getCurrentScreenName = function()
+{
+	return this.currentScreenName;
+}
+
 
 Sketch.prototype.getScreen = function( screenName )
 {
