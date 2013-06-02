@@ -88,6 +88,15 @@ onMoveInterfaceResource = function( interfaceResource, toX, toY ){}
  * @param {int} toVersion - The new active version from the project
  */
 onChangeActiveVersion = function( toVersion ){}
+
+/**
+ * EventKey: CloneResourceVersion
+ * Order to clone a resource version
+ *
+ * @param {int} baseVersion - A number indicating the base version from the clone.
+ * @param {int} targetVersion - The clone object from the new version.
+ */
+onCloneResourceVersion = function( interfaceResource, baseVersion, targetVersion ){}
  
  /**
  * EventKey: CreateButton
@@ -180,16 +189,20 @@ onResourceDeleteTagChanged = function( interfaceResource ){}
  * Sent when some resource have a version added
  *
  * @param {InterfaceResource} resourceTimeSlotObj - The added element in the resouce's history object.
+ * @param {ResourceHistory} resourceHistory - The resource's history without the removed element
+ * @param {int} sketchActiveVersion - A number indicating project's active version when this operation has been done
  */
-onResourceVersionAdded = function( resourceTimeSlotObj ){}
+onResourceVersionAdded = function( resourceTimeSlotObj, resourceHistory, sketchActiveVersion ){}
 
 /**
  * EventKey: ResourceVersionRemoved
  * Sent when some resource have a version removed
  *
  * @param {InterfaceResource} removedResource - The removed element from the resouce's history object.
+ * @param {ResourceHistory} resourceHistory - The resource's history without the removed element
+ * @param {int} sketchActiveVersion - A number indicating project's active version when this operation has been done
  */
-onResourceVersionRemoved = function( removedResource ){}
+onResourceVersionRemoved = function( removedResource, resourceHistory, sketchActiveVersion ){}
 
 
  /**
@@ -206,8 +219,10 @@ onResourceSelected = function( resourceArray ){}
  *
  * @param {InterfaceResource} clonedObj - The clone object from the new version.
  * @param {int} baseVersion - A number indicating the base version from the clone.
+ * @param {ResourceHistory} resourceHistory - The resource's history with the new clone
+ * @param {int} sketchActiveVersion - A number indicating project's active version when this clone was made
  */
-onResourceVersionCloned = function( clonedObj, baseVersion ){}
+onResourceVersionCloned = function( clonedObj, baseVersion, resourceHistory, sketchActiveVersion ){}
 
  /**
  * EventKey: ResourceSelectCanceled

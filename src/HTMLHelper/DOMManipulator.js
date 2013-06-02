@@ -14,6 +14,9 @@ DOMglobals.SIDE_SECTION_CLASS = "sideMenuSection";
 DOMglobals.SECTION_PART_CLASS = "sectionPart";
 
 DOMglobals.DELETE_VERSION_ID = "del_version_btn";
+DOMglobals.REMOVE_VERSION_ID = "rem_version_btn";
+DOMglobals.DELETE_RESOURCE_ID = "del_history_btn";
+DOMglobals.CLONE_VERSION_ID = "clone_version_btn";
 
 DOMglobals.PROJECT_SECTION_ID = "project_section";
 DOMglobals.PROJECT_VERSION_ID = "project_version_btn";
@@ -195,11 +198,11 @@ htmlGen.createSelectInput = function( labelStr, idStr, optionStrArray, onChangeE
 	return retStr;
 }
 
-htmlGen.createSmallButton = function( idStr, onClickEventFunctionName ) 
+htmlGen.createSmallButton = function( idStr, tooltipStr, onClickEventFunction ) 
 {
-	var retStr = '<a class="sectionSmallButton" id="'+idStr+
-		'" onclick = "'+onClickEventFunctionName+'(sideMenu.singleResource)" > <img src="'+DOMglobals.MEDIA_PATH+idStr+
-		'.png" alt="'+idStr+'"/> </a>';
+	var retStr = '<a class="sectionSmallButton" title="'+tooltipStr+'" id="'+idStr+
+		'" onclick = "'+onClickEventFunction+'" > <img src="'+
+		DOMglobals.MEDIA_PATH+idStr+'.png" alt="'+idStr+'"/> </a>';
 	return retStr;
 }
 
@@ -326,8 +329,19 @@ sideMenu.createResourceBasicSection = function( interfaceResource )
 		
 		/* time manipulation buttons */	
 		newSectionPart.innerHTML +=	htmlGen.createSectionLine();
+		newSectionPart.innerHTML +=	 htmlGen.createSmallButton(	DOMglobals.CLONE_VERSION_ID, 
+			"Create a new version based on an existent one",
+			"sideMenu.cloneVersionAction(sideMenu.singleResource, sideMenu.currentSketchProject)" );
 		newSectionPart.innerHTML +=	 htmlGen.createSmallButton(	DOMglobals.DELETE_VERSION_ID, 
-			"sideMenu.deleteVersionAction" );
+			"Set this resource's version as an inexistent element",
+			"sideMenu.deleteVersionAction(sideMenu.singleResource)" );
+		newSectionPart.innerHTML +=	 htmlGen.createSmallButton(	DOMglobals.REMOVE_VERSION_ID, 
+			"Remove the current version in edition, going back to the last existent version",
+			"sideMenu.deleteVersionAction(sideMenu.singleResource, sideMenu.currentSketchProject)" );
+		newSectionPart.innerHTML +=	 htmlGen.createSmallButton(	DOMglobals.DELETE_RESOURCE_ID, 
+			"Erase all resource history from this project",
+			"sideMenu.deleteVersionAction(sideMenu.singleResource, sideMenu.currentSketchProject)" );
+
 	}());
 	newSideSection.appendChild(newSectionPart);
 }
@@ -352,12 +366,59 @@ sideMenu.deleteVersionAction = function( interfaceResource )
 	globalMediators.internalMediator.publish( "DeleteResourceVersion", [ interfaceResource ] );
 }
 
+sideMenu.cloneVersionAction = function( interfaceResource, sketchObj )
+{
+	//TODO: Create a cool popup showing all available versions
+	var numToCheck = prompt("Enter the base version number", "Insert a number here");
+	var baseVersion = myMath.isValidNumber( numToCheck );
+	if( baseVersion == null )
+	{
+		alert("Please enter a valid number");
+		return;
+	}
+	var currentScreen = sketchObj.getCurrentScreen();
+	
+	var resourceHistory = currentScreen.getResourceHistory( interfaceResource.getId() );
+	if( resourceHistory != null )
+	{
+		if( resourceHistory.getResourceFromVersion( baseVersion ) == null )
+		{
+			alert("There is no resource in the version " +baseVersion+ ". Choose a valid number");
+			return;
+		}
+		else
+		{
+			var targetToCheck = prompt("Enter the target version number", "Insert a number here");
+			var newVersion = myMath.isValidNumber( targetToCheck );
+			if( newVersion == null )
+			{
+				alert("Please enter a valid number");
+				return;
+			}
+			else if( resourceHistory.getResourceFromVersion( newVersion ) != null )
+			{
+				alert("This version already exists, choose another target number");
+				return;
+			}
+			else
+			{
+				globalMediators.internalMediator.publish( "CloneResourceVersion", [ interfaceResource, baseVersion, newVersion ] );
+			}
+		}
+	}
+	else
+	{
+		console.error("Error while cloning version");
+		return;
+	}
+}
+
 sideMenu.changeVersionAction = function( sketchObj )
 {
 	var numToCheck = prompt("Enter the version number where you want to go:", "Insert a number here");
 	if(numToCheck == null)
 	{
-		return
+		return;
 	}
 	else if( /^\d+$/.test( numToCheck ) )
 	{

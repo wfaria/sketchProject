@@ -32,3 +32,22 @@ Stack.prototype.toString = function()
 	}
 	return ret;
 }
+
+var myMath = {};
+
+myMath.isValidNumber = function( str )
+{
+	if( str == null )
+	{
+		return null;
+	}
+	else if( /^\d+$/.test( str ) )
+	{
+		var num = parseInt( str, 10 );
+		if( !isNaN(num) && num >= 0 )
+		{
+			return num;
+		}
+	}
+	return null;
+}

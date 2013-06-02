@@ -499,8 +499,10 @@ GraphicController.prototype.onInterfaceResourceCreated = function( interfaceReso
 GraphicController.prototype.onResourceHistoryDeleted = function( interfaceResourceHistory )
 {
 	if( interfaceResourceHistory.getResources().length > 0 )
-	this.deleteInterfaceResource( interfaceResourceHistory.getResources()[0] ) ;
+		this.deleteInterfaceResource( interfaceResourceHistory.getResources()[0] ) ;
 }
+
+
 
 GraphicController.prototype.onResourceDeleteTagChanged = function( interfaceResource )
 {
@@ -520,6 +522,83 @@ GraphicController.prototype.onResourceDeleteTagChanged = function( interfaceReso
 	else
 	{
 		this.addInterfaceResource( interfaceResource );	
+	}
+}
+
+GraphicController.prototype.onResourceVersionAdded = function( resourceTimeSlotObj, resourceHistory, sketchActiveVersion  )
+{
+	var actualResource = resourceHistory.getResourceBeforeVersion( sketchActiveVersion );
+	if( actualResource != null && 
+		( resourceTimeSlotObj.getId() == actualResource.getId() ) &&
+		( resourceTimeSlotObj.getVersion() <= actualResource.getVersion() || resourceTimeSlotObj.getVersion() > sketchActiveVersion ) )
+	{
+		//Nothing to do, the creation operation doesn't affect the actual version
+		return;
+	}
+	else if( actualResource == null )
+	{
+		return;
+	}
+	else 
+	{
+	/* The created object is the newest active object from the resource at the current version,
+	 * so we need to substitute this element in the canvas
+	 */
+		this.deleteInterfaceResource( actualResource ) ;
+		this.addInterfaceResource( resourceTimeSlotObj );	
+	}
+}
+
+GraphicController.prototype.onResourceVersionRemoved = function( removedResource, resourceHistory, sketchActiveVersion )
+{
+	if( this.deleteInterfaceResource( removedResource ) != null )
+	{
+	/* A version removed doesn't mean that the resource disappeared.
+	 * We must check if exists some older version that satisfies the version search condition.
+	 */
+		var actualResource = resourceHistory.getResourceBeforeVersion( sketchActiveVersion );
+		if( actualResource != null )
+		{
+			this.addInterfaceResource( actualResource );	
+		}
+		else
+		{
+			/*
+			 * There are no elements, so the resource doesn't exist anymore before the actual version
+			 */
+			return;
+		}
+	}
+}
+
+GraphicController.prototype.onResourceVersionCloned = function( clonedObj, baseVersion, resourceHistory, sketchActiveVersion )
+{
+	var actualResource = resourceHistory.getResourceBeforeVersion( sketchActiveVersion );
+	if( actualResource != null && 
+		( clonedObj.getId() == actualResource.getId() ) &&
+		( clonedObj.getVersion() <= actualResource.getVersion() || clonedObj.getVersion() > sketchActiveVersion ) )
+	{
+		//Nothing to do, the clone operation doesn't affect the actual version
+		return;
+	}
+	else if( actualResource == null )
+	{
+		return;
+	}
+	else 
+	{
+	/* The cloned object is the newest active object from the resource at the current version,
+	 * so we need to substitute this element in the canvas
+	 */
+
+		var baseResource = resourceHistory.getResourceFromVersion( baseVersion );
+		if( baseResource == null )
+		{
+			console.error("Error while updating canvas after cloning, it should be impossible to clone a resource if its base version doesn't exist'" );
+			return;
+		}
+		this.deleteInterfaceResource( baseResource ) ;
+		this.addInterfaceResource( clonedObj );	
 	}
 }
 

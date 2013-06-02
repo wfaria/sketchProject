@@ -59,6 +59,27 @@ GeneralManager.prototype.subscribeToMediators = function()
 							generalGlobals.manager.actionController.doCommand( groupCommand );
 						}
 					},
+					onCloneResourceVersion: function( interfaceResource, baseVersion, targetVersion )
+					{
+						var unselectCommand = generalGlobals.manager.createCancelSelectionCommand();
+						var cloneVersionCommand = new CloneResourceVersionCommand( 	
+							basicCommandsGlobals.executionTypeEnum.CMEX_EDITION, 
+  							interfaceResource.getId(), baseVersion, targetVersion,
+  							generalGlobals.manager.sketchProject ); 
+						if( unselectCommand == null )
+						{
+							generalGlobals.manager.actionController.doCommand( cloneVersionCommand );
+						}
+						else
+						{
+							var commands = new Array();
+							commands.push( unselectCommand );
+							commands.push( cloneVersionCommand );
+							var groupCommand = new CommandGroup( basicCommandsGlobals.executionTypeEnum.CMEX_EDITION, 
+								commands, "Cloning resource version and removing selection", null );
+							generalGlobals.manager.actionController.doCommand( groupCommand );
+						}
+					},
   					onProjectCreated: function( projectName, authorName, sketchProject )
   					{
   						//TODO: kill the graphic canvas and free the manager object

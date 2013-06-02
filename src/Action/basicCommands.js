@@ -625,7 +625,8 @@ CloneResourceVersionCommand.prototype.execute = function( commandObject )
 		var clonedObj = resourceHistory.cloneVersion( baseVersion, targetVersion );
 		if( clonedObj != null )
 		{
-			globalMediators.internalMediator.publish( "ResourceVersionCloned", [ clonedObj, baseVersion ] );
+			globalMediators.internalMediator.publish( "ResourceVersionCloned", 
+				[ clonedObj, baseVersion, resourceHistory, sketchObj.getActiveVersionNumber() ] );
 			return actionGlobals.COMMAND_OK;
 		}
 		else
@@ -692,7 +693,8 @@ RemoveResourceVersionCommand.prototype.execute = function( commandObject )
 		var removedResource = resourceHistory.removeVersion( versionNum );
 		if(  removedResource != null )
 		{
-			globalMediators.internalMediator.publish( "ResourceVersionRemoved", [ removedResource ] );
+			globalMediators.internalMediator.publish( "ResourceVersionRemoved", 
+				[ removedResource, resourceHistory, sketchObj.getActiveVersionNumber() ] );
 			return actionGlobals.COMMAND_OK;
 		}
 		else
@@ -771,7 +773,8 @@ AddResourceTimeSlotCommand.prototype.execute = function( commandObject )
 	{
 		// This function will overwrite any object with the same version
 		resourceHistory.addVersion( resourceTimeSlotObj );
-		globalMediators.internalMediator.publish( "ResourceVersionAdded", [ resourceTimeSlotObj ] );
+		globalMediators.internalMediator.publish( "ResourceVersionAdded", 
+			[ resourceTimeSlotObj, resourceHistory, sketchObj.getActiveVersionNumber() ] );
 		return actionGlobals.COMMAND_OK;
 	}
 	else
@@ -893,7 +896,7 @@ ChangeActiveVersionCommand.prototype.execute = function( commandObject )
 {
 	var versionNumber = this.argObject.versionNum;
 	var sketchProject = this.argObject.sketchObject;
-	var oldVersionNumber = sketchProject.getActiveVersionNumber;
+	var oldVersionNumber = sketchProject.getActiveVersionNumber();
 	sketchProject.setActiveVersionNumber( versionNumber );
 	globalMediators.internalMediator.publish( "ActiveVersionChanged", [ oldVersionNumber, sketchProject ] );
 	return actionGlobals.COMMAND_OK;
