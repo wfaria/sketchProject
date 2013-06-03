@@ -176,6 +176,14 @@ onUploadProject = function(){}
  */
 onProjectUploaded = function( JSONString ){}
 
+ /**
+ * EventKey: RemoveResourceVersion
+ * Order to remove one resource version
+ *
+ * @param {InterfaceResource} interfaceResource - The object that contains the data from an interface resource that will be removed.
+ */
+onRemoveResourceVersion = function( interfaceResource ){}
+
 /**
  * EventKey: ResourceDeleteTagChanged
  * Sent when some resource have its delete tag changed, this tag can be true or false.

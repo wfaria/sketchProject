@@ -152,6 +152,49 @@ GeneralManager.prototype.subscribeToMediators = function()
 						console.log("Temporary button creation, fix it");
 
   					},
+  					onRemoveResourceVersion: function( interfaceResource )
+  					{
+  						var removeVersionCommand = null;
+  						
+  						// if it has only one element, you can erase its history without problems
+						var currentScreen = generalGlobals.manager.sketchProject.getCurrentScreen();
+						var resourceHistory = currentScreen.getResourceHistory( interfaceResource.getId() );
+						
+						if( resourceHistory == null )
+						{
+							console.error("Error while processing remove resource order" );
+							return;
+						}
+						else if( resourceHistory.getHistoryLength() == 1 )
+						{
+							removeVersionCommand = new DeleteResourceCommand( 
+								basicCommandsGlobals.executionTypeEnum.CMEX_EDITION, 
+								interfaceResource.getId(), generalGlobals.manager.sketchProject );
+						}
+						else
+						{
+							removeVersionCommand = new RemoveResourceVersionCommand( 
+								basicCommandsGlobals.executionTypeEnum.CMEX_EDITION,
+								interfaceResource.getId(), interfaceResource.getVersion(), 
+								generalGlobals.manager.sketchProject );
+						}
+						
+  						var unselectCommand = generalGlobals.manager.createCancelSelectionCommand();
+
+						if( unselectCommand == null )
+						{
+							generalGlobals.manager.actionController.doCommand( changeVersionCommand );
+						}
+						else
+						{
+							var commands = new Array();
+							commands.push( unselectCommand );
+							commands.push( removeVersionCommand );
+							var groupCommand = new CommandGroup( basicCommandsGlobals.executionTypeEnum.CMEX_EDITION, 
+								commands, "Removing project version and removing selection", null );
+							generalGlobals.manager.actionController.doCommand( groupCommand );
+						}
+  					},
   					onRenameElement: function( interfaceResource, newNameStr )
   					{
 						var command = new RenameResourceCommand( 

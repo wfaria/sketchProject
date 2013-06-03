@@ -255,6 +255,10 @@ function Sketch( name, author )
 
 Sketch.prototype.setActiveVersionNumber = function( number )
 {
+	if( number < 0 )
+	{
+		console.error( "FATAL error: You can't set the sketch project version as a negative number" );
+	}
 	this.activeVersion = number;
 }
 

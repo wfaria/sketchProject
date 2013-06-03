@@ -111,6 +111,20 @@ GraphicController.prototype.existEventManagerFor = function( interfaceResource )
 	return false;
 }
 
+GraphicController.prototype.getVersionFromRenderedResource = function( resourceId )
+{
+	var length = this.eventManagers.length;
+	var i;
+	for ( i = 0;  i < length; i ++ )
+	{
+		if( this.eventManagers[i].getId() == resourceId )
+		{
+			return this.eventManagers[i].getVersion();
+		}
+	}
+	return -1;
+}
+
 GraphicController.prototype.addInterfaceResource = function ( interfaceRes )
 {
 	if( this.deleteInterfaceResource( interfaceRes ) != null )
@@ -528,22 +542,9 @@ GraphicController.prototype.onResourceDeleteTagChanged = function( interfaceReso
 GraphicController.prototype.onResourceVersionAdded = function( resourceTimeSlotObj, resourceHistory, sketchActiveVersion  )
 {
 	var actualResource = resourceHistory.getResourceBeforeVersion( sketchActiveVersion );
-	if( actualResource != null && 
-		( resourceTimeSlotObj.getId() == actualResource.getId() ) &&
-		( resourceTimeSlotObj.getVersion() <= actualResource.getVersion() || resourceTimeSlotObj.getVersion() > sketchActiveVersion ) )
+	var renderedVersion = this.getVersionFromRenderedResource( resourceTimeSlotObj.getId() );
+	if( actualResource.getVersion() >  renderedVersion )
 	{
-		//Nothing to do, the creation operation doesn't affect the actual version
-		return;
-	}
-	else if( actualResource == null )
-	{
-		return;
-	}
-	else 
-	{
-	/* The created object is the newest active object from the resource at the current version,
-	 * so we need to substitute this element in the canvas
-	 */
 		this.deleteInterfaceResource( actualResource ) ;
 		this.addInterfaceResource( resourceTimeSlotObj );	
 	}

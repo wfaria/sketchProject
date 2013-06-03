@@ -337,7 +337,7 @@ sideMenu.createResourceBasicSection = function( interfaceResource )
 			"sideMenu.deleteVersionAction(sideMenu.singleResource)" );
 		newSectionPart.innerHTML +=	 htmlGen.createSmallButton(	DOMglobals.REMOVE_VERSION_ID, 
 			"Remove the current version in edition, going back to the last existent version",
-			"sideMenu.deleteVersionAction(sideMenu.singleResource, sideMenu.currentSketchProject)" );
+			"sideMenu.removeVersionAction(sideMenu.singleResource)" );
 		newSectionPart.innerHTML +=	 htmlGen.createSmallButton(	DOMglobals.DELETE_RESOURCE_ID, 
 			"Erase all resource history from this project",
 			"sideMenu.deleteVersionAction(sideMenu.singleResource, sideMenu.currentSketchProject)" );
@@ -359,7 +359,12 @@ sideMenu.removeResourceBasicSection = function()
 	sideMenu.singleResource = null;
 } 
 
-/* Function to react some events */
+/* Function to react to some events */
+
+sideMenu.removeVersionAction = function( interfaceResource )
+{
+	globalMediators.internalMediator.publish( "RemoveResourceVersion", [ interfaceResource ] );
+}
 
 sideMenu.deleteVersionAction = function( interfaceResource )
 {
