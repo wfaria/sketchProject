@@ -177,6 +177,14 @@ onUploadProject = function(){}
 onProjectUploaded = function( JSONString ){}
 
  /**
+ * EventKey: RemoveResourceHistory
+ * Order to remove one resource's entire history
+ *
+ * @param {InterfaceResource} interfaceResource - The object that contains the data from an interface resource that will be removed.
+ */
+onRemoveResourceHistory = function( interfaceResource ){}
+
+ /**
  * EventKey: RemoveResourceVersion
  * Order to remove one resource version
  *

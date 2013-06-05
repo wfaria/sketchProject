@@ -543,10 +543,17 @@ GraphicController.prototype.onResourceVersionAdded = function( resourceTimeSlotO
 {
 	var actualResource = resourceHistory.getResourceBeforeVersion( sketchActiveVersion );
 	var renderedVersion = this.getVersionFromRenderedResource( resourceTimeSlotObj.getId() );
-	if( actualResource.getVersion() >  renderedVersion )
+	//see GraphicController.prototype.onResourceVersionCloned to understand this part
+	if( actualResource.getVersion() > renderedVersion &&
+		actualResource.getVersion() == resourceTimeSlotObj.getVersion() )
 	{
 		this.deleteInterfaceResource( actualResource ) ;
 		this.addInterfaceResource( resourceTimeSlotObj );	
+	}
+	else if( actualResource.getVersion() > renderedVersion &&
+			 actualResource.getVersion() != resourceTimeSlotObj.getVersion() )
+	{
+		console.error( "Graphic Internal inconsistency while restoring a resource version" );
 	}
 }
 
@@ -575,6 +582,25 @@ GraphicController.prototype.onResourceVersionRemoved = function( removedResource
 GraphicController.prototype.onResourceVersionCloned = function( clonedObj, baseVersion, resourceHistory, sketchActiveVersion )
 {
 	var actualResource = resourceHistory.getResourceBeforeVersion( sketchActiveVersion );
+	var renderedVersion = this.getVersionFromRenderedResource( clonedObj.getId() );
+	
+	/* If the actual resource is newer than the rendered one and they are the same resource (same id, same version),
+	  then the new clone is a newer version of this element, draw the new one*/
+	if( actualResource.getVersion() > renderedVersion && 
+		actualResource.getVersion() == clonedObj.getVersion()  )
+	{
+		//The delete function uses only the resource id to remove it, so it's fine to use the same argument in the both calls
+		this.deleteInterfaceResource( clonedObj ) ;
+		this.addInterfaceResource( clonedObj );	
+	}
+	else if( (actualResource.getVersion() > renderedVersion)
+	 		 && actualResource.getVersion() != clonedObj.getVersion() )
+	{
+		/* internal error, it was supposed to be the same version, 
+		 * if this happened then some change passed without being noticed */
+		console.error( "Graphic Internal inconsistency while cloning a resource" );
+	}
+	/*var actualResource = resourceHistory.getResourceBeforeVersion( sketchActiveVersion );
 	if( actualResource != null && 
 		( clonedObj.getId() == actualResource.getId() ) &&
 		( clonedObj.getVersion() <= actualResource.getVersion() || clonedObj.getVersion() > sketchActiveVersion ) )
@@ -591,7 +617,7 @@ GraphicController.prototype.onResourceVersionCloned = function( clonedObj, baseV
 	/* The cloned object is the newest active object from the resource at the current version,
 	 * so we need to substitute this element in the canvas
 	 */
-
+/*
 		var baseResource = resourceHistory.getResourceFromVersion( baseVersion );
 		if( baseResource == null )
 		{
@@ -600,7 +626,7 @@ GraphicController.prototype.onResourceVersionCloned = function( clonedObj, baseV
 		}
 		this.deleteInterfaceResource( baseResource ) ;
 		this.addInterfaceResource( clonedObj );	
-	}
+	}*/
 }
 
 GraphicController.prototype.onInterfaceResourceMoved = function( interfaceResource, oldX, oldY )

@@ -340,7 +340,7 @@ sideMenu.createResourceBasicSection = function( interfaceResource )
 			"sideMenu.removeVersionAction(sideMenu.singleResource)" );
 		newSectionPart.innerHTML +=	 htmlGen.createSmallButton(	DOMglobals.DELETE_RESOURCE_ID, 
 			"Erase all resource history from this project",
-			"sideMenu.deleteVersionAction(sideMenu.singleResource, sideMenu.currentSketchProject)" );
+			"sideMenu.removeHistoryAction( sideMenu.singleResource )" );
 
 	}());
 	newSideSection.appendChild(newSectionPart);
@@ -360,6 +360,10 @@ sideMenu.removeResourceBasicSection = function()
 } 
 
 /* Function to react to some events */
+sideMenu.removeHistoryAction = function( interfaceResource )
+{
+	globalMediators.internalMediator.publish( "RemoveResourceHistory", [ interfaceResource ] );
+}
 
 sideMenu.removeVersionAction = function( interfaceResource )
 {

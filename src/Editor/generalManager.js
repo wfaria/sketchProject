@@ -195,6 +195,27 @@ GeneralManager.prototype.subscribeToMediators = function()
 							generalGlobals.manager.actionController.doCommand( groupCommand );
 						}
   					},
+  					onRemoveResourceHistory: function( interfaceResource )
+  					{
+						var deleteHistoryCommand = new DeleteResourceCommand( 
+							basicCommandsGlobals.executionTypeEnum.CMEX_EDITION, interfaceResource.getId(), 
+							generalGlobals.manager.sketchProject );
+						var unselectCommand = generalGlobals.manager.createCancelSelectionCommand();
+
+						if( unselectCommand == null )
+						{
+							generalGlobals.manager.actionController.doCommand( deleteHistoryCommand );
+						}
+						else
+						{
+							var commands = new Array();
+							commands.push( unselectCommand );
+							commands.push( deleteHistoryCommand );
+							var groupCommand = new CommandGroup( basicCommandsGlobals.executionTypeEnum.CMEX_EDITION, 
+								commands, "Removing project resource history and removing selection", null );
+							generalGlobals.manager.actionController.doCommand( groupCommand );
+						}
+  					},
   					onRenameElement: function( interfaceResource, newNameStr )
   					{
 						var command = new RenameResourceCommand( 
