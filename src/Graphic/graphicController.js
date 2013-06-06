@@ -682,10 +682,15 @@ GraphicController.prototype.onResourceFormatted = function( interfaceResource )
 		}
 		var textKineticObject = textElementArray[0];
 		textKineticObject.setFontFamily( interfaceResource.getExtraAttribute( iResGlobals.defaultKeys.FONTTYPE_KEY ) );
-		textKineticObject.setX( interfaceResource.getIntExtraAttribute( iResGlobals.defaultKeys.FONT_X_PADDING_KEY )/100 );
-		textKineticObject.setY( interfaceResource.getIntExtraAttribute( iResGlobals.defaultKeys.FONT_Y_PADDING_KEY )/100 );
+		textKineticObject.setX( interfaceResource.getWidth()*interfaceResource.getIntExtraAttribute( iResGlobals.defaultKeys.FONT_X_PADDING_KEY )/100 );
+		textKineticObject.setY( interfaceResource.getHeight()*interfaceResource.getIntExtraAttribute( iResGlobals.defaultKeys.FONT_Y_PADDING_KEY )/100 );
 		textKineticObject.setFontSize( interfaceResource.getIntExtraAttribute( iResGlobals.defaultKeys.FONTSIZE_KEY ) );
 		
+		textKineticObject.setOffset({
+	        x: textKineticObject.getWidth() / 2,
+	        y: textKineticObject.getHeight() / 2
+	     });
+	     
 		textKineticObject.getLayer().draw();
 	}
 }
