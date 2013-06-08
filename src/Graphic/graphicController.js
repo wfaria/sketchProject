@@ -85,6 +85,10 @@ GraphicController.prototype.renderScreen = function ( sketchObject )
 	for ( i = 0;  i < length; i++ )
 	{
 		interfaceResource = resources[i].getResourceBeforeVersion( activeVersion );
+		/*
+		 * It is null when there is no suitable version of this resource from the current version
+		 * It is deleted when it's flag is turned on
+		 */
 		if( interfaceResource != null && interfaceResource.getDeleted() == false )
 		{
 			this.addInterfaceResource( interfaceResource );
