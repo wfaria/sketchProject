@@ -9,7 +9,7 @@ DOMglobals.Y_TEXT_ID = "_basic_y_input";
 DOMglobals.WIDTH_TEXT_ID = "basic resource";
 DOMglobals.HEIGHT_TEXT_ID = "basic resource";
 DOMglobals.FONTSIZE_TEXT_ID = "font size";
-DOMglobals.FONTSTYLE_TEXT_ID = "font size";
+DOMglobals.FONTSTYLE_TEXT_ID = "font style";
 DOMglobals.SIDE_SECTION_CLASS = "sideMenuSection";
 DOMglobals.SECTION_PART_CLASS = "sectionPart";
 
@@ -187,7 +187,7 @@ htmlGen.numberEventToInterMediator = function( numToCheck, min, max, eventKey,  
 
 htmlGen.createSelectInput = function( labelStr, idStr, optionStrArray, onChangeEventStr )
 {
-	var retStr = labelStr + ' <select onchange= "'+onChangeEventStr+'" >'
+	var retStr = labelStr + ' <select id = "'+idStr+'" onchange= "'+onChangeEventStr+'" >'
 	var i = 0;
 	var length = optionStrArray.length;
 	for( i = 0; i < length; i++ )
@@ -355,7 +355,13 @@ sideMenu.updateValue = function( valueID, updatedValue )
 
 sideMenu.updateSelectValue = function( valueID, updatedValue )
 {
-	
+	var sel = $( valueID );
+    for(var i, j = 0; i = sel.options[j]; j++) {
+        if( i.value == updatedValue ) {
+            sel.selectedIndex = j;
+            break;
+        }
+    }
 }
 
 sideMenu.removeResourceBasicSection = function()

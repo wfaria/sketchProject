@@ -119,8 +119,11 @@ SelectionManager.prototype.onResourceFormatted = function( interfaceResource )
 	if( sideMenu.containsId(DOMglobals.BASIC_RESOURCE_ID ) )
 	{
 		var fontSize = interfaceResource.getIntExtraAttribute( iResGlobals.defaultKeys.FONTSIZE_KEY );
+		var fontFamily = interfaceResource.getExtraAttribute( iResGlobals.defaultKeys.FONTTYPE_KEY );
 		
 		sideMenu.updateValue( DOMglobals.FONTSIZE_TEXT_ID, fontSize );
+		
+		sideMenu.updateSelectValue( DOMglobals.FONTSTYLE_TEXT_ID, fontFamily );
 	}
 }
 
