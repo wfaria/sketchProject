@@ -17,6 +17,16 @@
 	display:block;
 	border: 1px solid #FFFFFF;
 }
+ 
+ /*
+.sectionTextInput{
+	background-color: #CCFFFF;
+	display: inline;
+}
+
+.sectionTextInputUnapplied{
+	background-color: #FFFFFF;
+}*/
 
 .sectionSmallButton{
 	background-color: #6A9999;	

@@ -110,7 +110,7 @@ var htmlGen = {};
 htmlGen.numberCheckEvent = function( eventStr )
 {
 	//Test if the value from the input is a number
-	return 'if( /^\\d+$/.test( this.value ){ ' +eventStr+'; } else { this.value=\"0\";}';
+	return 'if( /^\\d+$/.test( this.value ){ ' +eventStr+'; } else { alert(\"aaahh\"); this.value=\"0\";}';
 }
 
 htmlGen.createSectionLine = function()
@@ -138,7 +138,7 @@ htmlGen.createTextButton = function( idStr, labelStr, valueStr, onClickEventStr 
 htmlGen.createTextInputString = function( labelStr, idStr, sizeNum, initialValue, onKeyUpEventStr )
 {
 	return labelStr + ': <input type=\"text\"  id = \"'+idStr+
-		'\" size =\"'+sizeNum+'\" value="' + initialValue +
+		'\" class=\"sectionTextInput\" size =\"'+sizeNum+'\" value="' + initialValue +
 		'" onkeyup=\"'+onKeyUpEventStr+'\" /> <br\>';
 }
 
@@ -351,6 +351,11 @@ sideMenu.updateValue = function( valueID, updatedValue )
 	var DOMobj = $(valueID);
 	if( DOMobj != null)
 		DOMobj.value =  ""+updatedValue; // Always trying to use a string on the value
+}
+
+sideMenu.updateSelectValue = function( valueID, updatedValue )
+{
+	
 }
 
 sideMenu.removeResourceBasicSection = function()

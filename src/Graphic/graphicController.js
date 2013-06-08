@@ -434,6 +434,22 @@ GraphicController.prototype.extendKineticShape = function( interfaceResource, ki
 	return extendedKineticShape;
 }
 
+GraphicController.prototype.fixKineticTextOffset = function( interfaceResource, kineticShape )
+{
+	var textKineticObject = kineticShape;
+	textKineticObject.setFontFamily( interfaceResource.getExtraAttribute( iResGlobals.defaultKeys.FONTTYPE_KEY ) );
+	textKineticObject.setX( interfaceResource.getWidth()*interfaceResource.getIntExtraAttribute( iResGlobals.defaultKeys.FONT_X_PADDING_KEY )/100 );
+	textKineticObject.setY( interfaceResource.getHeight()*interfaceResource.getIntExtraAttribute( iResGlobals.defaultKeys.FONT_Y_PADDING_KEY )/100 );
+	textKineticObject.setFontSize( interfaceResource.getIntExtraAttribute( iResGlobals.defaultKeys.FONTSIZE_KEY ) );
+	
+	textKineticObject.setOffset({
+        x: textKineticObject.getWidth() / 2,
+        y: textKineticObject.getHeight() / 2
+     });
+     
+   return textKineticObject;
+}
+
 function KineticStyleChanger()
 {
 }
@@ -680,7 +696,8 @@ GraphicController.prototype.onResourceFormatted = function( interfaceResource )
 			console.error("Internal Error while formatting text" );
 			return; 
 		}
-		var textKineticObject = textElementArray[0];
+		this.fixKineticTextOffset( interfaceResource, textElementArray[0] );
+		/*var textKineticObject = textElementArray[0];
 		textKineticObject.setFontFamily( interfaceResource.getExtraAttribute( iResGlobals.defaultKeys.FONTTYPE_KEY ) );
 		textKineticObject.setX( interfaceResource.getWidth()*interfaceResource.getIntExtraAttribute( iResGlobals.defaultKeys.FONT_X_PADDING_KEY )/100 );
 		textKineticObject.setY( interfaceResource.getHeight()*interfaceResource.getIntExtraAttribute( iResGlobals.defaultKeys.FONT_Y_PADDING_KEY )/100 );
@@ -690,8 +707,8 @@ GraphicController.prototype.onResourceFormatted = function( interfaceResource )
 	        x: textKineticObject.getWidth() / 2,
 	        y: textKineticObject.getHeight() / 2
 	     });
-	     
-		textKineticObject.getLayer().draw();
+	     */
+		textElementArray[0].getLayer().draw();
 	}
 }
 
@@ -718,6 +735,7 @@ GraphicController.prototype.onResourceNameChanged = function( interfaceResource,
 		{
 			// The returned array is supposed to have only one element
 			kineticTextObjArray[0].setText( newNameStr );
+			this.fixKineticTextOffset( interfaceResource, kineticTextObjArray[0] );
 			kineticTextObjArray[0].getLayer().draw();
 		}
 	}
