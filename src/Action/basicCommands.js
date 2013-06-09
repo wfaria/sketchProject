@@ -232,6 +232,11 @@ CreateResourceCommand.prototype.execute = function( commandObject )
 			newResource = new ButtonResource( 0,0,0,100, 50, "Button", newId, activeVersionNum );
 			break;
 		}
+		case resourceTypeEnum.IR_IMAGE:
+		{
+			newResource = new ImageResource( 0,0,0,100, 100, "Image", newId, activeVersionNum );
+			break;
+		}
 		default:
 		{
 			console.error( "There is no available function to create a resource with type " +  resourceCode );

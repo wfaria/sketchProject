@@ -100,9 +100,26 @@ onCloneResourceVersion = function( interfaceResource, baseVersion, targetVersion
  
  /**
  * EventKey: CreateButton
- * Order to create a button
+ * Order to create a button resource
  *
  */
+
+ /**
+ * EventKey: CreateImage
+ * Order to create an image resource
+ *
+ */
+
+ /**
+ * EventKey: CreateResource
+ * Order to create an interface resource
+ *
+ * @param {String} resourceTypeStr - A string that defines what kind of element you want to create.
+ * - "button" = button (not implemented yet)
+ * - "image" = image resource
+ *
+ */
+onCreateResource = function( resourceTypeStr ){}
 
  /**
  * EventKey: ResourceHistoryDeleted
@@ -272,6 +289,15 @@ onResizeInterfaceResource = function( interfaceResource, toX, toY, newWidth, new
  */
 onInterfaceResourceResized = function( interfaceResource, oldX, oldY, oldWidth, oldHeight ){}
 
+
+/**
+ * EventKey: UploadImageToResource
+ * Order to upload an image to a resource, if the following parameter is null, then it is an order
+ * to create an image resource before.
+ *
+ * @param {InterfaceResource} interfaceResource - The object that contains the data from an interface resource. It can be null
+ */
+onUploadImageToResource = function( interfaceResource ){}
 
 /****** Graphic messages ********/
 

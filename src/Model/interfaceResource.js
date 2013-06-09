@@ -1,4 +1,5 @@
-var resourceTypeEnum = { IR_UNDEFINED: -1, IR_DELETED: 0, IR_BUTTON: 1, IR_WINDOW: 2, IR_TEXTLABEL: 3, IR_GROUP: 4 };
+var resourceTypeEnum = { IR_UNDEFINED: -1, IR_DELETED: 0, IR_BUTTON: 1, IR_WINDOW: 2, IR_TEXTLABEL: 3, IR_GROUP: 4,
+	IR_IMAGE: 5 };
 
 var iResGlobals = {};
 iResGlobals.PARENTLESS = -1;
@@ -27,7 +28,7 @@ function InterfaceResource( posX,posY,posZ,widthVal, heightVal, name, id, initia
 	this.createdInVersion = initialVersion;
 	this.id = id;
 	this.parentId = iResGlobals.PARENTLESS;
-	this.extra = {}; //TODO: Try to use a real array or a hashmap here
+	this.extra = {}; //TODO: Try to use a real array or a hashmap here (be aware with problems with serialization)
 	this.isDeleted = false;
 	
 	this.prototypeName = this.constructor.name; // This is only used in local serialization
@@ -88,7 +89,7 @@ InterfaceResource.prototype.getExtraAttribute = function( attributeKey )
 InterfaceResource.prototype.getIntExtraAttribute = function( attributeKey ) 
 {
 	var ret = this.getExtraAttribute( attributeKey );
-	if( ret != null)
+	if( ret != null )
 		return parseInt(ret,10);
 	else
 		return ret;
@@ -136,6 +137,20 @@ ButtonResource.prototype.toString = function()
 {
 	//TODO: Corrigir
 	return "Button Resource: "+InterfaceResource.prototype.toString.call( this );
+}
+
+
+function ImageResource( posX,posY,posZ,widthVal, heightVal, name, id, initialVersion )
+{
+	// the function call is used to simulate the super(...) call function, you will get SYNTAX_ERR if you miss the parameter number
+	InterfaceResource.call(this, posX,posY,posZ,widthVal, heightVal, name, id, initialVersion);
+	this.resourceType = resourceTypeEnum.IR_IMAGE;
+}
+ImageResource.prototype = new InterfaceResource;
+ImageResource.prototype.constructor = ImageResource;
+ImageResource.prototype.toString = function()
+{
+	return "Image Resource: "+InterfaceResource.prototype.toString.call( this );
 }
 
 

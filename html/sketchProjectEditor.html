@@ -44,6 +44,11 @@
 				globalMediators.internalMediator.publish( "CreateButton", [ ] );
 			}
 			
+			function callCreateResource( resourceTypeStr )
+			{
+				globalMediators.internalMediator.publish( "CreateResource", [ resourceTypeStr ] );
+			}
+			
 			function callUndo()
 			{
 				globalMediators.internalMediator.publish( "Undo", [ ] );
@@ -69,6 +74,7 @@
 						document.getElementById("extraBar").appendChild( menuDOM );
 						createMenuButtonGroup( menuID, "Create" );
 							createMenuButton( "Create", "Button", "callCreateButton()" );
+							createMenuButton( "Create", "Image", "callCreateResource('image')" );
 						createMenuButton( menuID, "Change Mode", "alert('Mode changed')" );
 						createMenuButtonGroup( menuID, "Edit" );
 							createMenuButton( "Edit", "Undo", "callUndo()" );

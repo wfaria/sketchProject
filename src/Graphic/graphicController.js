@@ -27,12 +27,14 @@ function GraphicController( containerDOMID )
       height: graphicControllerGlobals.CANVAS_HEIGHT
     }); 
     this.initializeVariables();
+    this.sketchObject = null;
 }
 
 GraphicController.prototype.constructor = GraphicController;
 
-GraphicController.prototype.initializeVariables = function()
+GraphicController.prototype.initializeVariables = function( sketchObj )
 {
+	this.sketchObject = sketchObj;
 	this.layers = new Array();
 	var i = 0;
 	for( i = 0; i < graphicControllerGlobals.MAX_DEPTH; i++ )
@@ -73,7 +75,7 @@ GraphicController.prototype.renderScreen = function ( sketchObject )
 	this.stage.removeChildren();
 	this.stage.draw();
 
-	this.initializeVariables();
+	this.initializeVariables( sketchObject );
 	
 	var currentScreen = sketchObject.getCurrentScreen();
 	if( currentScreen == null )
@@ -142,7 +144,8 @@ GraphicController.prototype.addInterfaceResource = function ( interfaceRes )
 	
 	
 	// TODO: Call this from a mediator to isolate the graphic part from the event handler
-	if( interfaceRes.getResourceType() == resourceTypeEnum.IR_BUTTON )
+	if( interfaceRes.getResourceType() == resourceTypeEnum.IR_BUTTON ||
+		interfaceRes.getResourceType() == resourceTypeEnum.IR_IMAGE )
 	{
 		var componentBaseObj = { 
 			layer : 		this.layers[ interfaceRes.getZ() ],
@@ -394,6 +397,44 @@ GraphicController.prototype.defaultKineticFactory = function( interfaceResource 
 			kineticRet = kinectGroup;
 			break;
 		}
+		case( resourceTypeEnum.IR_IMAGE ):
+		{
+			var currentScreen = this.sketchObject.getCurrentScreen();
+			var resourceHistory = currentScreen.getResourceHistory( interfaceResource.getId() );
+			
+			var imageObj = new Image();
+			var imgSrc = resourceHistory.getExtraAttribute( iResHistGlobals.defaultKeys.IMAGE_SRC );
+			
+			if( imgSrc == null )
+			{
+				imageObj.src = "../media/img/no_image_loaded.jpg";
+			}
+			else
+			{
+				console.error("Not implemented yet: Image insertion");
+				return;
+			}
+			
+			var kineticGroup = new Kinetic.Group(  { 
+				x:interfaceResource.getX(), y:interfaceResource.getY(), 
+				draggable:true, dragOnTop: false,
+				id:interfaceResource.getId(), name:interfaceResource.getName() });
+			
+			var kineticImage = new Kinetic.Image({
+				x: 0,
+				y: 0,
+				image: imageObj,
+				name: graphicControllerGlobals.defaultNames.MAIN_SHAPE,
+				width: interfaceResource.getWidth(),
+				height: interfaceResource.getHeight(),
+				dragOnTop: false,
+				draggable: false
+			});
+			
+			kineticGroup.add( kineticImage );
+			kineticRet = kineticGroup;
+			break;
+		} // END case( resourceTypeEnum.IR_IMAGE ):
 		default:
 		{
 			alert("FACTORY_ERROR");
@@ -426,6 +467,12 @@ GraphicController.prototype.extendKineticShape = function( interfaceResource, ki
 		case( resourceTypeEnum.IR_BUTTON ):
 		{
 			extendedKineticShape = graphicControllerGlobals.styleChangers[ graphicControllerGlobals.currentStyle ].modifyButton( kineticShape );
+			break;
+		}
+		case( resourceTypeEnum.IR_IMAGE ):
+		{
+			/* nothing to do */
+			extendedKineticShape = kineticShape;
 			break;
 		}
 		default:

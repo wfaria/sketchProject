@@ -152,6 +152,28 @@ GeneralManager.prototype.subscribeToMediators = function()
 						console.log("Temporary button creation, fix it");
 
   					},
+  					onCreateResource: function( resourceTypeStr )
+  					{
+  						var command = null;
+  						if( resourceTypeStr == "button" )
+  						{
+							var command = new CreateResourceCommand( 
+								basicCommandsGlobals.executionTypeEnum.CMEX_EDITION, 
+								resourceTypeEnum.IR_BUTTON, generalGlobals.manager.sketchProject );
+						}
+						else if( resourceTypeStr == "image" )
+						{
+							var command = new CreateResourceCommand( 
+								basicCommandsGlobals.executionTypeEnum.CMEX_EDITION, 
+								resourceTypeEnum.IR_IMAGE, generalGlobals.manager.sketchProject );
+						}
+						else
+						{
+							console.error( "Invalid resource request, invalid type = " + resourceTypeStr );
+							return; 
+						}
+						generalGlobals.manager.actionController.doCommand( command );
+  					},
   					onRemoveResourceVersion: function( interfaceResource )
   					{
   						var removeVersionCommand = null;

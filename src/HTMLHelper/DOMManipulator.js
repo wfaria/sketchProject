@@ -302,31 +302,34 @@ sideMenu.createResourceBasicSection = function( interfaceResource )
 		
 		/*Be careful to not send strings to the mediator,
 		 the following function guarantees that a value which isn't a number isn't sent to the mediator */
-		
 		newSectionPart.innerHTML += htmlGen.createTextInputString( "X Pos", DOMglobals.X_TEXT_ID, 10, ir.getX(),
 			"htmlGen.numberEventToInterMediator( this.value, 0, graphicControllerGlobals.CANVAS_WIDTH, "+
 			" \'MoveInterfaceResource\', [ ir, parseInt(this.value), ir.getY() ] );"  );
 		newSectionPart.innerHTML += htmlGen.createTextInputString( "Y Pos", DOMglobals.Y_TEXT_ID, 10, ir.getY(),
 			"htmlGen.numberEventToInterMediator( this.value, 0, graphicControllerGlobals.CANVAS_HEIGHT, "+
 			" \'MoveInterfaceResource\', [ ir, ir.getX(), parseInt(this.value) ] );"  );
+				
+		if( interfaceResource.getResourceType() != resourceTypeEnum.IR_IMAGE  )
+		{
+
+			newSectionPart.innerHTML +=	htmlGen.createSectionLine();
+			newSectionPart.innerHTML += htmlGen.createTextInputString( "Font Size", 
+				DOMglobals.FONTSIZE_TEXT_ID, 10, ir.getExtraAttribute( iResGlobals.defaultKeys.FONTSIZE_KEY ),
+				"htmlGen.numberEventToInterMediator( this.value, 10, 100, "+
+				" \'FormatInterfaceResource\', " +
+				"[ ir, parseInt( this.value ), "+
+				" ir.getExtraAttribute( iResGlobals.defaultKeys.FONTTYPE_KEY ) , "+
+				" parseInt( ir.getExtraAttribute( iResGlobals.defaultKeys.FONT_X_PADDING_KEY, 10 ) ), "+
+				" parseInt( ir.getExtraAttribute( iResGlobals.defaultKeys.FONT_Y_PADDING_KEY, 10 ) ) ] ) ") ;
+			newSectionPart.innerHTML +=  htmlGen.createSelectInput( "Font Family", DOMglobals.FONTSTYLE_TEXT_ID, 
+				["calibri", "arial", "verdana"], 
+				"globalMediators.internalMediator.publish( \'FormatInterfaceResource\', "+
+				"[ ir, parseInt( ir.getExtraAttribute( iResGlobals.defaultKeys.FONTSIZE_KEY, 10 ) ), "+
+				" this.options[this.selectedIndex].value , "+
+				" parseInt( ir.getExtraAttribute( iResGlobals.defaultKeys.FONT_X_PADDING_KEY, 10 ) ), "+
+				" parseInt( ir.getExtraAttribute( iResGlobals.defaultKeys.FONT_Y_PADDING_KEY, 10 ) ) ] ) ") ;
+		}
 			
-		newSectionPart.innerHTML +=	htmlGen.createSectionLine();
-		newSectionPart.innerHTML += htmlGen.createTextInputString( "Font Size", 
-			DOMglobals.FONTSIZE_TEXT_ID, 10, ir.getExtraAttribute( iResGlobals.defaultKeys.FONTSIZE_KEY ),
-			"htmlGen.numberEventToInterMediator( this.value, 10, 100, "+
-			" \'FormatInterfaceResource\', " +
-			"[ ir, parseInt( this.value ), "+
-			" ir.getExtraAttribute( iResGlobals.defaultKeys.FONTTYPE_KEY ) , "+
-			" parseInt( ir.getExtraAttribute( iResGlobals.defaultKeys.FONT_X_PADDING_KEY, 10 ) ), "+
-			" parseInt( ir.getExtraAttribute( iResGlobals.defaultKeys.FONT_Y_PADDING_KEY, 10 ) ) ] ) ") ;
-		newSectionPart.innerHTML +=  htmlGen.createSelectInput( "Font Family", DOMglobals.FONTSTYLE_TEXT_ID, 
-			["calibri", "arial", "verdana"], 
-			"globalMediators.internalMediator.publish( \'FormatInterfaceResource\', "+
-			"[ ir, parseInt( ir.getExtraAttribute( iResGlobals.defaultKeys.FONTSIZE_KEY, 10 ) ), "+
-			" this.options[this.selectedIndex].value , "+
-			" parseInt( ir.getExtraAttribute( iResGlobals.defaultKeys.FONT_X_PADDING_KEY, 10 ) ), "+
-			" parseInt( ir.getExtraAttribute( iResGlobals.defaultKeys.FONT_Y_PADDING_KEY, 10 ) ) ] ) ") ;
-		
 		/* time manipulation buttons */	
 		newSectionPart.innerHTML +=	htmlGen.createSectionLine();
 		newSectionPart.innerHTML +=	 htmlGen.createSmallButton(	DOMglobals.CLONE_VERSION_ID, 

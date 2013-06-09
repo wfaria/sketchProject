@@ -1,3 +1,10 @@
+var iResHistGlobals = {};
+
+iResHistGlobals.defaultKeys = {};
+iResHistGlobals.defaultKeys.IMAGE_SRC = "imgSrc";
+
+iResHistGlobals.defaultExtraValues = {};
+
 
 function createArrayIterator( arrayObj )
 {
@@ -23,6 +30,25 @@ function ResourceHistory( resource )
 	this.resourceId = resource.getId() ;
 	this.timeSlots = new Array();
 	this.timeSlots.push( resource );
+	this.extra = {}; //TODO: Try to use a real array or a hashmap here (be aware with problems with serialization)
+}
+
+ResourceHistory.prototype.getExtraAttribute = function( attributeKey ) 
+{	
+	var attrValue =  this.extra[attributeKey]; 
+	if( typeof attrValue != 'undefined' )
+	{
+		return attrValue;
+	}
+	else
+	{
+		return null;
+	}
+}
+
+ResourceHistory.prototype.setExtraAttribute = function( attributeKey, attributeValue ) 
+{	
+	this.extra[attributeKey] = attributeValue+""; 
 }
 
 ResourceHistory.prototype.getId = function()
