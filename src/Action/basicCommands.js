@@ -5,7 +5,7 @@ basicCommandsGlobals.commandTypeEnum = { CMD_UNDEFINED: -1, CMD_DRAG: 0,
 	CMD_CREATE_RES: 5, CMD_DELETE_RES: 6, CMD_RESTORE_RES: 7, CMD_GROUP_EXEC: 8,
 	CMD_RESIZE_RES: 9, CMD_FORMAT_RES: 10, CMD_CLONE_VERSION: 11, 
 	CMD_REMOVE_VERSION: 12, CMD_ADD_VERSION: 13, CMD_DELETE_VERSION: 14,
-	CMD_CHANGE_ACTIVE_VERSION: 15 };
+	CMD_CHANGE_ACTIVE_VERSION: 15, CMD_SET_HIST_EXTRA_IMG: 16 };
 basicCommandsGlobals.executionTypeEnum = { CMEX_UNDEFINED: -1, CMEX_EDITION: 0, CMEX_SIMULATION: 1 };
 
 function Command()
@@ -282,7 +282,7 @@ DeleteResourceCommand.prototype.constructor = DeleteResourceCommand;
 DeleteResourceCommand.prototype.toString = function()
 {
 	var interfaceResourceId = this.argObject.resourceId;
-	var sketchProject = this.argObject.newResourceCode;
+	var sketchProject = this.argObject.sketchObject;
 	return 		"Delete Resource " + Command.prototype.toString.call( this ) + "\n" +
 		"Parameters: Resource to be deleted with id" +  interfaceResourceId +"\n" +
 		"sketch project: " + sketchProject ;
@@ -868,7 +868,78 @@ DeleteResourceVersionCommand.prototype.undo = function( commandObject )
   				 resourceId, targetVersion, sketchObj );
 }
 
+		
+function SetRestHistExtraImageCommand( executionMode, interfaceResource, sketchProject, imageSource )
+{
+	Command.call(this);
+	this.commandCode = basicCommandsGlobals.commandTypeEnum.CMD_SET_HIST_EXTRA_IMG;
+	this.executionMode = executionMode;
+	this.setArgs(
+		{
+			resource: interfaceResource,
+			sketchObject: sketchProject,
+			imageSrc: imageSource
+		}
+	);
+}
 
+SetRestHistExtraImageCommand.prototype = new Command;
+SetRestHistExtraImageCommand.prototype.constructor = SetRestHistExtraImageCommand;
+
+SetRestHistExtraImageCommand.prototype.toString = function()
+{
+	var interfaceResource = this.argObject.resource;
+	var sketchProject = this.argObject.sketchObject;
+	var imageSource = this.argObject.imageSrc;
+	return 		"Set Resource History's Extra Image" + Command.prototype.toString.call( this ) + "\n" +
+		"Parameters: fontSize = " + sketchProject + 
+		"\n image string length = " + imageSource.length +
+		"\ninterface resource: " + interfaceResource ;
+}
+
+
+SetRestHistExtraImageCommand.prototype.execute = function( commandObject )
+{
+	var interfaceResource = this.argObject.resource;
+	var sketchProject = this.argObject.sketchObject;
+	var imageSource = this.argObject.imageSrc;
+	
+	var currentScreen = sketchProject.getCurrentScreen();
+	
+	var resourceHistory = currentScreen.getResourceHistory( interfaceResource.getId() );
+	if( resourceHistory != null )
+	{
+		resourceHistory.setExtraAttribute( iResHistGlobals.defaultKeys.IMAGE_SRC, imageSource );
+		globalMediators.internalMediator.publish( "ResHistExtraImgChanged", [ interfaceResource, resourceHistory ] );
+	}
+	else
+	{
+		console.error("Error while changing resource interface's extra image field" );
+		return actionGlobals.IGNORE_COMMAND;
+	}
+	return actionGlobals.COMMAND_OK;
+}
+
+SetRestHistExtraImageCommand.prototype.undo = function( commandObject )
+{
+	var interfaceResource = this.argObject.resource;
+	var sketchProject = this.argObject.sketchObject;
+	
+	var currentScreen = sketchProject.getCurrentScreen();
+	
+	var resourceHistory = currentScreen.getResourceHistory( interfaceResource.getId() );
+	if( resourceHistory != null )
+	{
+		var imageSource = resourceHistory.getExtraAttribute( iResHistGlobals.defaultKeys.IMAGE_SRC );
+		return new SetRestHistExtraImageCommand( basicCommandsGlobals.executionTypeEnum.CMEX_EDITION,
+			interfaceResource, sketchProject, imageSource );
+	}
+	else
+	{
+		console.error("Error while creating an undo command for the resource interface's extra image field change" );
+		return null;
+	}
+}
 
 /* test */
 

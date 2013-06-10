@@ -48,7 +48,15 @@ ResourceHistory.prototype.getExtraAttribute = function( attributeKey )
 
 ResourceHistory.prototype.setExtraAttribute = function( attributeKey, attributeValue ) 
 {	
-	this.extra[attributeKey] = attributeValue+""; 
+	if( attributeValue == null )
+	{
+		this.extra[attributeKey] = attributeValue;
+	} 
+	else
+	{
+		//force string conversion
+		this.extra[attributeKey] = attributeValue+"";
+	}
 }
 
 ResourceHistory.prototype.getId = function()

@@ -38,7 +38,20 @@ GeneralManager.prototype.subscribeToMediators = function()
   			function() // Do this way if you want to create a closure to the component
   			{	
   				return	{ // The real object (mediator component) with callback functions
-
+					onChangeResHistExtraImg: function( interfaceResource )
+					{
+						ImageHandler.setTargetElement( interfaceResource, generalGlobals.manager.sketchProject );
+						var innerHTMLText = '<h2>Choose your image<\/h2>\n<input type=\"file\" id=\"files\" name=\"files[]\" multiple onchange=\"ImageHandler.handleFileSelect(event)\" \/>';
+						Popup.showPopupDiv( innerHTMLText, 10 , 10 ) ;
+					},
+					onImageUploadedForResource: function( interfaceResource, imageSource )
+					{
+						var command = new SetRestHistExtraImageCommand( 
+							basicCommandsGlobals.executionTypeEnum.CMEX_EDITION,
+							interfaceResource, generalGlobals.manager.sketchProject, imageSource );
+						generalGlobals.manager.actionController.doCommand( command );
+						Popup.closePopupDiv();
+					},
 					onChangeActiveVersion: function( versionNumber )
 					{
 						var unselectCommand = generalGlobals.manager.createCancelSelectionCommand();

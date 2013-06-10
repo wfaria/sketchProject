@@ -719,6 +719,57 @@
   		}
   	);
   	
+  	module("Resource History Extra Field Manipulation Test");
+  	test(
+  		"Clone Resource Version tests", function()
+  		{
+  			var imageSource = "IMAGE_HERE";
+  			
+  			var sketchName = "test";
+			var sketchAuthor = "tester";
+			var sketchObj = new Sketch( sketchName, sketchAuthor );
+			var currentScreen = sketchObj.getCurrentScreen();
+			
+			globalMediators.start();
+			var actionController = new ActionController();
+			
+			var version = 0;
+			var createCommand = new CreateResourceCommand( 
+				basicCommandsGlobals.executionTypeEnum.CMEX_EDITION, 
+				resourceTypeEnum.IR_BUTTON, sketchObj );
+				
+			ok( actionController.doCommand( createCommand ) == true, "Creating a button");
+			
+			var resourceHistory = currentScreen.getResourceHistory(0);
+			
+			ok( resourceHistory != null, "Getting button's history object");
+			
+			ok( resourceHistory.getExtraAttribute( iResHistGlobals.defaultKeys.IMAGE_SRC ) == null, 
+				"In the start there is no extra field on the Resource history");
+			
+			var buttonResource = resourceHistory.getResourceFromVersion( version );
+			
+			ok( buttonResource != null, "Getting button from resource history");
+			
+			var changeImageCommand = new SetRestHistExtraImageCommand( basicCommandsGlobals.executionTypeEnum.CMEX_EDITION,
+				buttonResource, sketchObj, imageSource );
+				
+			ok( actionController.doCommand( changeImageCommand ) == true, "Change history's image extra field");
+				
+			ok( resourceHistory.getExtraAttribute( iResHistGlobals.defaultKeys.IMAGE_SRC ) == imageSource, 
+				"After calling the command there is an image extra field on the Resource history");
+				
+			ok( actionController.undo( ) != null, "Undoing the last action");
+				
+			ok( resourceHistory.getExtraAttribute( iResHistGlobals.defaultKeys.IMAGE_SRC ) == null, 
+				"And there is no extra field on the Resource history again");
+				
+			ok( actionController.redo( ) != null, "Undoing the last action");
+			
+			ok( resourceHistory.getExtraAttribute( iResHistGlobals.defaultKeys.IMAGE_SRC ) == imageSource, 
+				"After calling the redo there is an image extra field on the Resource history");
+  		}
+  	);
   </script>
 </body>
 </html>

@@ -411,8 +411,7 @@ GraphicController.prototype.defaultKineticFactory = function( interfaceResource 
 			}
 			else
 			{
-				console.error("Not implemented yet: Image insertion");
-				return;
+				imageObj.src = imgSrc;
 			}
 			
 			var kineticGroup = new Kinetic.Group(  { 
@@ -546,6 +545,12 @@ AndroidStyleChanger.prototype.modifyButton = function ( kineticShape )
 
 
 /******** Internal Mediator functions **********/
+GraphicController.prototype.onResHistExtraImgChanged = function( interfaceResource, resourceHistory )
+{
+	this.deleteInterfaceResource( interfaceResource ) ;
+	this.addInterfaceResource( interfaceResource );		
+}
+
 GraphicController.prototype.onProjectCreated = function( projectName, authorName, sketchProject )
 {
 	this.renderScreen( sketchProject );
@@ -779,7 +784,7 @@ GraphicController.prototype.onResourceNameChanged = function( interfaceResource,
 		kineticTextObjArray = this.getKineticChildrenByName( kineticObject, graphicControllerGlobals.defaultNames.NAME );
 		if( kineticTextObjArray == null || kineticTextObjArray.length != 1 )
 		{
-			console.error( "onResourceNameChange there is no name child on the kinetic object with the name changed" );
+			/* There are elements without name elements */
 			return;
 		}
 		else

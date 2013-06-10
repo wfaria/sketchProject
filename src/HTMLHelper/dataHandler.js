@@ -88,7 +88,10 @@ DataHandler.readFile = function(f)
 }
 
 /****/
-var ImageHandler = {};
+//TODO: Change this for a syncronous upload
+var ImageHandler =  { };
+ImageHandler.interfaceResource = null;
+ImageHandler.sketchProject = null;
 
 ImageHandler.errorHandler =  function(evt) {
 	switch(evt.target.error.code) {
@@ -126,20 +129,26 @@ ImageHandler.loadEnd =  function( evt )
 	if (evt.target.readyState == FileReader.DONE)
 	{
 		var imageRes = evt.target.result;
-		alert(imageRes);
 		var imageObj = new Image();
 		imageObj.src = imageRes;
-		globalMediators.internalMediator.publish( "ProjectUploaded", [ evt.target.result ] );
+		globalMediators.internalMediator.publish( "ImageUploadedForResource", 
+			[ ImageHandler.interfaceResource, evt.target.result ] );
 		window.status = "Image loaded";
 		
 	}
 	else
 	{
-		alert( "fatal error while openning file" );
+		alert( "Fatal error while openning image" );
 	}
 }
 
-ImageHandler.handleFileSelect = function(evt) 
+ImageHandler.setTargetElement = function( interfaceRes, sketchObj  )
+{
+	ImageHandler.interfaceResource = interfaceRes;
+	ImageHandler.sketchProject = sketchObj;	
+}
+
+ImageHandler.handleFileSelect = function( evt ) 
 {
 	var files = evt.target.files; // FileList object
 	

@@ -119,8 +119,15 @@ InterfaceResource.prototype.startWithExtraAttribute = function( attributeKey, at
 
 InterfaceResource.prototype.setExtraAttribute = function( attributeKey, attributeValue ) 
 {	
-	this.extra[attributeKey] = attributeValue+""; 
-	//this.extra.push( attributeValue+"" );
+	if( attributeValue == null )
+	{
+		this.extra[attributeKey] = attributeValue;
+	} 
+	else
+	{
+		//force string conversion
+		this.extra[attributeKey] = attributeValue+"";
+	}
 }
 
 

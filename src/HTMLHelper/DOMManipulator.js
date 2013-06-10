@@ -17,6 +17,7 @@ DOMglobals.DELETE_VERSION_ID = "del_version_btn";
 DOMglobals.REMOVE_VERSION_ID = "rem_version_btn";
 DOMglobals.DELETE_RESOURCE_ID = "del_history_btn";
 DOMglobals.CLONE_VERSION_ID = "clone_version_btn";
+DOMglobals.CHANGE_IMG_ID = "change_img_btn";
 
 DOMglobals.PROJECT_SECTION_ID = "project_section";
 DOMglobals.PROJECT_VERSION_ID = "project_version_btn";
@@ -311,7 +312,6 @@ sideMenu.createResourceBasicSection = function( interfaceResource )
 				
 		if( interfaceResource.getResourceType() != resourceTypeEnum.IR_IMAGE  )
 		{
-
 			newSectionPart.innerHTML +=	htmlGen.createSectionLine();
 			newSectionPart.innerHTML += htmlGen.createTextInputString( "Font Size", 
 				DOMglobals.FONTSIZE_TEXT_ID, 10, ir.getExtraAttribute( iResGlobals.defaultKeys.FONTSIZE_KEY ),
@@ -328,6 +328,12 @@ sideMenu.createResourceBasicSection = function( interfaceResource )
 				" this.options[this.selectedIndex].value , "+
 				" parseInt( ir.getExtraAttribute( iResGlobals.defaultKeys.FONT_X_PADDING_KEY, 10 ) ), "+
 				" parseInt( ir.getExtraAttribute( iResGlobals.defaultKeys.FONT_Y_PADDING_KEY, 10 ) ) ] ) ") ;
+		}
+		else if( interfaceResource.getResourceType() == resourceTypeEnum.IR_IMAGE )
+		{
+			newSectionPart.innerHTML +=	 htmlGen.createSmallButton(	DOMglobals.CHANGE_IMG_ID, 
+			"Change image from ALL versions of this resource",
+			"sideMenu.changeImageAction(sideMenu.singleResource)" );
 		}
 			
 		/* time manipulation buttons */	
@@ -374,6 +380,11 @@ sideMenu.removeResourceBasicSection = function()
 } 
 
 /* Function to react to some events */
+sideMenu.changeImageAction = function( interfaceResource )
+{
+	globalMediators.internalMediator.publish( "ChangeResHistExtraImg", [ interfaceResource ] );
+}
+
 sideMenu.removeHistoryAction = function( interfaceResource )
 {
 	globalMediators.internalMediator.publish( "RemoveResourceHistory", [ interfaceResource ] );

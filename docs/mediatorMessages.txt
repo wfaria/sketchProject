@@ -99,14 +99,8 @@ onChangeActiveVersion = function( toVersion ){}
 onCloneResourceVersion = function( interfaceResource, baseVersion, targetVersion ){}
  
  /**
- * EventKey: CreateButton
+ * EventKey: CreateButton //TODO: Use the CreateResource instead of this one
  * Order to create a button resource
- *
- */
-
- /**
- * EventKey: CreateImage
- * Order to create an image resource
  *
  */
 
@@ -209,6 +203,34 @@ onRemoveResourceHistory = function( interfaceResource ){}
  */
 onRemoveResourceVersion = function( interfaceResource ){}
 
+ /**
+ * EventKey: ChangeResHistExtraImg
+ * Order to change Resource History's image extra field
+ *
+ * @param {InterfaceResource} interfaceResource - The object from the current version of the project.
+ */
+onChangeResHistExtraImg = function( interfaceResource ){}
+
+
+ /**
+ * EventKey: ResHistExtraImgChanged
+ * Sent when one Resource History has its image extra field changed
+ *
+ * @param {InterfaceResource} interfaceResource - The object from the current version of the project.
+ * @param {ResourceHistory} resourceHistory - The history object with the new image source.
+ */
+onResHistExtraImgChanged = function( interfaceResource, resourceHistory ){}
+
+ /**
+ * EventKey: ImageUploadedForResource
+ * Sent when the image data handler read an image from the user
+ *
+ * @param {InterfaceResource} interfaceResource - The object from the current version of the project.
+ * @param {String} imageSource - A string that represents an image, generally it is pretty long.
+ */
+onImageUploadedForResource = function( interfaceResource, imageSource ){}
+
+
 /**
  * EventKey: ResourceDeleteTagChanged
  * Sent when some resource have its delete tag changed, this tag can be true or false.
@@ -289,15 +311,6 @@ onResizeInterfaceResource = function( interfaceResource, toX, toY, newWidth, new
  */
 onInterfaceResourceResized = function( interfaceResource, oldX, oldY, oldWidth, oldHeight ){}
 
-
-/**
- * EventKey: UploadImageToResource
- * Order to upload an image to a resource, if the following parameter is null, then it is an order
- * to create an image resource before.
- *
- * @param {InterfaceResource} interfaceResource - The object that contains the data from an interface resource. It can be null
- */
-onUploadImageToResource = function( interfaceResource ){}
 
 /****** Graphic messages ********/
 
