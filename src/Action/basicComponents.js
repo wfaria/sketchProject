@@ -78,7 +78,6 @@ function dragEnd( evt, kineticShape )
 
 function dblClick( evt )
 {
-   	globalMediators.internalMediator.publish( "RenameElement", [ this.interfaceResource, "lol" ] );
 }
 
 /*********************************************************/

@@ -1,7 +1,7 @@
 // This class is dependent from the KineticJS library
 
 var graphicControllerGlobals = {};
-graphicControllerGlobals.MAX_DEPTH = 15;
+graphicControllerGlobals.MAX_DEPTH = 2;
 graphicControllerGlobals.CANVAS_WIDTH = 800;
 graphicControllerGlobals.CANVAS_HEIGHT = 600;
 graphicControllerGlobals.stylesEnum = { DEFAULT : 0, ANDROID : 1, WINDOWS8: 2, LINUX: 3 };
@@ -12,6 +12,8 @@ graphicControllerGlobals.defaultNames.NAME = "_NAME";
 graphicControllerGlobals.defaultNames.MAIN_SHAPE = "_MAIN_ELEMENT";
 graphicControllerGlobals.defaultNames.NOT_RESIZE = "_NO_RZ";
 
+graphicControllerGlobals.COMMON_CANVAS = 0;
+graphicControllerGlobals.META_CANVAS = 1;
 
 /**
  * The GraphicController object, it will control the graphic part that uses the kinetic stage to draw and manipulate shapes.
@@ -26,7 +28,7 @@ function GraphicController( containerDOMID )
       width: graphicControllerGlobals.CANVAS_WIDTH,
       height: graphicControllerGlobals.CANVAS_HEIGHT
     }); 
-    this.initializeVariables();
+    this.initializeVariables( null );
     this.sketchObject = null;
 }
 
@@ -48,6 +50,16 @@ GraphicController.prototype.initializeVariables = function( sketchObj )
 	graphicControllerGlobals.styleChangers[ graphicControllerGlobals.stylesEnum.ANDROID ] = new AndroidStyleChanger();
 	graphicControllerGlobals.styleChangers[ graphicControllerGlobals.stylesEnum.WINDOWS8 ] = new KineticStyleChanger();
 	graphicControllerGlobals.styleChangers[ graphicControllerGlobals.stylesEnum.LINUX ] = new KineticStyleChanger();
+	
+	if( sketchObj != null )
+	{
+		this.metaGraphicController = new MetaGraphicController( this.layers[0] );
+		globalMediators.subscribeToMediators( this.metaGraphicController, "MetaGraphicController" );
+	}
+	else
+	{
+		this.metaGraphicController = null;
+	}
 }
 
 /**
@@ -139,8 +151,14 @@ GraphicController.prototype.addInterfaceResource = function ( interfaceRes )
 	}
 	
 	var ks = this.createGraphicObject( interfaceRes );
-	this.layers[ interfaceRes.getZ() ].add( ks );
-	this.layers[ interfaceRes.getZ() ].draw();
+	this.layers[ graphicControllerGlobals.COMMON_CANVAS ].add( ks );
+	this.layers[ graphicControllerGlobals.COMMON_CANVAS ].draw();
+	
+	if( interfaceRes.getResourceType() == resourceTypeEnum.IR_IMAGE )
+	{
+		//TODO: temporary fix, when inserting an image it doesn't appear until you click on the canvas
+		this.stage.draw();
+	}
 	
 	
 	// TODO: Call this from a mediator to isolate the graphic part from the event handler
