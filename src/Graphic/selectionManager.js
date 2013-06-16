@@ -113,6 +113,17 @@ SelectionManager.prototype.onInterfaceResourceMoved = function( interfaceResourc
 	}		
 }
 
+SelectionManager.prototype.onInterfaceResourceResized = function( interfaceResource, oldX, oldY, oldWidth, oldHeight )
+{
+	if( sideMenu.containsId(DOMglobals.BASIC_RESOURCE_ID ) )
+	{
+		sideMenu.updateValue( DOMglobals.X_TEXT_ID, interfaceResource.getX() );
+		sideMenu.updateValue( DOMglobals.Y_TEXT_ID, interfaceResource.getY() );
+		sideMenu.updateValue( DOMglobals.WIDTH_TEXT_ID, interfaceResource.getWidth() );
+		sideMenu.updateValue( DOMglobals.HEIGHT_TEXT_ID, interfaceResource.getHeight() );
+	}	
+}
+
 SelectionManager.prototype.onResourceFormatted = function( interfaceResource )
 {
 	//TODO: ADD the rest of the changed elements

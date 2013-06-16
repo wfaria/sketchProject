@@ -11,9 +11,8 @@ function MetaGraphicController( l )
 {
 	this.layer = l;
 	this.selectionKineticShapes = [];
+	this.selectionIndicatedResources = [];
 	this.anchorShapes = [];	
-	
-
 }
 
 MetaGraphicController.prototype.constructor = MetaGraphicController;
@@ -23,6 +22,50 @@ MetaGraphicController.prototype.generatePrefix = function( idNum )
 	return metaGraphicGlobals.idPrefix+idNum;
 }
 
+MetaGraphicController.prototype.removeAnchors = function()
+{
+	var i = 0;
+	for( i = 0; i < this.anchorShapes.length; i ++ )
+	{
+		this.anchorShapes[i].remove();
+	}
+	this.anchorShapes = [];	
+	this.layer.draw();
+}
+
+MetaGraphicController.prototype.removeSelectionKineticRect = function( interfaceResource ) 
+{
+	var kineticRectIndex = this.getSelectionKineticRectIndex( interfaceResource );
+	if( kineticRectIndex == -1 ) return null;
+	
+	
+	var kineticRect = this.selectionKineticShapes[ kineticRectIndex ];
+	if( kineticRect != null )
+	{
+		this.selectionKineticShapes.splice( kineticRectIndex, 1 );
+		this.selectionIndicatedResources.splice( kineticRectIndex, 1 );
+		kineticRect.remove();
+		this.layer.draw();
+	}
+	return kineticRect;
+}
+
+MetaGraphicController.prototype.getSelectionKineticRectIndex = function( interfaceResource ) 
+{
+	var idStr = this.generatePrefix(interfaceResource.getId());
+	var i = 0;
+	var length = this.selectionKineticShapes.length;
+	
+	for( i = 0; i < length; i++ )
+	{
+		if( this.selectionKineticShapes[i].getId() == this.generatePrefix(interfaceResource.getId()) )
+		{
+			return i;
+		}
+	}
+	
+	return -1;
+}
 
 MetaGraphicController.prototype.createSelectionCountour = function( interfaceResource ) 
 {
@@ -32,24 +75,58 @@ MetaGraphicController.prototype.createSelectionCountour = function( interfaceRes
 		y : interfaceResource.getY(),
 		width : interfaceResource.getWidth(),
 		height : interfaceResource.getHeight(),
-		stroke : 'red',
+		stroke : 'blue',
 		fill: 'white',
+		dashArray: [5, 2, 0.001, 5],
 		draggable: false,
 		dragOnTop: false,
 		id : this.generatePrefix(interfaceResource.getId()),
-		strokeWidth : 6
+		strokeWidth : 4
 	});
 	
 	rect.disableFill();
 	
 	this.selectionKineticShapes.push( rect );
-	
+	this.selectionIndicatedResources.push( interfaceResource );
 	
 	this.layer.add( rect );
 	this.layer.draw();
 }
 
-
+MetaGraphicController.prototype.saveAnchorModification = function()
+{
+	//This function only works with one element
+	if( this.selectionIndicatedResources.length != 1 )
+	{
+		console.log( "Graphic error, this application can only resize one element per time" );
+		return;
+	}
+	
+	var topLeft = this.anchorShapes[ metaGraphicGlobals.TL ];
+	var topRight = this.anchorShapes[ metaGraphicGlobals.TR ];
+	var bottomRight = this.anchorShapes[ metaGraphicGlobals.BR ];
+	var bottomLeft = this.anchorShapes[ metaGraphicGlobals.BL ];
+	var newX = topLeft.getX();
+	var newY = topLeft.getY();
+	var newWidth = topRight.getX() - topLeft.getX();
+	var newHeight = bottomLeft.getY() - topLeft.getY();
+	
+	// the width and the height can't be negative here
+	if( newWidth < 0 )
+	{
+		newX = newX+newWidth;
+		newWidth = -1*newWidth;
+	}
+	if( newHeight < 0 )
+	{
+		newY = newY+newHeight;
+		newHeight = -1*newHeight;
+	}
+	
+	globalMediators.internalMediator.publish( 'ResizeInterfaceResource', 
+		[ this.selectionIndicatedResources[0],
+			 newX, newY, newWidth, newHeight ]);
+}
 
 MetaGraphicController.prototype.createAnchor = function(x, y, index) 
 {
@@ -64,8 +141,32 @@ MetaGraphicController.prototype.createAnchor = function(x, y, index)
 		draggable : true,
 		dragOnTop : false
 	});
+	
+	// to avoid to create a closure, throw the metaGraphicController inside of a new variable
+	var controller = this;
+	
+	anchor.on('dragmove', function() {
+       controller.updateAnchors(index);
+    });
+    
+	anchor.on('dragend', function() {
+		controller.saveAnchorModification();	
+    });
+    
+	anchor.on('mouseover', function() {
+	  document.body.style.cursor = 'pointer';
+	  this.setStrokeWidth(4);
+	  controller.layer.draw();
+	});
+	
+	anchor.on('mouseout', function() {
+	  document.body.style.cursor = 'default';
+	  this.setStrokeWidth(2);
+	  controller.layer.draw();
+	});
 
 	this.anchorShapes[index] = anchor;
+
 	this.layer.add(anchor);
 
 }
@@ -82,12 +183,10 @@ MetaGraphicController.prototype.createSelectionAnchors = function(interfaceResou
 	var y = interfaceResource.getY();
 	var width = interfaceResource.getWidth();
 	var height = interfaceResource.getHeight();
-	this.createAnchor(x, y, MetaGraphicGlobals.TL);
-	this.createAnchor(x + width, y, MetaGraphicGlobals.TR);
-	this.createAnchor(x, y + height, MetaGraphicGlobals.BL);
-	this.createAnchor(x + width, y + height, MetaGraphicGlobals.BR);
-
-	//TODO: Add events here
+	this.createAnchor(x, y, metaGraphicGlobals.TL);
+	this.createAnchor(x + width, y, metaGraphicGlobals.TR);
+	this.createAnchor(x, y + height, metaGraphicGlobals.BL);
+	this.createAnchor(x + width, y + height, metaGraphicGlobals.BR);
 
 	this.layer.draw();
 }
@@ -99,31 +198,31 @@ MetaGraphicController.prototype.updateAnchors = function( anchorIndex  )
 	var anchorX = activeAnchor.getX();
 	var anchorY = activeAnchor.getY();
 
-        var topLeft = this.anchorShapes[ MetaGraphicGlobals.TL ];
-        var topRight = this.anchorShapes[ MetaGraphicGlobals.TR ];
-        var bottomRight = this.anchorShapes[ MetaGraphicGlobals.BR ];
-        var bottomLeft = this.anchorShapes[ MetaGraphicGlobals.BL ];
+	var topLeft = this.anchorShapes[ metaGraphicGlobals.TL ];
+	var topRight = this.anchorShapes[ metaGraphicGlobals.TR ];
+	var bottomRight = this.anchorShapes[ metaGraphicGlobals.BR ];
+	var bottomLeft = this.anchorShapes[ metaGraphicGlobals.BL ];
 	
 
 	switch( anchorIndex )
 	{
-	  case ( MetaGraphicGlobals.TL ):
+	  case ( metaGraphicGlobals.TL ):
 	  {
             topRight.setY(anchorY);
             bottomLeft.setX(anchorX);
             break;
 	  }
-          case ( MetaGraphicGlobals.TR ):
+          case ( metaGraphicGlobals.TR ):
             topLeft.setY(anchorY);
             bottomRight.setX(anchorX);
             break;
-          case ( MetaGraphicGlobals.BR ):
+          case ( metaGraphicGlobals.BR ):
 	  {
             bottomLeft.setY(anchorY);
             topRight.setX(anchorX); 
             break;
 	  }
-	  case ( MetaGraphicGlobals.BL ):
+	  case ( metaGraphicGlobals.BL ):
 	  {
             bottomRight.setY(anchorY);
             topLeft.setX(anchorX); 
@@ -141,10 +240,36 @@ MetaGraphicController.prototype.updateAnchors = function( anchorIndex  )
 	var newWidth = topRight.getX() - topLeft.getX();
 	var newHeight = bottomLeft.getY() - topLeft.getY();
 
-	//TODO: Make the graphicController resize the selectedShape with these parameters
-	//TODO: Update contour size
+	// Updating selection indicator size
+	if( this.selectionKineticShapes.length != 1 )
+	{
+		console.error("Graphic error while reszing object");
+	}
+	else
+	{
+		var selectionRect = this.selectionKineticShapes[ 0 ];
+		selectionRect.setX( newX );
+		selectionRect.setY( newY );
+		selectionRect.setWidth( newWidth );
+		selectionRect.setHeight( newHeight );
+	}
 
 	this.layer.draw();
+}
+
+MetaGraphicController.prototype.fixSelectionKineticShape = function( interfaceResource )
+{
+	if( this.selectionKineticShapes.length != 1 )
+	{
+		console.error("Graphic error while reszing object");
+	}
+	else
+	{
+		this.removeAnchors();
+		this.removeSelectionKineticRect( interfaceResource );
+		this.createSelectionCountour( interfaceResource );
+		this.createSelectionAnchors( interfaceResource );
+	}
 }
 
 /******** Internal Mediator functions **********/
@@ -154,6 +279,7 @@ MetaGraphicController.prototype.onResourceSelected = function( resourceArray )
 	if( resourceArray.length == 1 )
 	{
 		this.createSelectionCountour( resourceArray[0] );
+		this.createSelectionAnchors( resourceArray[0] );
 	}
 	else if( resourceArray.length > 0 )
 	{
@@ -163,4 +289,30 @@ MetaGraphicController.prototype.onResourceSelected = function( resourceArray )
 
 MetaGraphicController.prototype.onResourceSelectCanceled = function( resourceArray )
 {
+	var i;
+	for( i = 0; i < resourceArray.length; i++ )
+	{
+		this.removeSelectionKineticRect( resourceArray[i] );
+	}
+	this.removeAnchors();
+}
+
+
+MetaGraphicController.prototype.onInterfaceResourceMoved = function( interfaceResource, oldX, oldY )
+{
+	var kineticShapeIndex = this.getSelectionKineticRectIndex( interfaceResource );
+	if( this.getSelectionKineticRectIndex( interfaceResource ) != -1 )
+	{
+		this.fixSelectionKineticShape( interfaceResource );
+	}
+}
+
+
+MetaGraphicController.prototype.onInterfaceResourceResized = function( interfaceResource, oldX, oldY, oldWidth, oldHeight )
+{
+	var kineticShapeIndex = this.getSelectionKineticRectIndex( interfaceResource );
+	if( this.getSelectionKineticRectIndex( interfaceResource ) != -1 )
+	{
+		this.fixSelectionKineticShape( interfaceResource );
+	}
 }

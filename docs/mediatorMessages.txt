@@ -314,6 +314,19 @@ onInterfaceResourceResized = function( interfaceResource, oldX, oldY, oldWidth, 
 
 /****** Graphic messages ********/
 
+/**
+ * EventKey: GraphicResourceResized
+ * Sent when a interface resource's graphic is resized,
+ * it doesn't mean that the interface resource itself has been resized,
+ * also this event can be used to change the graphic resource's position
+ *
+ * @param {InterfaceResource} interfaceResource - The object that contains the data from an interface resource.
+ * @param {int} toX - The new X position from the resource.
+ * @param {int} toY - The new Y position from the resource.
+ * @param {int} newWidth - New resource width.
+ * @param {int} newHeight - New resource height.
+ */
+onGraphicResourceResized = function( interfaceResource, toX, toY, newWidth, newHeight ){}
 
 /**
  * EventKey: EditorDragEnd

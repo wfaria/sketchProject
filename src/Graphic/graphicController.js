@@ -53,7 +53,7 @@ GraphicController.prototype.initializeVariables = function( sketchObj )
 	
 	if( sketchObj != null )
 	{
-		this.metaGraphicController = new MetaGraphicController( this.layers[0] );
+		this.metaGraphicController = new MetaGraphicController( this.layers[graphicControllerGlobals.META_CANVAS] );
 		globalMediators.subscribeToMediators( this.metaGraphicController, "MetaGraphicController" );
 	}
 	else
