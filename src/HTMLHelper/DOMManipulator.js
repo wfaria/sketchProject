@@ -6,8 +6,8 @@ DOMglobals.BASIC_RESOURCE_ID = "basic resource";
 DOMglobals.NAME_ID = "_resource_name";
 DOMglobals.X_TEXT_ID = "_basic_x_input";
 DOMglobals.Y_TEXT_ID = "_basic_y_input";
-DOMglobals.WIDTH_TEXT_ID = "basic resource";
-DOMglobals.HEIGHT_TEXT_ID = "basic resource";
+DOMglobals.WIDTH_TEXT_ID = "resource width";
+DOMglobals.HEIGHT_TEXT_ID = "resource height";
 DOMglobals.FONTSIZE_TEXT_ID = "font size";
 DOMglobals.FONTSTYLE_TEXT_ID = "font style";
 DOMglobals.SIDE_SECTION_CLASS = "sideMenuSection";
@@ -294,10 +294,10 @@ sideMenu.createResourceBasicSection = function( interfaceResource )
 		newSectionPart.innerHTML =	htmlGen.createSectionLine();
 		newSectionPart.innerHTML += htmlGen.createTextInputString( "Name", DOMglobals.NAME_ID, 10, ir.getName(),
 			"globalMediators.internalMediator.publish( \'RenameElement\', [ ir, this.value ] );"  );
-		newSectionPart.innerHTML += htmlGen.createTextInputString( "Width", "change_width", 10, ir.getWidth(),
+		newSectionPart.innerHTML += htmlGen.createTextInputString( "Width", DOMglobals.WIDTH_TEXT_ID, 10, ir.getWidth(),
 			"htmlGen.numberEventToInterMediator( this.value, 10, graphicControllerGlobals.CANVAS_WIDTH, "+
 			" \'ResizeInterfaceResource\', [ ir, ir.getX(), ir.getY(), parseInt(this.value), ir.getHeight() ]);"  );
-		newSectionPart.innerHTML += htmlGen.createTextInputString( "Height", "change_height", 10, ir.getHeight(),
+		newSectionPart.innerHTML += htmlGen.createTextInputString( "Height", DOMglobals.HEIGHT_TEXT_ID, 10, ir.getHeight(),
 			"htmlGen.numberEventToInterMediator( this.value, 10, graphicControllerGlobals.CANVAS_HEIGHT, "+
 			" \'ResizeInterfaceResource\', [ ir, ir.getX(), ir.getY(), ir.getWidth(), parseInt(this.value) ] );"  );
 		

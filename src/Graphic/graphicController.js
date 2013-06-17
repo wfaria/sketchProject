@@ -422,6 +422,7 @@ GraphicController.prototype.defaultKineticFactory = function( interfaceResource 
 			
 			var imageObj = new Image();
 			var imgSrc = resourceHistory.getExtraAttribute( iResHistGlobals.defaultKeys.IMAGE_SRC );
+		
 			
 			if( imgSrc == null )
 			{
@@ -430,6 +431,14 @@ GraphicController.prototype.defaultKineticFactory = function( interfaceResource 
 			else
 			{
 				imageObj.src = imgSrc;
+			}
+			
+			if( !imageObj.complete || 
+				imageObj.naturalWidth == 0 || imageObj.naturalWidth == "undefined" || 
+				imageObj.naturalHeight == 0 || imageObj.naturalHeight == "undefined" )
+			{
+				alert("There is one resource with an image corrupted on the canvas");
+				imageObj.src = "../media/img/no_image_loaded.jpg"; //TODO: Corrupted image here
 			}
 			
 			var kineticGroup = new Kinetic.Group(  { 

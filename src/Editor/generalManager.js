@@ -46,6 +46,19 @@ GeneralManager.prototype.subscribeToMediators = function()
 					},
 					onImageUploadedForResource: function( interfaceResource, imageSource )
 					{
+						var imageObj = new Image();
+						imageObj.src = imageSource;
+						
+						if( !imageObj.complete || 
+							imageObj.naturalWidth == 0 || imageObj.naturalWidth == "undefined" || 
+							imageObj.naturalHeight == 0 || imageObj.naturalHeight == "undefined" )
+						{
+							Popup.closePopupDiv();
+							alert("The image that you choose is corrupted, please choose another image");
+							return;
+						}
+						
+						
 						var command = new SetRestHistExtraImageCommand( 
 							basicCommandsGlobals.executionTypeEnum.CMEX_EDITION,
 							interfaceResource, generalGlobals.manager.sketchProject, imageSource );
