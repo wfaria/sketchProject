@@ -186,7 +186,39 @@
 			ok( resourceHistory1.getExtraAttribute( "color" ) == colorString, 
 				"After setting a value, the extra color attribute has the value " + colorString );
 		}
-	)
+	);
+	
+	test
+	(
+		"Getting resource's next available version", function()
+		{
+			var x = 30;
+			var y = 10;
+			var version = 1;
+			var version1 = 4;
+			var version2 = 7;
+			var version3 = 8;
+			var btn1 = new ButtonResource( x,y,0,100, 50, "Button", 0, version );
+			var resourceHistory1 = new ResourceHistory( btn1 );
+			
+			ok( resourceHistory1.getHistoryLength() == 1, "Start length == 1 OK" );
+			ok( (resourceHistory1.cloneVersion( version, version1 ) != null), 
+				"Clonning from version " +version+ " to version " + version1 );
+			ok( (resourceHistory1.cloneVersion( version1, version2 ) != null), 
+				"Clonning from version " +version1+ " to version " + version2 );
+			ok( (resourceHistory1.cloneVersion( version2, version3 ) != null), 
+				"Clonning from version " +version2+ " to version " + version3 );
+				
+			ok( resourceHistory1.getNextFutureResource(0).getVersion() == version,
+				"Considering 0 as the active version, the next available version is " + version );
+			ok( resourceHistory1.getNextFutureResource(version2).getVersion() == version3,
+				"Considering " +version1+ " as the active version, the next available version is " + version2 );
+			ok( resourceHistory1.getNextFutureResource(version2).getVersion() == version3,
+				"Considering " +version2+ " as the active version, the next available version is " + version3 );
+			ok( resourceHistory1.getNextFutureResource(version3) == null,
+				"Since " +version3+ " is the newest version from this resource, there are no available next version" );
+		}
+	);
 	
 
 	/*

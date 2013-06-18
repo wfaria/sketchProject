@@ -73,6 +73,86 @@
 		}
 		
 	);	
+	
+	
+	test
+	(
+		"Checking next future and past versions", function()
+		{
+			var sketchName = "test";
+			var sketchAuthor = "tester";
+			var screenName =  "Test Screen";
+			var sketchObj = new Sketch( sketchName, sketchAuthor );
+			var screenObj = sketchObj.getCurrentScreen();
+			
+			var x = 30;
+			var y = 10;
+			var version = 0;
+			var version1 = 4;
+			var version2 = 7;
+			var version3 = 8;
+			var id1 = 0;
+			var id2 = 1;
+			var id3 = 2;
+			
+			ok( sketchObj.getNextAvailableVersion() == -1, 
+				"There is no next available version for a screen without elements" );
+			
+			ok( sketchObj.getPreviousAvailableVersion() == -1, 
+				"There is no previous available version for a screen without elements" );
+				
+			
+			var btn1 = new ButtonResource( x,y,0,100, 50, "Button1", id1, version );
+			var btn2 = new ButtonResource( x,y,0,100, 50, "Button2", id2, version );
+			var btn3 = new ButtonResource( x,y,0,100, 50, "Button3", id3, version );
+			screenObj.addResourceHistory( btn1 );
+			screenObj.addResourceHistory( btn2 );
+			screenObj.addResourceHistory( btn3 ); 
+			ok( screenObj.getResources().length == 3, "Adding 3 buttons in this screen" ); 
+			
+			ok( sketchObj.getNextAvailableVersion() == -1 && sketchObj.getPreviousAvailableVersion() == -1, 
+				"We continue without a next and a previous available version since there are elements only in the active version" );
+			
+			var hist1 = screenObj.getResourceHistory( btn1.getId() );
+			var hist2 = screenObj.getResourceHistory( btn2.getId() );
+			var hist3 = screenObj.getResourceHistory( btn3.getId() );
+			
+			ok( (hist1.cloneVersion( version, version1 ) != null), 
+				"Clonning from version " +version+ " to version " + version1 + " from the resource with id " + hist1.getId() );
+			ok( (hist1.cloneVersion( version, version2 ) != null), 
+				"Clonning from version " +version+ " to version " + version2 + " from the resource with id " + hist1.getId() );
+			ok( (hist2.cloneVersion( version, version1 ) != null), 
+				"Clonning from version " +version+ " to version " + version1 + " from the resource with id " + hist2.getId() );
+			ok( (hist2.cloneVersion( version, version3 ) != null), 
+				"Clonning from version " +version+ " to version " + version3 + " from the resource with id " + hist2.getId() );
+			ok( (hist3.cloneVersion( version, version2 ) != null), 
+				"Clonning from version " +version+ " to version " + version2 + " from the resource with id " + hist3.getId() );
+			ok( (hist3.cloneVersion( version2, version3 ) != null), 
+				"Clonning from version " +version2+ " to version " + version3 + " from the resource with id " + hist3.getId() );
+				
+			ok( sketchObj.getNextAvailableVersion() == version1, 
+				"Now we have a next available version since we cloned versions to there " );
+			ok( sketchObj.getPreviousAvailableVersion() == -1, 
+				"But we continue without previous available version since we created only future elements" );
+			 
+			sketchObj.setActiveVersionNumber( version2 );
+			ok( sketchObj.getNextAvailableVersion() == version3, 
+			 "After changing the active version to " +version2+ " our new next available version is " + version3 );
+			ok( sketchObj.getPreviousAvailableVersion() == version1, 
+			 "After changing the active version to " +version2+ " our new previous available version is " + version1 );
+			 
+			ok( hist1.removeVersion(version1).getVersion() == version1 && hist2.removeVersion(version1).getVersion() == version1,
+				"Removing all version " + version1  + " from the project");
+			ok( sketchObj.getPreviousAvailableVersion() == version, 
+			 "After this our new previous available version is " + version ); 
+			 
+			sketchObj.setActiveVersionNumber( version3 );
+			ok( sketchObj.getNextAvailableVersion() == -1, 
+			 "After changing the active version to " +version3+ " there is no new available version because it is the newest one" );
+			ok( sketchObj.getPreviousAvailableVersion() == version2, 
+			 "After changing the active version to " +version3+ " our new previous available version is " + version2 );
+		}
+	);
   </script>
 </body>
 </html>

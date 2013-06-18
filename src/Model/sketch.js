@@ -5,6 +5,9 @@ iResHistGlobals.defaultKeys.IMAGE_SRC = "imgSrc";
 
 iResHistGlobals.defaultExtraValues = {};
 
+var SketchGlobals = {};
+SketchGlobals.MAX_VERSION_NUMBER = 999999;
+
 
 function createArrayIterator( arrayObj )
 {
@@ -158,6 +161,28 @@ ResourceHistory.prototype.cloneVersion = function( numFrom, numTo )
 	}
 }
 
+// this function is used to check if the project has future or past versions
+ResourceHistory.prototype.getNextFutureResource = function ( versionNum  ) 
+{
+	if( this.timeSlots.length < 1 )
+	{
+		return null;
+	} 
+	else
+	{
+		for (var i = 0; i < this.timeSlots.length; i++)
+		{
+			if( this.timeSlots[i].getVersion() > versionNum )
+			{
+				return this.timeSlots[i];
+			}
+		}
+		// If this occurs, all elements from this history are newer than the version that
+		// we want, so they don't exist in this version
+		return null;
+	}
+}
+
 ResourceHistory.prototype.getResourceBeforeVersion = function ( versionNum  )
 {
 	if( this.timeSlots.length < 1 )
@@ -287,11 +312,79 @@ function Sketch( name, author )
 	 */
 }
 
+Sketch.prototype.getPreviousAvailableVersion = function()
+{
+	var i = 0;
+	var activeVersion = this.getActiveVersionNumber();
+	var currentScreen = this.getCurrentScreen();
+	if( currentScreen == null )
+	{
+		return -1;
+	}
+	
+	var resourceHistories = currentScreen.getResources();
+	if( resourceHistories.length == 0 )
+	{
+		return -1;
+	}
+	
+	var ret = -1;
+	for( i = 0; i < resourceHistories.length; i++ )
+	{
+		var prevResVersion = resourceHistories[i].getResourceBeforeVersion( activeVersion );
+		if( prevResVersion != null && prevResVersion.getVersion() < activeVersion &&
+				prevResVersion.getVersion() > ret  )
+		{
+			ret = prevResVersion.getVersion();
+		}
+	}
+	return ret;
+}
+
+Sketch.prototype.getNextAvailableVersion = function()
+{
+	var i = 0;
+	var activeVersion = this.getActiveVersionNumber();
+	var currentScreen = this.getCurrentScreen();
+	if( currentScreen == null )
+	{
+		return -1;
+	}
+	
+	var resourceHistories = currentScreen.getResources();
+	if( resourceHistories.length == 0 )
+	{
+		return -1;
+	}
+	var ret = SketchGlobals.MAX_VERSION_NUMBER;
+	var validRet = false;
+	
+	for( i = 0; i < resourceHistories.length; i++ )
+	{
+		var nextResVersion = resourceHistories[i].getNextFutureResource( activeVersion );
+		if( nextResVersion != null && nextResVersion.getVersion() < ret )
+		{
+			ret = nextResVersion.getVersion();
+			validRet = true;
+		}
+	}
+	if( validRet )
+		return ret;
+	else
+		return -1;
+}
+
 Sketch.prototype.setActiveVersionNumber = function( number )
 {
 	if( number < 0 )
 	{
 		console.error( "FATAL error: You can't set the sketch project version as a negative number" );
+		return;
+	}
+	if( number > SketchGlobals.MAX_VERSION_NUMBER )
+	{
+		console.error( "FATAL error: You can't set the sketch project version a number greater than " + SketchGlobals.MAX_VERSION_NUMBER );
+		return;
 	}
 	this.activeVersion = number;
 }
