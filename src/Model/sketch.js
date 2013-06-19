@@ -183,6 +183,7 @@ ResourceHistory.prototype.getNextFutureResource = function ( versionNum  )
 	}
 }
 
+// Get the newest version V, V <= activeVersion
 ResourceHistory.prototype.getResourceBeforeVersion = function ( versionNum  )
 {
 	if( this.timeSlots.length < 1 )
@@ -197,7 +198,6 @@ ResourceHistory.prototype.getResourceBeforeVersion = function ( versionNum  )
 	}
 	else
 	{
-		//TODO: See if a binary search is good here, I don't think this way because this array should be pretty small 
 		var resourceIndex = -1;
 		for (var i = 0; i < this.timeSlots.length; i++) 
 	    {
@@ -327,11 +327,10 @@ Sketch.prototype.getPreviousAvailableVersion = function()
 	{
 		return -1;
 	}
-	
 	var ret = -1;
 	for( i = 0; i < resourceHistories.length; i++ )
 	{
-		var prevResVersion = resourceHistories[i].getResourceBeforeVersion( activeVersion );
+		var prevResVersion = resourceHistories[i].getResourceBeforeVersion( activeVersion-1 );
 		if( prevResVersion != null && prevResVersion.getVersion() < activeVersion &&
 				prevResVersion.getVersion() > ret  )
 		{

@@ -94,6 +94,7 @@ SelectionManager.prototype.onResourceSelectCanceled = function( resourceArray )
 
 SelectionManager.prototype.onActiveVersionChanged = function( oldVersionNumber, sketchProject )
 {
+	sideMenu.updateVersionChangers();
 	var versionNumber = sketchProject.getActiveVersionNumber();
 	sideMenu.updateValue( DOMglobals.PROJECT_VERSION_ID,  versionNumber );
 }
@@ -144,4 +145,24 @@ SelectionManager.prototype.onResourceNameChanged = function( interfaceResource, 
 	{
 		sideMenu.updateValue( DOMglobals.NAME_ID, newNameStr );
 	}
+}
+
+
+SelectionManager.prototype.onResourceHistoryDeleted = function( interfaceResourceHistory )
+{
+	sideMenu.updateVersionChangers();
+}
+
+SelectionManager.prototype.onResourceVersionAdded = function( resourceTimeSlotObj, resourceHistory, sketchActiveVersion  )
+{
+	sideMenu.updateVersionChangers();
+}
+
+SelectionManager.prototype.onResourceVersionRemoved = function( removedResource, resourceHistory, sketchActiveVersion )
+{
+	sideMenu.updateVersionChangers();
+}
+SelectionManager.prototype.onResourceVersionCloned = function( clonedObj, baseVersion, resourceHistory, sketchActiveVersion )
+{
+	sideMenu.updateVersionChangers();
 }

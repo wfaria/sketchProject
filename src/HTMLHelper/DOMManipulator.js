@@ -263,6 +263,29 @@ sideMenu.createSectionPart = function ( divId )
 	return newPartDom;
 }
 
+sideMenu.updateVersionChangers = function()
+{
+	var targetVersion = this.currentSketchProject.getNextAvailableVersion();
+	if( targetVersion == -1 )
+	{
+		$(DOMglobals.NEXT_VER_ID).className = "sectionSmallButtonDisabled";
+	}
+	else
+	{
+		$(DOMglobals.NEXT_VER_ID).className = "sectionSmallButton";
+	}
+
+	targetVersion = this.currentSketchProject.getPreviousAvailableVersion();
+	if( targetVersion == -1 )
+	{
+		$(DOMglobals.PREV_VER_ID).className = "sectionSmallButtonDisabled";
+	}
+	else
+	{
+		$(DOMglobals.PREV_VER_ID).className = "sectionSmallButton";
+	}
+}
+
 sideMenu.createProjectSection = function( sketchObj )
 {
 	sideMenu.removeSideMenuSection( DOMglobals.PROJECT_SECTION_ID );
@@ -286,6 +309,8 @@ sideMenu.createProjectSection = function( sketchObj )
 			"sideMenu.goToNextVersionAction(sideMenu.singleResource, sideMenu.currentSketchProject)" );
 			
 	projectSectionDOM.appendChild(projectSectionPartDom);
+
+	this.updateVersionChangers();
 }
 
 sideMenu.createResourceBasicSection = function( interfaceResource )
@@ -417,7 +442,7 @@ sideMenu.goToNextVersionAction = function( interfaceResource, sketchObj )
 	if( targetVersion != -1 )
 	{
 		globalMediators.internalMediator.publish( "ChangeActiveVersion", [ targetVersion ] );
-			return;
+		return;
 	}
 }
 
@@ -427,7 +452,7 @@ sideMenu.goToPrevVersionAction = function( interfaceResource, sketchObj )
 	if( targetVersion != -1 )
 	{
 		globalMediators.internalMediator.publish( "ChangeActiveVersion", [ targetVersion ] );
-			return;
+		return;
 	}
 }
 

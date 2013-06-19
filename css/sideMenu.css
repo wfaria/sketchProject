@@ -33,6 +33,9 @@
   	outline: none;
   	display:inline-block;
   	border: 1px solid #FFFFFF;
+  	opacity:1;
+  	margin-left:auto;
+ 	margin-right:auto;
 }
 
 .sectionSmallButton:active{
@@ -41,4 +44,15 @@
 	border: 1px solid #ddd;
 	height: 32px;
 	width: 32px;	
+	opacity:1;
+}
+
+.sectionSmallButtonDisabled{
+	background-color: #333366;	
+  	outline: none;
+  	display:inline-block;
+  	border: 1px solid #FFFFFF;
+  	opacity:0.8;
+  	margin-left:auto;
+ 	margin-right:auto;
 }
