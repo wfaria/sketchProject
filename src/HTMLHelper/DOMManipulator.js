@@ -19,6 +19,9 @@ DOMglobals.DELETE_RESOURCE_ID = "del_history_btn";
 DOMglobals.CLONE_VERSION_ID = "clone_version_btn";
 DOMglobals.CHANGE_IMG_ID = "change_img_btn";
 
+DOMglobals.PREV_VER_ID = "prev_ver_btn";
+DOMglobals.NEXT_VER_ID = "next_ver_btn";
+
 DOMglobals.PROJECT_SECTION_ID = "project_section";
 DOMglobals.PROJECT_VERSION_ID = "project_version_btn";
 
@@ -269,11 +272,19 @@ sideMenu.createProjectSection = function( sketchObj )
 	
 	projectSectionPartDom.innerHTML += htmlGen.createTextButton( "aaa", "Project Name:", sideMenu.currentSketchProject.getName(), 
 		"alert('aaaaa')" );
-	projectSectionPartDom.innerHTML += htmlGen.createTextButton( DOMglobals.PROJECT_VERSION_ID, "Version:", sideMenu.currentSketchProject.getActiveVersionNumber(),
-		 "sideMenu.changeVersionAction( sideMenu.currentSketchProject )" );
 	projectSectionPartDom.innerHTML += htmlGen.createTextButton( "ccc", "Screen:", sideMenu.currentSketchProject.getCurrentScreenName(),
 		 "alert('aaaaa')" );
-
+	projectSectionPartDom.innerHTML += htmlGen.createTextButton( DOMglobals.PROJECT_VERSION_ID, "Version:", sideMenu.currentSketchProject.getActiveVersionNumber(),
+		 "sideMenu.changeVersionAction( sideMenu.currentSketchProject )" );
+			
+	projectSectionPartDom.innerHTML += htmlGen.createSmallButton(	DOMglobals.PREV_VER_ID, 
+			"Change the version to the previous available one with changes",
+			"sideMenu.goToPrevVersionAction(sideMenu.singleResource, sideMenu.currentSketchProject)" );
+			
+	projectSectionPartDom.innerHTML += htmlGen.createSmallButton(	DOMglobals.NEXT_VER_ID, 
+			"Change the version to the next available one with changes",
+			"sideMenu.goToNextVersionAction(sideMenu.singleResource, sideMenu.currentSketchProject)" );
+			
 	projectSectionDOM.appendChild(projectSectionPartDom);
 }
 
@@ -398,6 +409,26 @@ sideMenu.removeVersionAction = function( interfaceResource )
 sideMenu.deleteVersionAction = function( interfaceResource )
 {
 	globalMediators.internalMediator.publish( "DeleteResourceVersion", [ interfaceResource ] );
+}
+
+sideMenu.goToNextVersionAction = function( interfaceResource, sketchObj )
+{
+	var targetVersion = sketchObj.getNextAvailableVersion();
+	if( targetVersion != -1 )
+	{
+		globalMediators.internalMediator.publish( "ChangeActiveVersion", [ targetVersion ] );
+			return;
+	}
+}
+
+sideMenu.goToPrevVersionAction = function( interfaceResource, sketchObj )
+{
+	var targetVersion = sketchObj.getPreviousAvailableVersion();
+	if( targetVersion != -1 )
+	{
+		globalMediators.internalMediator.publish( "ChangeActiveVersion", [ targetVersion ] );
+			return;
+	}
 }
 
 sideMenu.cloneVersionAction = function( interfaceResource, sketchObj )

@@ -46,6 +46,7 @@ GeneralManager.prototype.subscribeToMediators = function()
 					},
 					onImageUploadedForResource: function( interfaceResource, imageSource )
 					{
+						/*
 						var imageObj = new Image();
 						imageObj.src = imageSource;
 						
@@ -57,7 +58,7 @@ GeneralManager.prototype.subscribeToMediators = function()
 							alert("The image that you choose is corrupted, please choose another image");
 							return;
 						}
-						
+						*/
 						
 						var command = new SetRestHistExtraImageCommand( 
 							basicCommandsGlobals.executionTypeEnum.CMEX_EDITION,
