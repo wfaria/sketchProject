@@ -3,6 +3,24 @@ var LocalPersistence = {};
 //TODO: Test Crockford's json2.js. 
 //TODO: Add file sanity check
 
+LocalPersistence.downloadWithName = function(uri, name) {
+
+ function eventFire(el, etype){
+  if (el.fireEvent) {
+   (el.fireEvent('on' + etype));
+  } else {
+   var evObj = document.createEvent('Events');
+   evObj.initEvent(etype, true, false);
+   el.dispatchEvent(evObj);
+  }
+ }
+
+ var link = document.createElement("a"); // <a href element...
+ link.download = name;
+ link.href = uri;
+ eventFire(link, "click");
+}
+
 LocalPersistence.getUploadedProject = function( fileString )
 {
 	return LocalPersistence.convertToObject( fileString );
@@ -16,7 +34,6 @@ LocalPersistence.downloadProject = function( sketchObject )
 LocalPersistence.convertToString = function ( sketchObject )
 {
 	var JSONString = JSON.stringify( sketchObject );
-	alert( "@#@#@"+ JSONString);
 	return JSONString;
 }
 

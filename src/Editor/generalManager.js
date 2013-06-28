@@ -11,7 +11,6 @@ function GeneralManager()
 	this.graphicController = new GraphicController( generalGlobals.CONTAINER_DOMID ); 
 }
 
-
 GeneralManager.prototype.constructor = GeneralManager;
 
 GeneralManager.prototype.createCancelSelectionCommand = function()
@@ -155,8 +154,13 @@ GeneralManager.prototype.subscribeToMediators = function()
   						try
   						{
 							var JSONString = LocalPersistence.downloadProject( generalGlobals.manager.sketchProject );
-							var uriContent = "data:application/octet-stream," + encodeURIComponent( JSONString );
-							var newWindow=window.open(uriContent, 'neuesDokument');
+							//var uriContent = "data:application/octet-stream," + encodeURIComponent( JSONString );
+							var uriContent = "data:text/plain," + encodeURIComponent( JSONString );
+							//var newWindow=window.open(uriContent, 'neuesDokument');
+							
+							alert("This application will try to send the project as a file to your computer. If a page with text opens instead of the download dialog, please save this page as the project file.");
+							LocalPersistence.downloadWithName( uriContent, "sketchProject.txt"  );
+							
   						}
   						catch(err)
   						{
