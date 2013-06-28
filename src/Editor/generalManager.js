@@ -154,11 +154,11 @@ GeneralManager.prototype.subscribeToMediators = function()
   						try
   						{
 							var JSONString = LocalPersistence.downloadProject( generalGlobals.manager.sketchProject );
-							//var uriContent = "data:application/octet-stream," + encodeURIComponent( JSONString );
-							var uriContent = "data:text/plain," + encodeURIComponent( JSONString );
+							var uriContent = "data:application/octet-stream," + encodeURIComponent( JSONString );
+							//var uriContent = "data:text/plain," + encodeURIComponent( JSONString );
 							//var newWindow=window.open(uriContent, 'neuesDokument');
 							
-							alert("This application will try to send the project as a file to your computer. If a page with text opens instead of the download dialog, please save this page as the project file.");
+							alert("This application will try to send the project as a file to your computer. If a page with text opens instead of the download dialog, please save this page as the project file using the .txt extension.");
 							LocalPersistence.downloadWithName( uriContent, "sketchProject.txt"  );
 							
   						}
