@@ -431,7 +431,6 @@ GraphicController.prototype.defaultKineticFactory = function( interfaceResource 
 			else
 			{
 				imageObj.src = imgSrc;
-
 			}
 			
 			/*				
@@ -459,6 +458,14 @@ GraphicController.prototype.defaultKineticFactory = function( interfaceResource 
 				dragOnTop: false,
 				draggable: false
 			});
+			
+			
+			imageObj.onload = function() {
+				// This should be used to not let unloaded images on canvas until someone call the draw function
+				var tempLayer = kineticImage.getLayer();
+				if( tempLayer )
+					tempLayer.draw();
+			};
 			
 			kineticGroup.add( kineticImage );
 			kineticRet = kineticGroup;

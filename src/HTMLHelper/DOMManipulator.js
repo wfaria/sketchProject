@@ -176,16 +176,26 @@ htmlGen.createNumberInputString = function( labelStr, idStr, sizeNum, initialVal
  * @param {...[?]} parameterArray -  A variable number of variables of different types that the event can use,
  * be careful, if you are planning to use the checked number as a parameters, using parseInt before sending it
  */
-htmlGen.numberEventToInterMediator = function( numToCheck, min, max, eventKey,  parameterArray )
+htmlGen.numberEventToInterMediator = function( numToCheck, min, max, eventKey,  parameterArray, DOMsourceId )
 {
+	var DOMelem = null;
+	if( typeof DOMsourceId != 'undefined' )
+	{
+		DOMelem = $( DOMsourceId );
+	}
 	if( /^\d+$/.test( numToCheck ) )
 	{
 		var num = parseInt( numToCheck, 10 );
 		if( !isNaN(num) && num >= min && num <= max )
 		{
 			globalMediators.internalMediator.publish( eventKey, parameterArray );
+			if(DOMelem != null) DOMelem.className = "sectionTextInput";
+			return;
 		}
 	}
+	
+	if(DOMelem!= null) { DOMelem.className = "sectionInvalidTextInput"; console.log("entrada invalida"); }
+
 }
 
 
@@ -341,7 +351,7 @@ sideMenu.createResourceBasicSection = function( interfaceResource )
 		 the following function guarantees that a value which isn't a number isn't sent to the mediator */
 		newSectionPart.innerHTML += htmlGen.createTextInputString( "X Pos", DOMglobals.X_TEXT_ID, 10, ir.getX(),
 			"htmlGen.numberEventToInterMediator( this.value, 0, graphicControllerGlobals.CANVAS_WIDTH, "+
-			" \'MoveInterfaceResource\', [ ir, parseInt(this.value), ir.getY() ] );"  );
+			" \'MoveInterfaceResource\', [ ir, parseInt(this.value), ir.getY() ], DOMglobals.X_TEXT_ID );"  );
 		newSectionPart.innerHTML += htmlGen.createTextInputString( "Y Pos", DOMglobals.Y_TEXT_ID, 10, ir.getY(),
 			"htmlGen.numberEventToInterMediator( this.value, 0, graphicControllerGlobals.CANVAS_HEIGHT, "+
 			" \'MoveInterfaceResource\', [ ir, ir.getX(), parseInt(this.value) ] );"  );
@@ -395,7 +405,10 @@ sideMenu.updateValue = function( valueID, updatedValue )
 {
 	var DOMobj = $(valueID);
 	if( DOMobj != null)
+	{
 		DOMobj.value =  ""+updatedValue; // Always trying to use a string on the value
+		DOMobj.className = "sectionTextInput";
+	}
 }
 
 sideMenu.updateSelectValue = function( valueID, updatedValue )

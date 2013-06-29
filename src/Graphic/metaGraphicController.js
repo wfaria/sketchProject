@@ -203,7 +203,6 @@ MetaGraphicController.prototype.updateAnchors = function( anchorIndex  )
 	var bottomRight = this.anchorShapes[ metaGraphicGlobals.BR ];
 	var bottomLeft = this.anchorShapes[ metaGraphicGlobals.BL ];
 	
-
 	switch( anchorIndex )
 	{
 	  case ( metaGraphicGlobals.TL ):
@@ -212,11 +211,11 @@ MetaGraphicController.prototype.updateAnchors = function( anchorIndex  )
             bottomLeft.setX(anchorX);
             break;
 	  }
-          case ( metaGraphicGlobals.TR ):
+      case ( metaGraphicGlobals.TR ):
             topLeft.setY(anchorY);
             bottomRight.setX(anchorX);
             break;
-          case ( metaGraphicGlobals.BR ):
+      case ( metaGraphicGlobals.BR ):
 	  {
             bottomLeft.setY(anchorY);
             topRight.setX(anchorX); 
