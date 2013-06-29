@@ -194,7 +194,7 @@ htmlGen.numberEventToInterMediator = function( numToCheck, min, max, eventKey,  
 		}
 	}
 	
-	if(DOMelem!= null) { DOMelem.className = "sectionInvalidTextInput"; console.log("entrada invalida"); }
+	if(DOMelem!= null) { DOMelem.className = "sectionInvalidTextInput"; }
 
 }
 
@@ -342,10 +342,10 @@ sideMenu.createResourceBasicSection = function( interfaceResource )
 			"globalMediators.internalMediator.publish( \'RenameElement\', [ ir, this.value ] );"  );
 		newSectionPart.innerHTML += htmlGen.createTextInputString( "Width", DOMglobals.WIDTH_TEXT_ID, 10, ir.getWidth(),
 			"htmlGen.numberEventToInterMediator( this.value, 10, graphicControllerGlobals.CANVAS_WIDTH, "+
-			" \'ResizeInterfaceResource\', [ ir, ir.getX(), ir.getY(), parseInt(this.value), ir.getHeight() ]);"  );
+			" \'ResizeInterfaceResource\', [ ir, ir.getX(), ir.getY(), parseInt(this.value), ir.getHeight() ], DOMglobals.WIDTH_TEXT_ID);"  );
 		newSectionPart.innerHTML += htmlGen.createTextInputString( "Height", DOMglobals.HEIGHT_TEXT_ID, 10, ir.getHeight(),
 			"htmlGen.numberEventToInterMediator( this.value, 10, graphicControllerGlobals.CANVAS_HEIGHT, "+
-			" \'ResizeInterfaceResource\', [ ir, ir.getX(), ir.getY(), ir.getWidth(), parseInt(this.value) ] );"  );
+			" \'ResizeInterfaceResource\', [ ir, ir.getX(), ir.getY(), ir.getWidth(), parseInt(this.value) ], DOMglobals.HEIGHT_TEXT_ID );"  );
 		
 		/*Be careful to not send strings to the mediator,
 		 the following function guarantees that a value which isn't a number isn't sent to the mediator */
@@ -354,7 +354,7 @@ sideMenu.createResourceBasicSection = function( interfaceResource )
 			" \'MoveInterfaceResource\', [ ir, parseInt(this.value), ir.getY() ], DOMglobals.X_TEXT_ID );"  );
 		newSectionPart.innerHTML += htmlGen.createTextInputString( "Y Pos", DOMglobals.Y_TEXT_ID, 10, ir.getY(),
 			"htmlGen.numberEventToInterMediator( this.value, 0, graphicControllerGlobals.CANVAS_HEIGHT, "+
-			" \'MoveInterfaceResource\', [ ir, ir.getX(), parseInt(this.value) ] );"  );
+			" \'MoveInterfaceResource\', [ ir, ir.getX(), parseInt(this.value) ], DOMglobals.Y_TEXT_ID );"  );
 				
 		if( interfaceResource.getResourceType() != resourceTypeEnum.IR_IMAGE  )
 		{
@@ -366,7 +366,7 @@ sideMenu.createResourceBasicSection = function( interfaceResource )
 				"[ ir, parseInt( this.value ), "+
 				" ir.getExtraAttribute( iResGlobals.defaultKeys.FONTTYPE_KEY ) , "+
 				" parseInt( ir.getExtraAttribute( iResGlobals.defaultKeys.FONT_X_PADDING_KEY, 10 ) ), "+
-				" parseInt( ir.getExtraAttribute( iResGlobals.defaultKeys.FONT_Y_PADDING_KEY, 10 ) ) ] ) ") ;
+				" parseInt( ir.getExtraAttribute( iResGlobals.defaultKeys.FONT_Y_PADDING_KEY, 10 ) ) ], DOMglobals.FONTSIZE_TEXT_ID ) ") ;
 			newSectionPart.innerHTML +=  htmlGen.createSelectInput( "Font Family", DOMglobals.FONTSTYLE_TEXT_ID, 
 				["calibri", "arial", "verdana"], 
 				"globalMediators.internalMediator.publish( \'FormatInterfaceResource\', "+
