@@ -18,6 +18,11 @@ EventManager.prototype.addFunction = function ( funcKey, funcImp )
 EventManager.prototype.callFunction = function( funcKey, funcParams )
 {
 	this.funcArray[funcKey].apply( this.base, funcParams );
+}
+
+EventManager.prototype.getInterfaceResource = function( )
+{
+	return this.base.interfaceResource;
 } 
 
 EventManager.prototype.getBaseObject = function( )

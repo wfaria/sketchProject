@@ -110,6 +110,39 @@ GraphicController.prototype.renderScreen = function ( sketchObject )
 	}
 }
 
+GraphicController.prototype.fixZIndexes = function()
+{
+	var renderedResources = new Array();
+	var length = this.eventManagers.length;
+	var i;
+	
+	for ( i = 0;  i < length; i ++ )
+	{
+		renderedResources.push( this.eventManagers[i].getInterfaceResource() );
+	}
+	
+	renderedResources.sort( 
+		function(a,b){ 
+			if( a.getZ() != b.getZ() )
+				return a.getZ()-b.getZ();
+			else
+				return a.getId()-b.getId(); 
+		}
+	);
+	
+	for ( i = 0;  i < length; i ++ )
+	{
+		var kineticObj = this.getKineticObjectById( renderedResources[i] );
+		if( kineticObj == null )
+		{
+			console.error("Error while ordering elements' Z-index, trying to order an inexistente element");
+			return; 
+		}
+		kineticObj.moveToTop();
+	}
+	
+}
+
 // This function should be used for events that can manipulate resources in different points of time
 // It checks if a resource is already rendered on the canvas
 GraphicController.prototype.existEventManagerFor = function( interfaceResource )
@@ -150,16 +183,7 @@ GraphicController.prototype.addInterfaceResource = function ( interfaceRes )
 		console.error("Error while adding element on canvas, it already exists.");
 	}
 	
-	var ks = this.createGraphicObject( interfaceRes );
-	this.layers[ graphicControllerGlobals.COMMON_CANVAS ].add( ks );
-	this.layers[ graphicControllerGlobals.COMMON_CANVAS ].draw();
-	
-	if( interfaceRes.getResourceType() == resourceTypeEnum.IR_IMAGE )
-	{
-		//TODO: temporary fix, when inserting an image it doesn't appear until you click on the canvas
-		this.stage.draw();
-	}
-	
+	var ks = this.createGraphicObject( interfaceRes );	
 	
 	// TODO: Call this from a mediator to isolate the graphic part from the event handler
 	if( interfaceRes.getResourceType() == resourceTypeEnum.IR_BUTTON ||
@@ -181,6 +205,16 @@ GraphicController.prototype.addInterfaceResource = function ( interfaceRes )
 	else
 	{
 		alert("ERRO");
+	}
+	
+	this.layers[ graphicControllerGlobals.COMMON_CANVAS ].add( ks );
+	this.fixZIndexes();
+	this.layers[ graphicControllerGlobals.COMMON_CANVAS ].draw();
+	
+	if( interfaceRes.getResourceType() == resourceTypeEnum.IR_IMAGE )
+	{
+		//TODO: temporary fix, when inserting an image it doesn't appear until you click on the canvas
+		this.stage.draw();
 	}
 }
 

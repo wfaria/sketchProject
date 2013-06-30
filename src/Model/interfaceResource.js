@@ -54,6 +54,7 @@ InterfaceResource.prototype.getDeleted = function() { return this.isDeleted; }
 
 InterfaceResource.prototype.setX = function(num) { this.x = num; }
 InterfaceResource.prototype.setY = function(num) { this.y = num; }
+InterfaceResource.prototype.setZ = function(num) { this.z = num; }
 InterfaceResource.prototype.setWidth = function(num) { this.width = num; }
 InterfaceResource.prototype.setHeight = function(num) { this.height = num; }
 InterfaceResource.prototype.setParentId = function(num) { this.parentId = num; }
