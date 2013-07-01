@@ -147,6 +147,13 @@ SelectionManager.prototype.onResourceNameChanged = function( interfaceResource, 
 	}
 }
 
+SelectionManager.prototype.onInterfaceResourceZChanged = function( interfaceResource, oldZ )
+{
+	if( sideMenu.containsId(DOMglobals.BASIC_RESOURCE_ID ) )
+	{
+		sideMenu.updateValue( DOMglobals.Z_TEXT_ID, interfaceResource.getZ() );
+	}
+}
 
 SelectionManager.prototype.onResourceHistoryDeleted = function( interfaceResourceHistory )
 {

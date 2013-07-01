@@ -839,6 +839,19 @@ GraphicController.prototype.onResourceFormatted = function( interfaceResource )
 	}
 }
 
+GraphicController.prototype.onInterfaceResourceZChanged = function( interfaceResource, oldZ )
+{
+	this.fixZIndexes();
+	var kineticObject = this.getKineticObjectById( interfaceResource );
+	if( kineticObject == null )
+	{
+		console.error( "Graphic object from the resource with Z-index changed not found" );
+		return;
+	}
+	kineticObject.getLayer().draw();
+}
+
+
 /******** Graphic Mediator functions **********/
 
 GraphicController.prototype.onResourceNameChanged = function( interfaceResource, newNameStr )

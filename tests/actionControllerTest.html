@@ -29,7 +29,7 @@
   		}
   	);
   	*/
-  	module("Command undo with only one command type");
+  	module("Resource Spatial Movement Commands");
   	test
   	( 
   		"Drag Command", function()
@@ -81,6 +81,28 @@
   			ok( actionController.undo() != null , "Undo the redo action again");
   			ok( btn1.getX() == x, "After this button is  back to the start X position " + btn1.getX() + " again" );
   			ok( actionController.undo() == null , "There are no more commands to be undone");
+  		}
+  	);
+  	
+  	test
+  	(
+  		"Z-index change command", function()
+  		{
+  			var x = 30;
+			var y = 10;
+			var z = 10;
+			var btn1 = new InterfaceResource( x,y,z,100, 50, "Button", 0, 0 );
+  			var actionController = new ActionController();
+  			
+  			ok( btn1.getZ() == z, "The resource start with Z position " + z );
+  			
+  			var changeZCommand = new ChangeResourceZCommand(  basicCommandsGlobals.executionTypeEnum.CMEX_EDITION, btn1, z+z );
+  			ok( actionController.doCommand(changeZCommand) == true, "Dragging this object's Z position");
+  			ok( btn1.getZ() == z+z, "Now it is with Z position " + (z+z) );
+  			ok( actionController.undo() != null , "Undo the last action");
+  			ok( btn1.getZ() == z, "The resource backs to the old Z position " + z );
+  			ok( actionController.redo() != null , "Redo the undone action");
+  			ok( btn1.getZ() == z+z, "Now it is with Z position " + (z+z) +" again" );
   		}
   	);
   	

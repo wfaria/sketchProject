@@ -5,7 +5,7 @@ basicCommandsGlobals.commandTypeEnum = { CMD_UNDEFINED: -1, CMD_DRAG: 0,
 	CMD_CREATE_RES: 5, CMD_DELETE_RES: 6, CMD_RESTORE_RES: 7, CMD_GROUP_EXEC: 8,
 	CMD_RESIZE_RES: 9, CMD_FORMAT_RES: 10, CMD_CLONE_VERSION: 11, 
 	CMD_REMOVE_VERSION: 12, CMD_ADD_VERSION: 13, CMD_DELETE_VERSION: 14,
-	CMD_CHANGE_ACTIVE_VERSION: 15, CMD_SET_HIST_EXTRA_IMG: 16 };
+	CMD_CHANGE_ACTIVE_VERSION: 15, CMD_SET_HIST_EXTRA_IMG: 16, CMD_CHANGE_RES_Z: 17 };
 basicCommandsGlobals.executionTypeEnum = { CMEX_UNDEFINED: -1, CMEX_EDITION: 0, CMEX_SIMULATION: 1 };
 
 function Command()
@@ -516,7 +516,7 @@ ResizeResizeCommand.prototype.execute = function( commandObject )
 
 ResizeResizeCommand.prototype.undo = function( commandObject )
 {
-	var interfaceResource = this.argObject.resource
+	var interfaceResource = this.argObject.resource;
 	return new ResizeResizeCommand( basicCommandsGlobals.executionTypeEnum.CMEX_EDITION,
 		interfaceResource, interfaceResource.getX(), interfaceResource.getY(), 
 		interfaceResource.getWidth(), interfaceResource.getHeight() );
@@ -735,6 +735,50 @@ RemoveResourceVersionCommand.prototype.undo = function( commandObject )
 		console.error( "There is no version " + targetVersion + " in the resource with id " + resourceId );
 		return null;
 	}
+}
+
+function ChangeResourceZCommand( executionMode, interfaceResource, toZ )
+{
+	Command.call(this);
+	this.commandCode = basicCommandsGlobals.commandTypeEnum.CMD_CHANGE_RES_Z;
+	this.executionMode = executionMode;
+	this.setArgs(
+		{
+			resource: interfaceResource,
+			z: toZ
+		}
+	);
+}
+
+ChangeResourceZCommand.prototype = new Command;
+ChangeResourceZCommand.prototype.constructor = ChangeResourceZCommand;
+
+ChangeResourceZCommand.prototype.toString = function()
+{
+	var interfaceResource = this.argObject.resource;
+	var toZ = this.argObject.z;
+	return 		"Change Resource Z position" + Command.prototype.toString.call( this ) + "\n" +
+		"Parameters: new Z position = " + toZ ++
+		"\ninterface resource: " + interfaceResource ;
+}
+
+
+ChangeResourceZCommand.prototype.execute = function( commandObject )
+{
+	var interfaceResource = this.argObject.resource;
+	var toZ = this.argObject.z;
+	var oldZ = interfaceResource.getZ();
+	interfaceResource.setZ( toZ );
+	globalMediators.internalMediator.publish( "InterfaceResourceZChanged", 
+		[ interfaceResource, oldZ ] );
+	return actionGlobals.COMMAND_OK;
+}
+
+ChangeResourceZCommand.prototype.undo = function( commandObject )
+{
+	var interfaceResource = this.argObject.resource;
+	return new ChangeResourceZCommand( basicCommandsGlobals.executionTypeEnum.CMEX_EDITION,
+		interfaceResource, interfaceResource.getZ() );
 }
 
 

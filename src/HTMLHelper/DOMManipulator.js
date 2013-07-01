@@ -6,6 +6,7 @@ DOMglobals.BASIC_RESOURCE_ID = "basic resource";
 DOMglobals.NAME_ID = "_resource_name";
 DOMglobals.X_TEXT_ID = "_basic_x_input";
 DOMglobals.Y_TEXT_ID = "_basic_y_input";
+DOMglobals.Z_TEXT_ID = "_basic_z_input";
 DOMglobals.WIDTH_TEXT_ID = "resource width";
 DOMglobals.HEIGHT_TEXT_ID = "resource height";
 DOMglobals.FONTSIZE_TEXT_ID = "font size";
@@ -183,7 +184,8 @@ htmlGen.numberEventToInterMediator = function( numToCheck, min, max, eventKey,  
 	{
 		DOMelem = $( DOMsourceId );
 	}
-	if( /^\d+$/.test( numToCheck ) )
+		//if( /^\d+$/.test( numToCheck ) )
+	if( /^-?\d+$/.test( numToCheck ) )
 	{
 		var num = parseInt( numToCheck, 10 );
 		if( !isNaN(num) && num >= min && num <= max )
@@ -355,7 +357,9 @@ sideMenu.createResourceBasicSection = function( interfaceResource )
 		newSectionPart.innerHTML += htmlGen.createTextInputString( "Y Pos", DOMglobals.Y_TEXT_ID, 10, ir.getY(),
 			"htmlGen.numberEventToInterMediator( this.value, 0, graphicControllerGlobals.CANVAS_HEIGHT, "+
 			" \'MoveInterfaceResource\', [ ir, ir.getX(), parseInt(this.value) ], DOMglobals.Y_TEXT_ID );"  );
-				
+		newSectionPart.innerHTML += htmlGen.createTextInputString( "Z Pos", DOMglobals.Z_TEXT_ID, 10, ir.getZ(),
+			"htmlGen.numberEventToInterMediator( this.value, -100, 100, "+
+			" \'ChangeResourceZIndex\', [ ir, parseInt(this.value) ], DOMglobals.Z_TEXT_ID );"  );
 		if( interfaceResource.getResourceType() != resourceTypeEnum.IR_IMAGE  )
 		{
 			newSectionPart.innerHTML +=	htmlGen.createSectionLine();

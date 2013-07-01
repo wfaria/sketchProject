@@ -30,6 +30,15 @@ onChangeActiveVersion = function( versionNumber ){}
 
 
 /**
+ * EventKey: ChangeResourceZIndex
+ * Order to change interface resource's Z-index.
+ *
+ * @param {InterfaceResource} interfaceResource - The object that contains the data from an interface resource.
+ * @param {int} toZ - The new Z value.
+ */
+onChangeResourceZIndex = function( interfaceResource, toZ ){}
+
+/**
  * EventKey: FormatInterfaceResource
  * Order to format interface resource's text
  *
@@ -310,6 +319,15 @@ onResizeInterfaceResource = function( interfaceResource, toX, toY, newWidth, new
  * @param {int} oldHeight - New resource height.
  */
 onInterfaceResourceResized = function( interfaceResource, oldX, oldY, oldWidth, oldHeight ){}
+
+/**
+ * EventKey: InterfaceResourceZChanged
+ * Sent when an interface resource have its Z-index changed.
+ *
+ * @param {InterfaceResource} interfaceResource - The object that contains the data from an interface resource.
+ * @param {int} oldZ - The last Z value.
+ */
+onInterfaceResourceZChanged = function( interfaceResource, oldZ ){}
 
 
 /****** Graphic messages ********/
