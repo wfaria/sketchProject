@@ -232,6 +232,11 @@ CreateResourceCommand.prototype.execute = function( commandObject )
 			newResource = new ButtonResource( 0,0,0,100, 50, "Button", newId, activeVersionNum );
 			break;
 		}
+		case resourceTypeEnum.IR_WINDOW:
+		{
+			newResource = new WindowResource( 0,0,0,400, 300, "Window Title", newId, activeVersionNum );
+			break;
+		}
 		case resourceTypeEnum.IR_IMAGE:
 		{
 			newResource = new ImageResource( 0,0,0,100, 100, "Image", newId, activeVersionNum );

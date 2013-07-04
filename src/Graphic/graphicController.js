@@ -9,7 +9,9 @@ graphicControllerGlobals.currentStyle = graphicControllerGlobals.stylesEnum.DEFA
 graphicControllerGlobals.styleChangers = {};
 graphicControllerGlobals.defaultNames = {};
 graphicControllerGlobals.defaultNames.NAME = "_NAME";
+graphicControllerGlobals.defaultNames.NAMELESS = "_";
 graphicControllerGlobals.defaultNames.MAIN_SHAPE = "_MAIN_ELEMENT";
+graphicControllerGlobals.defaultNames.SECONDARY_SHAPE = "_SEC_ELEMENT";
 graphicControllerGlobals.defaultNames.NOT_RESIZE = "_NO_RZ";
 
 graphicControllerGlobals.COMMON_CANVAS = 0;
@@ -187,6 +189,7 @@ GraphicController.prototype.addInterfaceResource = function ( interfaceRes )
 	
 	// TODO: Call this from a mediator to isolate the graphic part from the event handler
 	if( interfaceRes.getResourceType() == resourceTypeEnum.IR_BUTTON ||
+		interfaceRes.getResourceType() == resourceTypeEnum.IR_WINDOW ||
 		interfaceRes.getResourceType() == resourceTypeEnum.IR_IMAGE )
 	{
 		var componentBaseObj = { 
@@ -204,7 +207,7 @@ GraphicController.prototype.addInterfaceResource = function ( interfaceRes )
 	}
 	else
 	{
-		alert("ERRO");
+		console.error("Error while attaching evenet managers to the created element");
 	}
 	
 	this.layers[ graphicControllerGlobals.COMMON_CANVAS ].add( ks );
@@ -296,7 +299,7 @@ GraphicController.prototype.getKineticChildrenByName = function ( kineticObject,
 GraphicController.prototype.createGraphicObject = function ( interfaceResource )
 {
 	var kineticShape = this.defaultKineticFactory( interfaceResource );
-	kineticShape = this.extendKineticShape( interfaceResource, kineticShape );
+	//TODO: Decide if will use this function kineticShape = this.extendKineticShape( interfaceResource, kineticShape );
 	return kineticShape;
 }
 
@@ -393,6 +396,114 @@ GraphicController.prototype.defaultKineticFactory = function( interfaceResource 
 			kineticRet = kineticGroup;
 			break;
 		}
+		
+		case( resourceTypeEnum.IR_WINDOW ):
+		{
+			var kinectGroup = new Kinetic.Group(  { 
+				x:interfaceResource.getX(), y:interfaceResource.getY(), 
+				draggable:true, dragOnTop: false,
+				id:interfaceResource.getId(), name:interfaceResource.getName() });
+			
+			var xDesloc = 0;
+			var yDesloc = 0;	
+			
+			var xBaseOffset = 0.02;
+			var yBaseOffset = 0.02;
+				
+			var square1 = new Kinetic.Rect({
+			  fill: "#669999",
+			  stroke: "#003333",
+			  strokeWidth: 2,
+			  name: graphicControllerGlobals.defaultNames.MAIN_SHAPE,
+			  //draggable: true,
+			  dragOnTop: false,
+			  width: interfaceResource.getWidth(),
+			  height: interfaceResource.getHeight()
+			});
+			
+			var titleBarHeight = 0.1*interfaceResource.getHeight();
+			 
+			var squareTitle = new Kinetic.Rect({
+			  fill: "#003366",
+			  stroke: "#006699",
+			  strokeWidth: 2,
+			  dragOnTop: false, 
+			  name: graphicControllerGlobals.defaultNames.SECONDARY_SHAPE,
+			  x:0,
+			  y:0,
+			  width: interfaceResource.getWidth(),
+			  height: titleBarHeight
+			});
+			
+			var btnSize = 2.5*xBaseOffset;
+			
+			var squareClose = new Kinetic.Rect({
+			  fill: "#FF0000",
+			  stroke: "#CC000",
+			  strokeWidth: 2,
+			  dragOnTop: false,
+			  name: graphicControllerGlobals.defaultNames.NAMELESS, 
+			  x:(1-(btnSize+xBaseOffset))*interfaceResource.getWidth(),
+			  y:0.5*yBaseOffset*interfaceResource.getHeight(),
+			  width: btnSize*interfaceResource.getWidth(),
+			  height: btnSize*interfaceResource.getHeight()
+			});
+			
+			var squareMaximize = new Kinetic.Rect({
+			  fill: "#66CC00",
+			  stroke: "#339900",
+			  strokeWidth: 2,
+			  dragOnTop: false,
+			  name: graphicControllerGlobals.defaultNames.NAMELESS, 
+			  x:(1-2*(btnSize+xBaseOffset))*interfaceResource.getWidth(),
+			  y:0.5*yBaseOffset*interfaceResource.getHeight(),
+			  width: btnSize*interfaceResource.getWidth(),
+			  height: btnSize*interfaceResource.getHeight()
+			});
+			
+			yDesloc = 0.1;
+			
+			var squareBody = new Kinetic.Rect({
+			  fill: "#CCCCCC",
+			  dragOnTop: false, 
+			  name: graphicControllerGlobals.defaultNames.SECONDARY_SHAPE,
+			  x:xBaseOffset*interfaceResource.getWidth(),
+			  y:(yBaseOffset+yDesloc)*interfaceResource.getHeight(),
+			  width: 0.96*interfaceResource.getWidth(),
+			  height: ( 1 - (2*yBaseOffset+yDesloc))*interfaceResource.getHeight()
+			});
+			
+			var simpleText = new Kinetic.Text({
+				name: graphicControllerGlobals.defaultNames.NAME,
+				dragOnTop: false,
+			 	//x: yBaseOffset*interfaceResource.getWidth(),
+			  	//y: titleBarHeight/2, // the title is always on the top
+			  	x: 0,
+			  	y: titleBarHeight/2,
+		        text: interfaceResource.getName(),
+		        fontSize: parseInt( interfaceResource.startWithExtraAttribute( iResGlobals.defaultKeys.FONTSIZE_KEY, 
+		        	iResGlobals.defaultExtraValues.FONTSIZE_KEY ),10 ),
+		        fontFamily: interfaceResource.startWithExtraAttribute( iResGlobals.defaultKeys.FONTTYPE_KEY, 
+		        	iResGlobals.defaultExtraValues.FONTTYPE_KEY ),
+		        fill: 'black',
+		        align: 'right'
+		      });
+		      
+		   	simpleText.setOffset({
+		        x: 0,
+		        y: simpleText.getHeight()/2
+		     });
+			
+			kinectGroup.add( square1 );
+			kinectGroup.add( squareTitle );
+			kinectGroup.add( squareClose );
+			kinectGroup.add( squareMaximize );
+			kinectGroup.add( squareBody );
+			kinectGroup.add( simpleText );
+			kineticRet = kinectGroup;
+			
+			break;
+		} //end 		case( resourceTypeEnum.IR_BUTTON ):
 		case( resourceTypeEnum.IR_BUTTON ):
 		{
 			var kinectGroup = new Kinetic.Group(  { 
@@ -401,7 +512,7 @@ GraphicController.prototype.defaultKineticFactory = function( interfaceResource 
 				id:interfaceResource.getId(), name:interfaceResource.getName() });
 
 			var square1 = new Kinetic.Rect({
-			  fill: "#669933",
+			  fill: "#669999",
 			  stroke: "#003333",
 			  strokeWidth: 2,
 			  name: graphicControllerGlobals.defaultNames.MAIN_SHAPE,
@@ -411,10 +522,7 @@ GraphicController.prototype.defaultKineticFactory = function( interfaceResource 
 			  height: interfaceResource.getHeight()
 			});
 			var square2 = new Kinetic.Rect({
-			  fill: "#99CC66",
-			  /*stroke: "black",
-			  strokeWidth: 4,*/
-			  //draggable: true,
+			  fill: "#CCCCCC",
 			  dragOnTop: false,
 			  name: "_INTERN_SQUARE",
 			  x:0.1*interfaceResource.getWidth(),
@@ -438,7 +546,8 @@ GraphicController.prototype.defaultKineticFactory = function( interfaceResource 
 		        fill: 'black',
 		        align: 'right'
 		      });
-		   	simpleText.setOffset({
+		     
+		    simpleText.setOffset({
 		        x: simpleText.getWidth() / 2,
 		        y: simpleText.getHeight() / 2
 		     });
@@ -559,14 +668,35 @@ GraphicController.prototype.fixKineticTextOffset = function( interfaceResource, 
 {
 	var textKineticObject = kineticShape;
 	textKineticObject.setFontFamily( interfaceResource.getExtraAttribute( iResGlobals.defaultKeys.FONTTYPE_KEY ) );
-	textKineticObject.setX( interfaceResource.getWidth()*interfaceResource.getIntExtraAttribute( iResGlobals.defaultKeys.FONT_X_PADDING_KEY )/100 );
-	textKineticObject.setY( interfaceResource.getHeight()*interfaceResource.getIntExtraAttribute( iResGlobals.defaultKeys.FONT_Y_PADDING_KEY )/100 );
 	textKineticObject.setFontSize( interfaceResource.getIntExtraAttribute( iResGlobals.defaultKeys.FONTSIZE_KEY ) );
-	
-	textKineticObject.setOffset({
-        x: textKineticObject.getWidth() / 2,
-        y: textKineticObject.getHeight() / 2
-     });
+	switch( interfaceResource.getResourceType() )
+	{
+		case( resourceTypeEnum.IR_BUTTON ):
+		{
+			textKineticObject.setX( interfaceResource.getWidth()*interfaceResource.getIntExtraAttribute( iResGlobals.defaultKeys.FONT_X_PADDING_KEY )/100 );
+			textKineticObject.setY( interfaceResource.getHeight()*interfaceResource.getIntExtraAttribute( iResGlobals.defaultKeys.FONT_Y_PADDING_KEY )/100 );
+			textKineticObject.setOffset({
+		        x: textKineticObject.getWidth() / 2,
+		        y: textKineticObject.getHeight() / 2
+		     });
+		     break;
+		}
+		case( resourceTypeEnum.IR_WINDOW ):
+		{
+			var titleBarHeight = 0.1*interfaceResource.getHeight();
+		  	textKineticObject.setX( 0 );
+			textKineticObject.setY( titleBarHeight/2 );
+		   	textKineticObject.setOffset({
+		        x: 0,
+		        y: textKineticObject.getHeight()/2
+		     });
+			break;
+		}
+		default:
+		{
+			break; //nothing to do
+		}
+	}
      
    return textKineticObject;
 }

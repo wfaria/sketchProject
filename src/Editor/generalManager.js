@@ -190,6 +190,12 @@ GeneralManager.prototype.subscribeToMediators = function()
 								basicCommandsGlobals.executionTypeEnum.CMEX_EDITION, 
 								resourceTypeEnum.IR_IMAGE, generalGlobals.manager.sketchProject );
 						}
+						else if( resourceTypeStr == "window" )
+						{
+							var command = new CreateResourceCommand( 
+								basicCommandsGlobals.executionTypeEnum.CMEX_EDITION, 
+								resourceTypeEnum.IR_WINDOW, generalGlobals.manager.sketchProject );
+						}
 						else
 						{
 							console.error( "Invalid resource request, invalid type = " + resourceTypeStr );

@@ -143,8 +143,20 @@ ButtonResource.prototype = new InterfaceResource;
 ButtonResource.prototype.constructor = ButtonResource;
 ButtonResource.prototype.toString = function()
 {
-	//TODO: Corrigir
 	return "Button Resource: "+InterfaceResource.prototype.toString.call( this );
+}
+
+function WindowResource( posX,posY,posZ,widthVal, heightVal, name, id, initialVersion )
+{
+	// the function call is used to simulate the super(...) call function, you will get SYNTAX_ERR if you miss the parameter number
+	InterfaceResource.call(this, posX,posY,posZ,widthVal, heightVal, name, id, initialVersion);
+	this.resourceType = resourceTypeEnum.IR_WINDOW;
+}
+WindowResource.prototype = new InterfaceResource;
+WindowResource.prototype.constructor = WindowResource;
+WindowResource.prototype.toString = function()
+{
+	return "Window Resource: "+InterfaceResource.prototype.toString.call( this );
 }
 
 
