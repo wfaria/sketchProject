@@ -326,7 +326,8 @@ GeneralManager.prototype.subscribeToMediators = function()
   					},
   					onResourceClicked: function( evt, interfaceResource )
   					{
-  						var isAdditiveSelection = evt.ctrlKey;
+  						//TODO: var isAdditiveSelection = evt.ctrlKey; Multiple selection not supported
+  						var isAdditiveSelection = false;
   						var commands = [];
   						if( generalGlobals.manager.selectionManager.isSelected( interfaceResource ) )
   						{
