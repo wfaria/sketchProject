@@ -1,13 +1,29 @@
 var basicCommandsGlobals = {};
 
+/**
+ * An enumerator of command types
+ * @enum {number}
+ *  
+ */
 basicCommandsGlobals.commandTypeEnum = { CMD_UNDEFINED: -1, CMD_DRAG: 0, 
 	CMD_KINETIC_DRAG: 1, CMD_RENAME_RES: 2, CMD_SELECT_RES: 3, CMD_CANC_SELECT_RES: 4,
 	CMD_CREATE_RES: 5, CMD_DELETE_RES: 6, CMD_RESTORE_RES: 7, CMD_GROUP_EXEC: 8,
 	CMD_RESIZE_RES: 9, CMD_FORMAT_RES: 10, CMD_CLONE_VERSION: 11, 
 	CMD_REMOVE_VERSION: 12, CMD_ADD_VERSION: 13, CMD_DELETE_VERSION: 14,
 	CMD_CHANGE_ACTIVE_VERSION: 15, CMD_SET_HIST_EXTRA_IMG: 16, CMD_CHANGE_RES_Z: 17 };
+	
+/**
+ * An enumerator of command modes
+ * @enum {number}
+ *  
+ */
 basicCommandsGlobals.executionTypeEnum = { CMEX_UNDEFINED: -1, CMEX_EDITION: 0, CMEX_SIMULATION: 1 };
 
+
+/**
+ * Generic command constructor.
+ * @constructor
+ */
 function Command()
 {
 	this.argObject = null;
@@ -16,6 +32,14 @@ function Command()
 }
 Command.prototype.constructor = Command;
 
+
+/**
+ * Execute the command
+ *
+ * @param {Object} commandObject - A command object, generally it is itself.
+ * @return {int} A number that indicates if the command has been executed succcessfully or not
+ * 
+ */
 Command.prototype.execute = function( commandObject )
 {
 	console.error( "This command object does not have an execute function:\n" +
@@ -23,33 +47,73 @@ Command.prototype.execute = function( commandObject )
 	return actionGlobals.COMMAND_OK;
 }
 
+/**
+ * Return a reverse command
+ * 
+ * @param {Object} commandObject - A command object, generally it is itself.
+ * @return {Object} the undo command for this command or null if there is some error.
+ * 
+ */
 Command.prototype.undo = function( commandObject )
 {
 	console.error( "This command object does not have an undo function:\n" +
 	 commandObject.toString() );
+	 return null;
 }
 
+/**
+ * Get the code from the command
+ *
+ * @return {int} A number that indicates the command type
+ * 
+ */
 Command.prototype.getCode = function()
 {
 	return this.commandCode;
 }
 
+/**
+ * Get the execution mode from the command, for while it is a legacy function, 
+ * in the future it may be useful to restore the execution context (mode) before starting the command.
+ *
+ * @return {int} A number that indicates the command mode.
+ * 
+ */
 Command.prototype.getMode = function()
 {
 	return this.executionMode;
 }
 
+/**
+ * Set the command intern parameters, it can be any kind of object.
+ * 
+ * @param {?} objects - A generic object with sufficient parameters to be executed by a command.
+ * 
+ */
 Command.prototype.setArgs = function( objects )
 {
 	this.argObject = objects;
 }
 
+/**
+ * Get the execution mode from the command, for while it is a legacy function, 
+ * in the future it may be useful to restore the execution context (mode) before starting the command
+ *
+ * @return {int} A number that indicates the command type
+ * 
+ */
 Command.prototype.toString = function()
 {
 	return "Command code: " + this.commandCode  + ", mode: " + this.executionMode;
 }
 
-
+/**
+ * //TODO: Finish this command commentaries
+ * @constructor
+ * @extends Command
+ * 
+ * @param {int} executionMode - A number that indicates the command execution mode.
+ */
 function KineticDragCommand( executionMode, resourceObj, kineticObj, toX, toY )
 {
 	Command.call(this);
@@ -80,7 +144,13 @@ KineticDragCommand.prototype.toString = function()
 }
 
 
-
+/**
+ * //TODO: Finish this command commentaries
+ * @constructor
+ * @extends Command
+ * 
+ * @param {int} executionMode - A number that indicates the command execution mode.
+ */
 function DragResourceCommand( executionMode, resourceObj, toX, toY )
 {
 	Command.call(this);
@@ -108,6 +178,13 @@ DragResourceCommand.prototype.toString = function()
 
 }
 
+/**
+ * //TODO: Finish this command commentaries
+ * @constructor
+ * @extends Command
+ * 
+ * @param {int} executionMode - A number that indicates the command execution mode.
+ */
 function RenameResourceCommand( executionMode, resourceObj, newNameStr )
 {
 	Command.call(this);
@@ -132,6 +209,13 @@ RenameResourceCommand.prototype.toString = function()
 
 }
 
+/**
+ * //TODO: Finish this command commentaries
+ * @constructor
+ * @extends Command
+ * 
+ * @param {int} executionMode - A number that indicates the command execution mode.
+ */
 function SelectResourceCommand( executionMode, resourceObjArray, isAdditive, selectManager )
 {
 	Command.call(this);
@@ -158,6 +242,13 @@ SelectResourceCommand.prototype.toString = function()
 		"selection Manager: " + selectionManager.toString() ;
 }
 
+/**
+ * //TODO: Finish this command commentaries
+ * @constructor
+ * @extends Command
+ * 
+ * @param {int} executionMode - A number that indicates the command execution mode.
+ */
 function CancelSelectResourceCommand( executionMode, resourceObjArray, isAdditive, selectManager )
 {
 	Command.call(this);
@@ -184,6 +275,13 @@ CancelSelectResourceCommand.prototype.toString = function()
 		"selection Manager: " + selectionManager.toString() ;
 }
 
+/**
+ * //TODO: Finish this command commentaries
+ * @constructor
+ * @extends Command
+ * 
+ * @param {int} executionMode - A number that indicates the command execution mode.
+ */
 function CreateResourceCommand( executionMode, newResCode, sketchObj )
 {
 	Command.call(this);
@@ -269,6 +367,13 @@ CreateResourceCommand.prototype.undo = function( commandObject )
 		basicCommandsGlobals.executionTypeEnum.CMEX_EDITION, newId, sketchProject );
 }
 
+/**
+ * //TODO: Finish this command commentaries
+ * @constructor
+ * @extends Command
+ * 
+ * @param {int} executionMode - A number that indicates the command execution mode.
+ */
 function DeleteResourceCommand( executionMode, resourceObjId, sketchObj )
 {
 	Command.call(this);
@@ -333,6 +438,13 @@ DeleteResourceCommand.prototype.undo = function( commandObject )
 	}
 }
 
+/**
+ * //TODO: Finish this command commentaries
+ * @constructor
+ * @extends Command
+ * 
+ * @param {int} executionMode - A number that indicates the command execution mode.
+ */
 function RestoreResHistCommand( executionMode, resHist, sketchObj )
 {
 	Command.call(this);
@@ -394,6 +506,13 @@ RestoreResHistCommand.prototype.undo = function( commandObject )
 		basicCommandsGlobals.executionTypeEnum.CMEX_EDITION, interfaceResource.getId(), sketchProject );
 }
 
+/**
+ * //TODO: Finish this command commentaries
+ * @constructor
+ * @extends Command
+ * 
+ * @param {int} executionMode - A number that indicates the command execution mode.
+ */
 function CommandGroup( executionMode, commandArray, commandExplanationStr, actionController )
 {
 	Command.call(this);
@@ -466,6 +585,13 @@ CommandGroup.prototype.undo = function( commandObject )
 	commandArray, commandExplanationStr, actionController );
 }
 
+/**
+ * //TODO: Finish this command commentaries
+ * @constructor
+ * @extends Command
+ * 
+ * @param {int} executionMode - A number that indicates the command execution mode.
+ */
 function ResizeResizeCommand( executionMode, interfaceResource, toX, toY, newWidth, newHeight )
 {
 	Command.call(this);
@@ -526,7 +652,14 @@ ResizeResizeCommand.prototype.undo = function( commandObject )
 		interfaceResource, interfaceResource.getX(), interfaceResource.getY(), 
 		interfaceResource.getWidth(), interfaceResource.getHeight() );
 }
-		
+
+/**
+ * //TODO: Finish this command commentaries
+ * @constructor
+ * @extends Command
+ * 
+ * @param {int} executionMode - A number that indicates the command execution mode.
+ */		
 function FormatResourceCommand( executionMode, interfaceResource, fontSize, fontFamilyStr, xPadding, yPadding )
 {
 	Command.call(this);
@@ -589,7 +722,13 @@ FormatResourceCommand.prototype.undo = function( commandObject )
 	);
 }
 
-/* test */
+/**
+ * //TODO: Finish this command commentaries
+ * @constructor
+ * @extends Command
+ * 
+ * @param {int} executionMode - A number that indicates the command execution mode.
+ */
 function CloneResourceVersionCommand( executionMode, resourceId, baseVersion, targetVersion, sketchObj )
 {
 	Command.call(this);
@@ -661,6 +800,13 @@ CloneResourceVersionCommand.prototype.undo = function( commandObject )
 		resourceId, targetVersion, sketchObj );
 }
 
+/**
+ * //TODO: Finish this command commentaries
+ * @constructor
+ * @extends Command
+ * 
+ * @param {int} executionMode - A number that indicates the command execution mode.
+ */
 function RemoveResourceVersionCommand( executionMode, resourceId, versionNum, sketchObj )
 {
 	Command.call(this);
@@ -742,6 +888,13 @@ RemoveResourceVersionCommand.prototype.undo = function( commandObject )
 	}
 }
 
+/**
+ * //TODO: Finish this command commentaries
+ * @constructor
+ * @extends Command
+ * 
+ * @param {int} executionMode - A number that indicates the command execution mode.
+ */
 function ChangeResourceZCommand( executionMode, interfaceResource, toZ )
 {
 	Command.call(this);
@@ -787,9 +940,13 @@ ChangeResourceZCommand.prototype.undo = function( commandObject )
 }
 
 
-/******/
-
-
+/**
+ * //TODO: Finish this command commentaries
+ * @constructor
+ * @extends Command
+ * 
+ * @param {int} executionMode - A number that indicates the command execution mode.
+ */
 function AddResourceTimeSlotCommand( executionMode, resourceTimeSlotObj, sketchObj )
 {
 	Command.call(this);
@@ -847,9 +1004,14 @@ AddResourceTimeSlotCommand.prototype.undo = function( commandObject )
 	return new RemoveResourceVersionCommand( basicCommandsGlobals.executionTypeEnum.CMEX_EDITION,
 		 resourceTimeSlotObj.getId(), resourceTimeSlotObj.getVersion(), sketchObj );
 }
-/***/
 
-
+/**
+ * //TODO: Finish this command commentaries
+ * @constructor
+ * @extends Command
+ * 
+ * @param {int} executionMode - A number that indicates the command execution mode.
+ */
 function DeleteResourceVersionCommand( executionMode, resourceId, versionNum, sketchObj )
 {
 	Command.call(this);
@@ -917,7 +1079,13 @@ DeleteResourceVersionCommand.prototype.undo = function( commandObject )
   				 resourceId, targetVersion, sketchObj );
 }
 
-		
+/**
+ * //TODO: Finish this command commentaries
+ * @constructor
+ * @extends Command
+ * 
+ * @param {int} executionMode - A number that indicates the command execution mode.
+ */	
 function SetRestHistExtraImageCommand( executionMode, interfaceResource, sketchProject, imageSource )
 {
 	Command.call(this);
@@ -990,9 +1158,14 @@ SetRestHistExtraImageCommand.prototype.undo = function( commandObject )
 	}
 }
 
-/* test */
-
 //TODO: It needs unitary tests
+/**
+ * //TODO: Finish this command commentaries
+ * @constructor
+ * @extends Command
+ * 
+ * @param {int} executionMode - A number that indicates the command execution mode.
+ */
 function ChangeActiveVersionCommand( executionMode, versionNumber, sketchObj )
 {
 	Command.call(this);
@@ -1154,7 +1327,7 @@ CancelSelectResourceCommand.prototype.undo = function( commandObject )
 		 isAdditiveSelection, selectionManager );
 }
 
-/*
+/* TODO: See if this commented code will have no use, the same for the following factory functions
 function CommandFunctionFactory()
 {
 	this.commandMatrix = new Array();
@@ -1173,7 +1346,14 @@ function CommandFunctionFactory()
 }
 */
 
-// This one creates a command to be executed
+/**
+ * Call the undo method from a command, before it was used to check the command mode and code,
+ * it may be used in the future.
+ *
+ * @param {Object} commandObject - A command object, generally it is itself.
+ * @return {Object} the undo command for this command or null if there is some error.
+ * 
+ */
 function undoFactory( commandObject )
 {
 	var code = commandObject.getCode();
@@ -1191,7 +1371,13 @@ function undoFactory( commandObject )
 	
 }
 
-// This one executes a command
+/**
+ * Call the execute method from a command, before it was used to check the command mode and code,
+ * it may be used in the future.
+ *
+ * @return {int} A number that indicates if the command has been executed succcessfully or not
+ * 
+ */
 function commandDigest( commandObject )
 {
 	var code = commandObject.getCode();

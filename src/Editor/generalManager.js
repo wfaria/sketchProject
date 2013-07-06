@@ -2,6 +2,13 @@ generalGlobals = {};
 generalGlobals.manager = null;
 generalGlobals.CONTAINER_DOMID = "container";
 
+/**
+ * General controller constructor.
+ * It contains the main objects from the project.
+ * @constructor
+ * //TODO: Maybe it is a good idea to change this container to a combination of singletons.
+ * 
+ */
 function GeneralManager()
 {
 	this.editorState = 0;
@@ -13,6 +20,9 @@ function GeneralManager()
 
 GeneralManager.prototype.constructor = GeneralManager;
 
+/**
+ * Just a shortcut command to create a frequently used command, the selection cancel 
+ */
 GeneralManager.prototype.createCancelSelectionCommand = function()
 {
 	var removedSelection = [];
@@ -28,6 +38,11 @@ GeneralManager.prototype.createCancelSelectionCommand = function()
 		removedSelection, false, generalGlobals.manager.selectionManager );
 }
 
+/**
+ * A function to subscribe this object with the convenient mediators.
+ * //TODO: Maybe it is a good idea to extract the reaction functions like in the graphic controller 
+ * 
+ */
 GeneralManager.prototype.subscribeToMediators = function()
 {
 	generalGlobals.manager.graphicController.subscribeToMediators();
@@ -368,6 +383,14 @@ GeneralManager.prototype.subscribeToMediators = function()
 		); //end mediator.subscribe( compName, true, ...
 }
 
+/**
+ * Prepare the system to edit a opened project.
+ * It erases all objects related to graphics, mediators, commands.
+ * So it let the system as if it was opened for the first time.
+ *
+ * @param {Sketch} sketchObject - An object that contains information from the opened object
+ *
+ */
 generalGlobals.openProject = function( sketchObject )
 {
 	if( generalGlobals.manager != null )
@@ -382,6 +405,15 @@ generalGlobals.openProject = function( sketchObject )
    		[ sketchObject.getName(), sketchObject.getAuthor(), sketchObject ] );
 }
 
+/**
+ * Create a new empty project to be edited.
+ * It erases all objects related to graphics, mediators, commands.
+ * So it let the system as if it was opened for the first time.
+ *
+ * @param {string} nameStr - New project's name.
+ * @param {string} authorStr - New project's author name.
+ *
+ */
 generalGlobals.newProject = function(  nameStr , authorStr  )
 {
 	if( generalGlobals.manager != null )

@@ -23,10 +23,21 @@ function Mediator( idString )
 	this.components = [];
 	this.id = idString;
 }
-
 Mediator.prototype.constructor = Mediator;
+
+
+/**
+ * ToString function
+ * 
+ * @return {string} a string with mediator's id. This string doesn't contain info about its components.
+ */
 Mediator.prototype.toString = function() { return "Mediator with ID: " + this.id; }
 
+/**
+ * A function that defines how to print mediator debug messages. 
+ * 
+ * @param {string} text - Any text desired to be printed.
+ */
 Mediator.prototype.debugAlert = function(text) {
 	//alert( text );
 	console.log( text );
@@ -36,7 +47,7 @@ Mediator.prototype.debugAlert = function(text) {
  * Publish an event with args to the source channel 
  *
  * @param {string} event - The event that has been published
- * @param {...[?]} args -  A variable number of variables of different types that the event can use
+ * @param {...?} args -  A variable number of variables of different types that the event can use
  * @param {string} source - The object where the callback function will be called, 
  * if it is undefined, then it will be called in the component itself (the object which contains the callback function)
  */
@@ -86,12 +97,26 @@ Mediator.prototype.subscribe = function(name, replaceDuplicate, component ) {
 	this.components[name] = component;
 }
 
+/**
+ * Unsubscribe a component that receive information about updates in a channel.
+ * If the specified component doesn't exist, it does nothing. 
+ *
+ * @param {string} name - A name to identify the component to be removed.
+ * 
+ */
 Mediator.prototype.removeComponent = function(name) {
 	if (name in this.components) {
 		delete this.components[name];
 	}
 }
 
+/**
+ * Get a component that receive information about updates in a channel.
+ *
+ * @param {string} name - A name to identify the component to be gotten.
+ * @return {?} A component element or undefined if a component with specified name doesn't exist.
+ * 
+ */
 Mediator.prototype.getComponent = function(name) 
 {
 	return this.components[name]; // undefined if component has not been added
