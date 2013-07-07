@@ -123,6 +123,9 @@ MetaGraphicController.prototype.saveAnchorModification = function()
 		newHeight = -1*newHeight;
 	}
 	
+	if( newWidth < 20 ) newWidth = 20;
+	if( newHeight < 20 ) newHeight = 20;
+	
 	globalMediators.internalMediator.publish( 'ResizeInterfaceResource', 
 		[ this.selectionIndicatedResources[0],
 			 newX, newY, newWidth, newHeight ]);
