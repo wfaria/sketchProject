@@ -93,7 +93,13 @@ SelectionManager.prototype.getSelectedElements = function()
 
 
 /******** Graphic Mediator functions **********/
-
+//TODO: Separate the sideMenu controller from this object (or not?)
+/**
+ * EventKey: ResourceSelected.
+ * Sent when a group of resources are selected on the canvas.
+ *
+ * @param {Array} resourceArray - An array with the selected elements
+ */
 SelectionManager.prototype.onResourceSelected = function( resourceArray )
 {
 	if( resourceArray.length == 1)
@@ -106,6 +112,12 @@ SelectionManager.prototype.onResourceSelected = function( resourceArray )
 	}
 }
 
+/**
+ * EventKey: ResourceSelectCanceled.
+ * Sent when a group of selected resources are unselected.
+ *
+ * @param {Array} resourceArray - An array with the unselected elements
+ */
 SelectionManager.prototype.onResourceSelectCanceled = function( resourceArray )
 {
 	if( this.getSelectedElements.length == 0 )
@@ -116,6 +128,13 @@ SelectionManager.prototype.onResourceSelectCanceled = function( resourceArray )
 
 /******** Internal Mediator functions **********/
 
+/**
+ * EventKey: ActiveVersionChanged.
+ * Sent when a project has its active version number changed
+ *
+ * @param {int} oldVersionNumber - Project's last version
+ * @param {Sketch} sketchProject - Project's object with the version changed
+ */
 SelectionManager.prototype.onActiveVersionChanged = function( oldVersionNumber, sketchProject )
 {
 	sideMenu.updateVersionChangers();
@@ -123,12 +142,28 @@ SelectionManager.prototype.onActiveVersionChanged = function( oldVersionNumber, 
 	sideMenu.updateValue( DOMglobals.PROJECT_VERSION_ID,  versionNumber );
 }
 
+/**
+ * EventKey: ProjectCreated.
+ * Sent when a project is created 
+ *
+ * @param {String} projectName - New project's name
+ * @param {String} authorName - New project's author
+ * @param {Sketch} sketchProject - New project's object
+ */
 SelectionManager.prototype.onProjectCreated = function( projectName, authorName, sketchProject )
 {
 	sideMenu.removeResourceBasicSection();
 	sideMenu.createProjectSection( sketchProject );
 }
 
+/**
+ * EventKey: InterfaceResourceMoved.
+ * Sent when a interface resource is moved
+ *
+ * @param {InterfaceResource} interfaceResource - The object that contains the data from an interface resource.
+ * @param {int} oldX - The last X position from the resource.
+ * @param {int} oldY - The last Y position from the resource.
+ */
 SelectionManager.prototype.onInterfaceResourceMoved = function( interfaceResource, oldX, oldY )
 {
 	if( sideMenu.containsId(DOMglobals.BASIC_RESOURCE_ID ) )
@@ -138,6 +173,16 @@ SelectionManager.prototype.onInterfaceResourceMoved = function( interfaceResourc
 	}		
 }
 
+/**
+ * EventKey: InterfaceResourceResized.
+ * Sent when a interface resource is resized
+ *
+ * @param {InterfaceResource} interfaceResource - The object that contains the data from an interface resource.
+ * @param {int} oldX - The old X position from the resource.
+ * @param {int} oldY - The old Y position from the resource.
+ * @param {int} oldWidth - old resource width.
+ * @param {int} oldHeight - old resource height.
+ */
 SelectionManager.prototype.onInterfaceResourceResized = function( interfaceResource, oldX, oldY, oldWidth, oldHeight )
 {
 	if( sideMenu.containsId(DOMglobals.BASIC_RESOURCE_ID ) )
@@ -149,6 +194,12 @@ SelectionManager.prototype.onInterfaceResourceResized = function( interfaceResou
 	}	
 }
 
+ /**
+ * EventKey: ResourceFormatted.
+ * Sent when an interface resource have its text formatted
+ *
+ * @param {InterfaceResource} interfaceResource - The object that contains the data from an interface resource.
+ */
 SelectionManager.prototype.onResourceFormatted = function( interfaceResource )
 {
 	//TODO: ADD the rest of the changed elements
@@ -163,6 +214,13 @@ SelectionManager.prototype.onResourceFormatted = function( interfaceResource )
 	}
 }
 
+ /**
+ * EventKey: ResourceNameChanged
+ * Sent when a interface resource name's changed
+ *
+ * @param {InterfaceResource} interfaceResource - The data object from the shape which has been clicked
+ * @param {String} newNameStr - The new name's String
+ */
 SelectionManager.prototype.onResourceNameChanged = function( interfaceResource, newNameStr )
 {
 	if( sideMenu.containsId(DOMglobals.BASIC_RESOURCE_ID ) )
@@ -171,6 +229,13 @@ SelectionManager.prototype.onResourceNameChanged = function( interfaceResource, 
 	}
 }
 
+/**
+ * EventKey: InterfaceResourceZChanged.
+ * Sent when an interface resource have its Z-index changed.
+ *
+ * @param {InterfaceResource} interfaceResource - The object that contains the data from an interface resource.
+ * @param {int} oldZ - The last Z value.
+ */
 SelectionManager.prototype.onInterfaceResourceZChanged = function( interfaceResource, oldZ )
 {
 	if( sideMenu.containsId(DOMglobals.BASIC_RESOURCE_ID ) )
@@ -179,20 +244,52 @@ SelectionManager.prototype.onInterfaceResourceZChanged = function( interfaceReso
 	}
 }
 
+/**
+ * EventKey: ResourceHistoryDeleted.
+ * Sent when an entire resource history is deleted
+ *
+ * @param {InterfaceResource} interfaceResourceHistory - The object that contains the data from an interface resource history.
+ */
 SelectionManager.prototype.onResourceHistoryDeleted = function( interfaceResourceHistory )
 {
 	sideMenu.updateVersionChangers();
 }
 
+/**
+ * EventKey: ResourceVersionAdded.
+ * Sent when some resource have a version added
+ *
+ * @param {InterfaceResource} resourceTimeSlotObj - The added element in the resouce's history object.
+ * @param {ResourceHistory} resourceHistory - The resource's history without the removed element
+ * @param {int} sketchActiveVersion - A number indicating project's active version when this operation has been done
+ */
 SelectionManager.prototype.onResourceVersionAdded = function( resourceTimeSlotObj, resourceHistory, sketchActiveVersion  )
 {
 	sideMenu.updateVersionChangers();
 }
 
+/**
+ * EventKey: ResourceVersionRemoved.
+ * Sent when some resource have a version removed
+ *
+ * @param {InterfaceResource} removedResource - The removed element from the resouce's history object.
+ * @param {ResourceHistory} resourceHistory - The resource's history without the removed element
+ * @param {int} sketchActiveVersion - A number indicating project's active version when this operation has been done
+ */
 SelectionManager.prototype.onResourceVersionRemoved = function( removedResource, resourceHistory, sketchActiveVersion )
 {
 	sideMenu.updateVersionChangers();
 }
+
+/**
+ * EventKey: ResourceVersionCloned.
+ * Sent when some resource have a version cloned.
+ *
+ * @param {InterfaceResource} clonedObj - The clone object from the new version.
+ * @param {int} baseVersion - A number indicating the base version from the clone.
+ * @param {ResourceHistory} resourceHistory - The resource's history with the new clone
+ * @param {int} sketchActiveVersion - A number indicating project's active version when this clone was made
+ */
 SelectionManager.prototype.onResourceVersionCloned = function( clonedObj, baseVersion, resourceHistory, sketchActiveVersion )
 {
 	sideMenu.updateVersionChangers();

@@ -11,7 +11,7 @@ event comments ends with a past verb, they should ALWAYS be sent when the event 
 
 /****** Internal messages ********/
 /**
- * EventKey: ActiveVersionChanged
+ * EventKey: ActiveVersionChanged.
  * Sent when a project has its active version number changed
  *
  * @param {int} oldVersionNumber - Project's last version
@@ -53,7 +53,7 @@ onFormatInterfaceResource = function( interfaceResource, fontSize, fontFamily, x
 //TODO: Add extraFormat with color and bold, italic, etc
 
  /**
- * EventKey: ResourceFormatted
+ * EventKey: ResourceFormatted.
  * Sent when an interface resource have its text formatted
  *
  * @param {InterfaceResource} interfaceResource - The object that contains the data from an interface resource.
@@ -161,7 +161,7 @@ onDeleteResourceVersion = function( interfaceResource ){}
  */
 
 /**
- * EventKey: ProjectCreated
+ * EventKey: ProjectCreated.
  * Sent when a project is created 
  *
  * @param {String} projectName - New project's name
@@ -251,7 +251,7 @@ onImageUploadedForResource = function( interfaceResource, imageSource ){}
 onResourceDeleteTagChanged = function( interfaceResource ){}
 
 /**
- * EventKey: ResourceVersionAdded
+ * EventKey: ResourceVersionAdded.
  * Sent when some resource have a version added
  *
  * @param {InterfaceResource} resourceTimeSlotObj - The added element in the resouce's history object.
@@ -261,7 +261,7 @@ onResourceDeleteTagChanged = function( interfaceResource ){}
 onResourceVersionAdded = function( resourceTimeSlotObj, resourceHistory, sketchActiveVersion ){}
 
 /**
- * EventKey: ResourceVersionRemoved
+ * EventKey: ResourceVersionRemoved.
  * Sent when some resource have a version removed
  *
  * @param {InterfaceResource} removedResource - The removed element from the resouce's history object.
@@ -280,8 +280,8 @@ onResourceVersionRemoved = function( removedResource, resourceHistory, sketchAct
 onResourceSelected = function( resourceArray ){}
 
 /**
- * EventKey: ResourceVersionCloned
- * Sent when some resource have a version cloned
+ * EventKey: ResourceVersionCloned.
+ * Sent when some resource have a version cloned.
  *
  * @param {InterfaceResource} clonedObj - The clone object from the new version.
  * @param {int} baseVersion - A number indicating the base version from the clone.
@@ -323,7 +323,7 @@ onResizeInterfaceResource = function( interfaceResource, toX, toY, newWidth, new
 onInterfaceResourceResized = function( interfaceResource, oldX, oldY, oldWidth, oldHeight ){}
 
 /**
- * EventKey: InterfaceResourceZChanged
+ * EventKey: InterfaceResourceZChanged.
  * Sent when an interface resource have its Z-index changed.
  *
  * @param {InterfaceResource} interfaceResource - The object that contains the data from an interface resource.

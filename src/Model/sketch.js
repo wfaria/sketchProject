@@ -1,11 +1,13 @@
 var iResHistGlobals = {};
 
 iResHistGlobals.defaultKeys = {};
+/** @define {string} */
 iResHistGlobals.defaultKeys.IMAGE_SRC = "imgSrc";
 
 iResHistGlobals.defaultExtraValues = {};
 
 var SketchGlobals = {};
+/** @define {int} */
 SketchGlobals.MAX_VERSION_NUMBER = 999999;
 
 
@@ -27,7 +29,12 @@ function createArrayIterator( arrayObj )
 }
 
 
-
+/**
+ * Resource History's constructor.
+ * @constructor
+ * 
+ * @param {InterfaceResource} resource - The base resource from this history.
+ */
 function ResourceHistory( resource )
 {
 	this.resourceId = resource.getId() ;
@@ -36,6 +43,12 @@ function ResourceHistory( resource )
 	this.extra = {}; //TODO: Try to use a real array or a hashmap here (be aware with problems with serialization)
 }
 
+/**
+ * Get an extra value with the given key.
+ * 
+ * @param {string} attributeKey - The key with the desired value.
+ * @return {string} A string with the value indicated by this key or null if it doesn't exist.
+ */
 ResourceHistory.prototype.getExtraAttribute = function( attributeKey ) 
 {	
 	var attrValue =  this.extra[attributeKey]; 
@@ -49,6 +62,12 @@ ResourceHistory.prototype.getExtraAttribute = function( attributeKey )
 	}
 }
 
+/**
+ * Insert a pair <key, value> in the extra value set.
+ *  
+ * @param {string} attributeKey - Value's key, it must be unique, if it exists it will be overwritten.
+ * @param {string} attributeValue - Any value with the string type.
+ */
 ResourceHistory.prototype.setExtraAttribute = function( attributeKey, attributeValue ) 
 {	
 	if( attributeValue == null )
@@ -62,21 +81,41 @@ ResourceHistory.prototype.setExtraAttribute = function( attributeKey, attributeV
 	}
 }
 
+/**
+ * Get the Id number from this object.
+ *  
+ * @return {int}
+ */
 ResourceHistory.prototype.getId = function()
 {
 	return this.resourceId;
 }
 
+/**
+ * Get the number of different versions from this resource.
+ *  
+ * @return {int}
+ */
 ResourceHistory.prototype.getHistoryLength = function()
 {
 	return this.timeSlots.length;
 }
 
+/**
+ * Get an array with different versions from this resource
+ *  
+ * @return {Array.<InterfaceResource>} An array with these objects, don't change this array.
+ */
 ResourceHistory.prototype.getResources = function()
 {
 	return this.timeSlots;
 }
 
+/**
+ * To String
+ * 
+ * @return {string} 
+ */
 ResourceHistory.prototype.toString = function()
 {
 	var s = "Resource history from object with id " + this.resourceId + "\n";
@@ -87,7 +126,12 @@ ResourceHistory.prototype.toString = function()
 	return s;
 }
 
-
+/**
+ * Remove a version from the history.
+ *  
+ * @param {int} versionNum - The version number to be removed.
+ * @return {InterfaceResource} the object removed or null if there is no version with the givem parameter.
+ */
 ResourceHistory.prototype.removeVersion = function ( versionNum  )
 {
 	for (var i = 0; i < this.timeSlots.length; i++) 
@@ -102,6 +146,12 @@ ResourceHistory.prototype.removeVersion = function ( versionNum  )
     return null;
 }
 
+/**
+ * Change the deleted flag from a resource in some version
+ *  
+ * @param {int} versionNum - The version number to be changed.
+ * @return {InterfaceResource} the object with the 'deleted' flag after a logical negation.
+ */
 ResourceHistory.prototype.changeDeletedFlag = function( versionNum )
 {
 	var objToDel = this.getResourceFromVersion( versionNum );
@@ -112,6 +162,12 @@ ResourceHistory.prototype.changeDeletedFlag = function( versionNum )
 	return objToDel;
 }
 
+/**
+ * Add a new version based in one resource object.
+ * If there is another version with same version number it will be overwritten.
+ * 
+ * @param {InterfaceResource} resource - The object to be inserted in the history. 
+ */
 ResourceHistory.prototype.addVersion = function ( resource )
 {
 	this.removeVersion( resource.getVersion() );
@@ -120,6 +176,12 @@ ResourceHistory.prototype.addVersion = function ( resource )
 	this.timeSlots.sort( function(a,b){ return a.getVersion()-b.getVersion() });
 }
 
+/**
+ * Get a resource with the given version number.
+ * 
+ * @param {int} versionNum - The version number to be selected.
+ * @return {InterfaceResource} the object with this version or null if it doesn't exist.
+ */
 ResourceHistory.prototype.getResourceFromVersion = function ( versionNum  )
 {
 	for (var i = 0; i < this.timeSlots.length; i++) 
@@ -132,6 +194,12 @@ ResourceHistory.prototype.getResourceFromVersion = function ( versionNum  )
     return null;
 }
 
+/**
+ * Clone an object.
+ * 
+ * @param {Object} obj - A base object.
+ * @return {Object} An new object with the exact attributes from the old one. 
+ */
 function cloneObject(obj) 
 {
         var clone = {};
@@ -145,6 +213,15 @@ function cloneObject(obj)
         return clone;
 }
 
+/**
+ * Create a clone from one version to another version.
+ * If there is already another version with the same number of the target version
+ * from this function it will be overwritten.
+ *  
+ * @param {int} numFrom - Base version.
+ * @param {int} numTo - New version.
+ * @return {InterfaceResource} The cloned object or null if the base version doesn't exist.
+ */
 ResourceHistory.prototype.cloneVersion = function( numFrom, numTo )
 {
 	var obj = this.getResourceFromVersion( numFrom );
@@ -161,7 +238,12 @@ ResourceHistory.prototype.cloneVersion = function( numFrom, numTo )
 	}
 }
 
-// this function is used to check if the project has future or past versions
+/**
+ * Get the oldest resource with creation version greater than the passed one.
+ * 
+ * @param {int} versionNum - The reference version.
+ * @return {InterfaceResource} An object that satisfies that condition or null if it doesn't exist.
+ */
 ResourceHistory.prototype.getNextFutureResource = function ( versionNum  ) 
 {
 	if( this.timeSlots.length < 1 )
@@ -183,7 +265,12 @@ ResourceHistory.prototype.getNextFutureResource = function ( versionNum  )
 	}
 }
 
-// Get the newest version V, V <= activeVersion
+/**
+ * Get the newest resource with creation version lesser or equal than the passed one.
+ * 
+ * @param {int} versionNum - The reference version.
+ * @return {InterfaceResource} An object that satisfies that condition or null if it doesn't exist.
+ */
 ResourceHistory.prototype.getResourceBeforeVersion = function ( versionNum  )
 {
 	if( this.timeSlots.length < 1 )
@@ -218,6 +305,12 @@ ResourceHistory.prototype.getResourceBeforeVersion = function ( versionNum  )
 }
 
 
+/**
+ * Screen object constructor.
+ * @constructor
+ * 
+ * @param {string} name - Screen's name.
+ */
 function Screen( name )
 {
 	this.name = name;
@@ -225,22 +318,44 @@ function Screen( name )
 	this.lastAccessedResource = null;
 }
 
+/**
+ * Return an array with all histories in the screen.
+ * 
+ * @return {Array.<ResourceHistory>} An array with those histories, don't change these elements.
+ */
 Screen.prototype.getResources = function()
 {
 	return this.resourceHistories;
 }
 
+/**
+ * Get Screen's name.
+ * 
+ * @return {string} Screen's name. 
+ */
 Screen.prototype.getName = function()
 {
 	return this.name;
 }
 
+/**
+ * Add a resource history in this screen. If exists
+ * some history with same id, it will be overwritten.
+ * 
+ * @param {ResourceHistory} resource - The Resource History to be inserted.  
+ */
 Screen.prototype.addResourceHistory = function( resource )
 {
 	this.deleteResourceHistory( resource.getId() );
 	this.resourceHistories.push( new ResourceHistory( resource ) ); 
 }
 
+/**
+ * Get a Resource History that have the given id.
+ * 
+ * @param {int} resourceId - The id to be searched.
+ * @return {ResourceHistory} Returns a Resource History with the given id or null if it doesn't exist. 
+ */
 Screen.prototype.getResourceHistory = function( resourceId )
 {
 	/*TODO: Check if it's better to check the last accessed resource to optimize here or
@@ -256,6 +371,12 @@ Screen.prototype.getResourceHistory = function( resourceId )
 	return null;
 }
 
+/**
+ * Delete a Resource History that have the given id.
+ * 
+ * @param {int} resourceId - The id to be deleted.
+ * @return {ResourceHistory} Returns the deleted Resource History or null if it doesn't exist. 
+ */
 Screen.prototype.deleteResourceHistory = function( resourceId )
 {
 	var i;
@@ -278,7 +399,7 @@ Screen.prototype.deleteResourceHistory = function( resourceId )
  * Like the common add function it will overwrite any resource with
  * same ID.
  * 
- * @param {ResourceHistory} resourceHistory - Any object that represents a resouce historic.
+ * @param {ResourceHistory} resourceHistory - Any object that represents a resource historic.
  */
 Screen.prototype.restoreResourceHistory = function( resourceHistory )
 {
@@ -293,6 +414,14 @@ Screen.prototype.restoreResourceHistory = function( resourceHistory )
 	}
 }
 
+/**
+ * Sketch object constructor.
+ * It represents a project with screens and resources.
+ * @constructor
+ * 
+ * @param {string} name - Sketch Project's name.
+ * @param {string} author - Sketch Project's author.
+ */
 function Sketch( name, author )
 {
 	this.name = name;
@@ -312,6 +441,13 @@ function Sketch( name, author )
 	 */
 }
 
+/**
+ * Get the newest version with some different resource from the active version.
+ * The returned version is smaller than the active version.
+ * 
+ * @return {int} The previous existent version or -1 
+ * if there is no version that satisfy that condition. 
+ */
 Sketch.prototype.getPreviousAvailableVersion = function()
 {
 	var i = 0;
@@ -340,6 +476,13 @@ Sketch.prototype.getPreviousAvailableVersion = function()
 	return ret;
 }
 
+/**
+ * Get the oldest version with some different resource from the active version.
+ * Also this version must be greater than the active version.
+ * 
+ * @return {int} The next existent version or -1 
+ * if there is no version that satisfy that condition. 
+ */
 Sketch.prototype.getNextAvailableVersion = function()
 {
 	var i = 0;
@@ -373,6 +516,12 @@ Sketch.prototype.getNextAvailableVersion = function()
 		return -1;
 }
 
+/**
+ * Change project's active version.
+ * This number must be smaller than the max number and greater than -1.
+ *  
+ * @param {int} number
+ */
 Sketch.prototype.setActiveVersionNumber = function( number )
 {
 	if( number < 0 )
@@ -388,10 +537,22 @@ Sketch.prototype.setActiveVersionNumber = function( number )
 	this.activeVersion = number;
 }
 
+/**
+ * Get the project's active version.
+ * 
+ * @return {int} 
+ */
 Sketch.prototype.getActiveVersionNumber = function()
 {
 	return this.activeVersion;
 }
+
+/**
+ * Add a screen in the project.
+ *  
+ * @param {Screen} screenObj - The screen object.
+ * @return {boolean} false if there is already a screen with same name, otherwise returns true. 
+ */
 Sketch.prototype.addScreen = function ( screenObj )
 {
 	if( this.getScreen( screenObj.getName() ) != null )
@@ -400,6 +561,12 @@ Sketch.prototype.addScreen = function ( screenObj )
 	return true;
 }
 
+/**
+ * Delete a screen from this project.
+ *  
+ * @param {string} screenName - The name of the screen to be removed.
+ * @return {Screen} The removed screen or null if there is no screen with the given name.
+ */
 Sketch.prototype.deleteScreen = function( screenName )
 {
 	var i;
@@ -419,6 +586,12 @@ Sketch.prototype.deleteScreen = function( screenName )
 	return null;
 }
 
+/**
+ * Change project's current screen.
+ *  
+ * @param {string} screenName - The name of the screen to be selected.
+ * @return {Screen} The selected screen, if there is no screen with the given name it returns the old active screen.
+ */
 Sketch.prototype.setScreen = function( screenName )
 {
 	var screenObj = this.getScreen( screenName );
@@ -427,11 +600,20 @@ Sketch.prototype.setScreen = function( screenName )
 	return screenObj;
 }
 
+/**
+ * Get project's maximum id number. This number
+ * hasn't been used by any resource yet.
+ * 
+ * @return {int} 
+ */
 Sketch.prototype.getMaxId = function()
 {
 	return this.maxIdCount;
 }
 
+/**
+ * Increase the maximum id number. 
+ */
 Sketch.prototype.increaseMaxId = function()
 {
 	this.maxIdCount++;
@@ -442,6 +624,11 @@ Sketch.prototype.getScreenIterator = function()
 	return createArrayIterator(this.screens);
 }
 
+/**
+ * Get the current screen or null if there isn't a current screen.
+ * 
+ * @return {Screen} 
+ */
 Sketch.prototype.getCurrentScreen = function()
 {
 	if( this.currentScreenName == null )
@@ -449,12 +636,23 @@ Sketch.prototype.getCurrentScreen = function()
 	return this.getScreen( this.currentScreenName );
 }
 
+/**
+ * Get the name of the current screen, it can be null.
+ * 
+ * @return {string} 
+ */
 Sketch.prototype.getCurrentScreenName = function()
 {
 	return this.currentScreenName;
 }
 
-
+/**
+ * Get a screen with name equals of the given string. If 
+ * this screen doesn't exist it returns null.
+ *   
+ * @param {string} screenName
+ * @return {Screen}
+ */
 Sketch.prototype.getScreen = function( screenName )
 {
 	var i;
@@ -466,17 +664,32 @@ Sketch.prototype.getScreen = function( screenName )
 	return null;
 }
 
+/**
+ * Return an array with the screens from this object.
+ * 
+ * @return {Array.<Screen>} An array with screens, don't change this array. 
+ */
 Sketch.prototype.getScreens = function( )
 {
 	return this.screens;
 }
 
 
+/**
+ * Get sketch project's name.
+ * 
+ * @return {string} 
+ */
 Sketch.prototype.getName = function( )
 {
 	return this.name;
 }
 
+/**
+ * Get sketch project's author string.
+ * 
+ * @return {string} 
+ */
 Sketch.prototype.getAuthor = function( )
 {
 	return this.author;

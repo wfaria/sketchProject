@@ -1,12 +1,22 @@
+/**
+ * An enumerator of resource types
+ * @enum {number}
+ *  
+ */
 var resourceTypeEnum = { IR_UNDEFINED: -1, IR_DELETED: 0, IR_BUTTON: 1, IR_WINDOW: 2, IR_TEXTLABEL: 3, IR_GROUP: 4,
 	IR_IMAGE: 5 };
 
 var iResGlobals = {};
+/** @define {int} */
 iResGlobals.PARENTLESS = -1;
 iResGlobals.defaultKeys = {};
+/** @define {string} */
 iResGlobals.defaultKeys.FONTSIZE_KEY = "font_size";
+/** @define {string} */
 iResGlobals.defaultKeys.FONTTYPE_KEY = "font_type";
+/** @define {string} */
 iResGlobals.defaultKeys.FONT_X_PADDING_KEY = "font_x_padding";
+/** @define {string} */
 iResGlobals.defaultKeys.FONT_Y_PADDING_KEY = "font_y_padding";
 
 iResGlobals.defaultExtraValues = {};
@@ -15,7 +25,19 @@ iResGlobals.defaultExtraValues.FONTTYPE_KEY = "calibri";
 iResGlobals.defaultExtraValues.FONT_X_PADDING_KEY = "50";
 iResGlobals.defaultExtraValues.FONT_Y_PADDING_KEY = "50";
 
-// This is the object that the other objects will inherit
+/**
+ * Basic interface resource. All other resource must inherit from this object.
+ * @constructor
+ * 
+ * @param {int} posX - Resource's X position. 
+ * @param {int} posY - Resource's Y position.
+ * @param {int} posZ - Resource's Z position.
+ * @param {int} widthVal - Resource's width.
+ * @param {int} heightVal - Resource's height.
+ * @param {String} name - Resource's name.
+ * @param {int} id - Resource's id number.
+ * @param {int} initialVersion - The version when this resource has been created.
+ */
 function InterfaceResource( posX,posY,posZ,widthVal, heightVal, name, id, initialVersion )
 {
 	this.x = posX;
@@ -35,32 +57,156 @@ function InterfaceResource( posX,posY,posZ,widthVal, heightVal, name, id, initia
 }
 InterfaceResource.prototype.constructor = InterfaceResource;
 
+/**
+ * Create a string that represent this resource.
+ * 
+ * @return {string} A string that contains information about this resource. 
+ */
 InterfaceResource.prototype.toString = function()
 {
 	return this.getName() + ' at position ('+this.x+','+this.y+') created at the version ' + this.getVersion() +
 		' with id (' + this.getId() + ')' ;	
 }
+
+/**
+ * Get Resource's X position.
+ * 
+ * @return {int} 
+ */
 InterfaceResource.prototype.getX = function() {	return this.x; }
+
+/**
+ * Get Resource's Y position.
+ * 
+ * @return {int} 
+ */
 InterfaceResource.prototype.getY = function() {	return this.y; }
+
+/**
+ * Get Resource's Z position.
+ * 
+ * @return {int} 
+ */
 InterfaceResource.prototype.getZ = function() {	return this.z; }
+
+/**
+ * Get Resource's height.
+ * 
+ * @return {int} 
+ */
 InterfaceResource.prototype.getHeight = function() {	return this.height; }
+
+/**
+ * Get Resource's width.
+ * 
+ * @return {int} 
+ */
 InterfaceResource.prototype.getWidth = function() {	return this.width; }
+
+/**
+ * Get Resource's id number.
+ * 
+ * @return {int} 
+ */
 InterfaceResource.prototype.getId = function() {	return this.id; }
+
+/**
+ * Get Resource's parent id number.
+ * 
+ * @return {int} 
+ */
 InterfaceResource.prototype.getParentId = function() {	return this.parentId; }
+
+/**
+ * Get Resource's name.
+ * 
+ * @return {string} 
+ */
 InterfaceResource.prototype.getName = function() {	return this.name; }
+
+/**
+ * Get Resource's type number
+ * 
+ * @return {int} 
+ */
 InterfaceResource.prototype.getResourceType = function() {	return this.resourceType; }
+
+/**
+ * Get Resource's creation version.
+ * 
+ * @return {int} 
+ */
 InterfaceResource.prototype.getVersion = function() {	return this.createdInVersion; }
+
+/**
+ * Get Resource's deleted flag.
+ * 
+ * @return {boolean} 
+ */
 InterfaceResource.prototype.getDeleted = function() { return this.isDeleted; }
 
+
+/**
+ * Set resource's X position.
+ *  
+ * @param {int} num - The value to be assigned.
+ */
 InterfaceResource.prototype.setX = function(num) { this.x = num; }
+
+/**
+ * Set resource's Y position.
+ *  
+ * @param {int} num - The value to be assigned.
+ */
 InterfaceResource.prototype.setY = function(num) { this.y = num; }
+
+/**
+ * Set resource's Z position.
+ *  
+ * @param {int} num - The value to be assigned.
+ */
 InterfaceResource.prototype.setZ = function(num) { this.z = num; }
+
+/**
+ * Set resource's width.
+ *  
+ * @param {int} num - The value to be assigned.
+ */
 InterfaceResource.prototype.setWidth = function(num) { this.width = num; }
+
+/**
+ * Set resource's height.
+ *  
+ * @param {int} num - The value to be assigned.
+ */
 InterfaceResource.prototype.setHeight = function(num) { this.height = num; }
+
+/**
+ * Set resource's parent id number.
+ *  
+ * @param {int} num - The value to be assigned.
+ */
 InterfaceResource.prototype.setParentId = function(num) { this.parentId = num; }
+
+/**
+ * Set resource's name.
+ * 
+ * @param {string} nameStr - The new name. 
+ */
 InterfaceResource.prototype.setName = function( nameStr ) { this.name = nameStr; }
+
+/**
+ * Set resource's deleted flag.
+ * 
+ * @param {boolean} boolVal - The value to be assigned. 
+ */
 InterfaceResource.prototype.setDeleted = function( boolVal ) { this.isDeleted = boolVal; }
 
+/**
+ * Set resource's creation version.
+ * 
+ * @param {int} versionNum - The value to be assigned. 
+ */
 InterfaceResource.prototype.setVersion = function( versionNum ) 
 {	
 	this.createdInVersion = versionNum; 
@@ -87,13 +233,25 @@ InterfaceResource.prototype.getExtraAttribute = function( attributeKey )
 	}
 }
 
+/**
+ * Get the value from an extra attribute in the number format.
+ * If the key doesn't exist it raises an error message.
+ *
+ * @param {string} attributeKey - The key from the desired attribute.
+ * 
+ * @return {string} The value from this attribute, if it does not exist
+ * it returns 0.
+ */
 InterfaceResource.prototype.getIntExtraAttribute = function( attributeKey ) 
 {
 	var ret = this.getExtraAttribute( attributeKey );
 	if( ret != null )
 		return parseInt(ret,10);
 	else
-		return ret;
+	{
+		console.error( "Error while trying to access an extra field from a resource" );
+		return 0;
+	}
 }
 
 /**
@@ -118,6 +276,12 @@ InterfaceResource.prototype.startWithExtraAttribute = function( attributeKey, at
 	return ret;
 }
 
+/**
+ * Insert a pair <key, value> in the extra value set.
+ *  
+ * @param {string} attributeKey - Value's key, it must be unique, if it exists it will be overwritten.
+ * @param {string} attributeValue - Any value with the string type.
+ */
 InterfaceResource.prototype.setExtraAttribute = function( attributeKey, attributeValue ) 
 {	
 	if( attributeValue == null )
@@ -131,7 +295,19 @@ InterfaceResource.prototype.setExtraAttribute = function( attributeKey, attribut
 	}
 }
 
-
+/**
+ * Button interface resource's constructor. 
+ * @constructor
+ * @extends {InterfaceResource}
+ * @param {int} posX - Resource's X position. 
+ * @param {int} posY - Resource's Y position.
+ * @param {int} posZ - Resource's Z position.
+ * @param {int} widthVal - Resource's width.
+ * @param {int} heightVal - Resource's height.
+ * @param {String} name - Resource's name.
+ * @param {int} id - Resource's id number.
+ * @param {int} initialVersion - The version when this resource has been created.
+ */
 function ButtonResource( posX,posY,posZ,widthVal, heightVal, name, id, initialVersion )
 {
 	// the function call is used to simulate the super(...) call function, you will get SYNTAX_ERR if you miss the parameter number
@@ -141,11 +317,27 @@ function ButtonResource( posX,posY,posZ,widthVal, heightVal, name, id, initialVe
 }
 ButtonResource.prototype = new InterfaceResource;
 ButtonResource.prototype.constructor = ButtonResource;
+
+/** @inheritDoc */
 ButtonResource.prototype.toString = function()
 {
 	return "Button Resource: "+InterfaceResource.prototype.toString.call( this );
 }
 
+/**
+ * Window interface resource's constructor. 
+ * @constructor
+ * @extends {InterfaceResource}
+ * 
+ * @param {int} posX - Resource's X position. 
+ * @param {int} posY - Resource's Y position.
+ * @param {int} posZ - Resource's Z position.
+ * @param {int} widthVal - Resource's width.
+ * @param {int} heightVal - Resource's height.
+ * @param {String} name - Resource's name.
+ * @param {int} id - Resource's id number.
+ * @param {int} initialVersion - The version when this resource has been created.
+ */
 function WindowResource( posX,posY,posZ,widthVal, heightVal, name, id, initialVersion )
 {
 	// the function call is used to simulate the super(...) call function, you will get SYNTAX_ERR if you miss the parameter number
@@ -154,12 +346,26 @@ function WindowResource( posX,posY,posZ,widthVal, heightVal, name, id, initialVe
 }
 WindowResource.prototype = new InterfaceResource;
 WindowResource.prototype.constructor = WindowResource;
+
+/** @inheritDoc */
 WindowResource.prototype.toString = function()
 {
 	return "Window Resource: "+InterfaceResource.prototype.toString.call( this );
 }
 
-
+/**
+ * Image interface resource's constructor. 
+ * @constructor
+ * @extends {InterfaceResource}
+ * @param {int} posX - Resource's X position. 
+ * @param {int} posY - Resource's Y position.
+ * @param {int} posZ - Resource's Z position.
+ * @param {int} widthVal - Resource's width.
+ * @param {int} heightVal - Resource's height.
+ * @param {String} name - Resource's name.
+ * @param {int} id - Resource's id number.
+ * @param {int} initialVersion - The version when this resource has been created.
+ */
 function ImageResource( posX,posY,posZ,widthVal, heightVal, name, id, initialVersion )
 {
 	// the function call is used to simulate the super(...) call function, you will get SYNTAX_ERR if you miss the parameter number
@@ -168,12 +374,14 @@ function ImageResource( posX,posY,posZ,widthVal, heightVal, name, id, initialVer
 }
 ImageResource.prototype = new InterfaceResource;
 ImageResource.prototype.constructor = ImageResource;
+
+/** @inheritDoc */
 ImageResource.prototype.toString = function()
 {
 	return "Image Resource: "+InterfaceResource.prototype.toString.call( this );
 }
 
-
+/* TODO: Remove this resource, the resource use a flag instead of using a new type of resource */
 function DeletedResource( posX,posY,posZ,widthVal, heightVal, name, id, initialVersion )
 {
 	// the function call is used to simulate the super(...) call function, you will get SYNTAX_ERR if you miss the parameter number
@@ -187,6 +395,7 @@ DeletedResource.prototype.toString = function()
 	return "Deleted Resource: "+InterfaceResource.prototype.toString.call( this );
 }
 
+/* TODO: This resource works only if exists one version per screen, look a way to fix it for multiple versions */
 function GroupResource( posX,posY,posZ,widthVal, heightVal, name, id, initialVersion )
 {
 	// the function call is used to simulate the super(...) call function, you will get SYNTAX_ERR if you miss the parameter number
