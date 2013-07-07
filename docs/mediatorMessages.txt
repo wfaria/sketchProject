@@ -70,7 +70,7 @@ onResourceFormatted = function( interfaceResource ){}
 onInterfaceResourceCreated = function( interfaceResource ){}
 
 /**
- * EventKey: InterfaceResourceMoved
+ * EventKey: InterfaceResourceMoved.
  * Sent when a interface resource is moved
  *
  * @param {InterfaceResource} interfaceResource - The object that contains the data from an interface resource.
@@ -168,12 +168,14 @@ onDeleteResourceVersion = function( interfaceResource ){}
  * @param {String} authorName - New project's author
  * @param {Sketch} sketchProject - New project's object
  */
+onProjectCreated = function( projectName, authorName, sketchProject ){}
  
  /**
  * EventKey: ProjectClosed
  * Sent when a project is closed 
  *
  */
+onProjectClosed = function( ){}
  
  /**
  * EventKey: DownloadProject
@@ -269,8 +271,8 @@ onResourceVersionAdded = function( resourceTimeSlotObj, resourceHistory, sketchA
 onResourceVersionRemoved = function( removedResource, resourceHistory, sketchActiveVersion ){}
 
 
- /**
- * EventKey: ResourceSelected
+/**
+ * EventKey: ResourceSelected.
  * Sent when a group of resources are selected on the canvas.
  *
  * @param {Array} resourceArray - An array with the selected elements
@@ -288,8 +290,8 @@ onResourceSelected = function( resourceArray ){}
  */
 onResourceVersionCloned = function( clonedObj, baseVersion, resourceHistory, sketchActiveVersion ){}
 
- /**
- * EventKey: ResourceSelectCanceled
+/**
+ * EventKey: ResourceSelectCanceled.
  * Sent when a group of selected resources are unselected.
  *
  * @param {Array} resourceArray - An array with the unselected elements
@@ -309,14 +311,14 @@ onResourceSelectCanceled = function( resourceArray ){}
 onResizeInterfaceResource = function( interfaceResource, toX, toY, newWidth, newHeight ){}
 
 /**
- * EventKey: InterfaceResourceResized
+ * EventKey: InterfaceResourceResized.
  * Sent when a interface resource is resized
  *
  * @param {InterfaceResource} interfaceResource - The object that contains the data from an interface resource.
- * @param {int} oldX - The new X position from the resource.
- * @param {int} oldY - The new Y position from the resource.
- * @param {int} oldWidth - New resource width.
- * @param {int} oldHeight - New resource height.
+ * @param {int} oldX - The old X position from the resource.
+ * @param {int} oldY - The old Y position from the resource.
+ * @param {int} oldWidth - old resource width.
+ * @param {int} oldHeight - old resource height.
  */
 onInterfaceResourceResized = function( interfaceResource, oldX, oldY, oldWidth, oldHeight ){}
 
@@ -370,3 +372,4 @@ onGraphicResourceResized = function( interfaceResource, toX, toY, newWidth, newH
  * @param {InterfaceResource} interfaceResource - The data object from the shape which has been clicked
  * @param {String} newNameStr - The new name's String
  */
+onResourceNameChanged = function( interfaceResource, newNameStr ){}

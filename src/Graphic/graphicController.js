@@ -33,9 +33,15 @@ function GraphicController( containerDOMID )
     this.initializeVariables( null );
     this.sketchObject = null;
 }
-
 GraphicController.prototype.constructor = GraphicController;
 
+/**
+ * Set some variables in a state like as the controller is a new object.
+ * Also it prepares this controller to be used.
+ *
+ * @param {Sketch} sketchObj - An object that represents the sketch project
+ * 
+ */ 
 GraphicController.prototype.initializeVariables = function( sketchObj )
 {
 	this.sketchObject = sketchObj;
@@ -81,7 +87,7 @@ GraphicController.prototype.subscribeToMediators = function ( )
  * This function will draw all elements from the current screen of a sketch project.
  * If there is already a screen drew, it will be erased from the canvas.
  *
- * @param {!Object} sketchObject - An object which represents the sketch project.
+ * @param {Sketch} sketchObject - An object which represents the sketch project.
  */
 GraphicController.prototype.renderScreen = function ( sketchObject )
 {
@@ -286,16 +292,23 @@ GraphicController.prototype.getKineticObjectById = function ( interfaceResource 
  * The ID must be unique, but the names must not be, so they can be used as a class specifier.
  * This function returns an array with all children with this name. 
  *
- * @param {string} event - The event that has been published
- * @param {...[?]} args -  A variable number of variables of different types that the event can use
- * @param {string} source - The object where the callback function will be called, 
+ * @param {Kinetic.Node} kineticObject - A kinetic node to be verified, it can be a group object.
+ * @param {string} nameStr - The object where the callback function will be called, 
  * if it is undefined, then it will be called in the component itself (the object which contains the callback function)
+ * @return {Array.<Kinetic.Node>} a kinetic object array that contains elements with the passed name.
  */
 GraphicController.prototype.getKineticChildrenByName = function ( kineticObject, nameStr )
 {
+	//TODO: check using contains to allow objects to have more than one name identifier
 	return kineticObject.get( "." + nameStr); 
 }
 
+/**
+ * Create a kinetic object that represents one resource.
+ * 
+ * @param {InterfaceResource} interfaceResource - An object that represents a resource.
+ * @return {Kinetic.Node} A kinetic object that is the graphic representation from the passed resource.
+ */
 GraphicController.prototype.createGraphicObject = function ( interfaceResource )
 {
 	var kineticShape = this.defaultKineticFactory( interfaceResource );
@@ -303,6 +316,12 @@ GraphicController.prototype.createGraphicObject = function ( interfaceResource )
 	return kineticShape;
 }
 
+/**
+ * Create a kinetic object little boxx that shows one resource's version.
+ * 
+ * @param {InterfaceResource} interfaceResource - An object that represents a resource.
+ * @return {Kinetic.Group} A kinetic object that shows resource's version.
+*/
 GraphicController.prototype.createKineticVersionTag = function( interfaceResource )
 {
 	var kineticGroup = new Kinetic.Group(  { 
@@ -335,12 +354,31 @@ GraphicController.prototype.createKineticVersionTag = function( interfaceResourc
 	return kineticGroup;
 }
 
+/**
+ * Check if a kinetic object contains a specific name, this function can be
+ * used to check if this objects has some property like "not resize". 
+ *
+ * @param {Kinetic.Node} event - A kinetic node to be verified, it can't be a group object. It must be the object itself.
+ * @param {string} strToCheck - The string to be checked if it is contained on kinetic object's name.
+ * @return {boolean} true or false according to the comparison with the kinetic object name. 
+ */
 GraphicController.prototype.containsNameElement = function( kineticObject, strToCheck )
 {
 	var name = kineticObject.getName();
 	return ( name.indexOf( strToCheck ) != -1 );
 }
 
+/**
+ * Resize a kinetic group object. It resize its children using the same proportion of
+ * size and distance with their parents. It doesn't resize objects that contains a specific name
+ * indicating to not resize it.
+ *
+ * @param {Kinetic.Group} kineticObject - A kinetic node to be verified, it can't be a group object. It must be the object itself.
+ * @param {int} newX - New X position from the object.
+ * @param {int} newY - New Y position from the object.
+ * @param {int} newWidth - Object's new width.
+ * @param {int} newHeight - Object's new height.
+ */
 GraphicController.prototype.resizeKineticObject = function( kineticObject, newX, newY, newWidth, newHeight ) 
 {
 	var mainElementArray = this.getKineticChildrenByName( kineticObject,
@@ -384,6 +422,14 @@ GraphicController.prototype.resizeKineticObject = function( kineticObject, newX,
 	layer.draw();
 }
 
+/**
+ * Create a kinetic object that represents one resource.
+ * This function only create the kinetic object, it doesn't attach events or other
+ * things like this.
+ * 
+ * @param {InterfaceResource} interfaceResource - An object that represents a resource.
+ * @return {Kinetic.Node} A kinetic object that is the graphic representation from the passed resource.
+ */
 GraphicController.prototype.defaultKineticFactory = function( interfaceResource )
 {
 	var kineticRet = null;
@@ -624,6 +670,14 @@ GraphicController.prototype.defaultKineticFactory = function( interfaceResource 
 	return kineticRet;
 }
 
+/**
+ * Apply a style to an interface resource.
+ * For while this functions isn't being used but it may be used in the future.
+ * 
+ * @param {InterfaceResource} interfaceResource - An object that represents a resource.
+ * @param {Kinetic.Node} kineticShape - The graphic representation from this resource.
+ * @return {Kinetic.Node} The graphic representation from this resource with some visual modifications.
+ */
 GraphicController.prototype.extendKineticShape = function( interfaceResource, kineticShape )
 {
 	var extendedKineticShape;
@@ -664,6 +718,15 @@ GraphicController.prototype.extendKineticShape = function( interfaceResource, ki
 	return extendedKineticShape;
 }
 
+
+/**
+ * Fix the text from a kinetic resourcce after changing some
+ * text property like size or font family.
+ * 
+ * @param {InterfaceResource} interfaceResource - An object that represents a resource.
+ * @param {Kinetic.Node} kineticShape - The graphic representation from this resource.
+ * @return {Kinetic.Node} The graphic representation from this resource with the text part fixed.
+ */
 GraphicController.prototype.fixKineticTextOffset = function( interfaceResource, kineticShape )
 {
 	var textKineticObject = kineticShape;
@@ -701,6 +764,12 @@ GraphicController.prototype.fixKineticTextOffset = function( interfaceResource, 
    return textKineticObject;
 }
 
+/**
+ * An object that should contain functions to change the style from
+ * kinetic objects. For while it isn't used.
+ * //TODO: Decide if it will be used or not
+ * @constructor
+ */
 function KineticStyleChanger()
 {
 }
@@ -746,22 +815,45 @@ AndroidStyleChanger.prototype.modifyButton = function ( kineticShape )
 
 
 /******** Internal Mediator functions **********/
+ /**
+ * Sent when one Resource History has its image extra field changed
+ *
+ * @param {InterfaceResource} interfaceResource - The object from the current version of the project.
+ * @param {ResourceHistory} resourceHistory - The history object with the new image source.
+ */
 GraphicController.prototype.onResHistExtraImgChanged = function( interfaceResource, resourceHistory )
 {
 	this.deleteInterfaceResource( interfaceResource ) ;
 	this.addInterfaceResource( interfaceResource );		
 }
 
+/**
+ * Sent when a project is created 
+ *
+ * @param {String} projectName - New project's name
+ * @param {String} authorName - New project's author
+ * @param {Sketch} sketchProject - New project's object
+ */
 GraphicController.prototype.onProjectCreated = function( projectName, authorName, sketchProject )
 {
 	this.renderScreen( sketchProject );
 }
 
+/**
+ * Sent when a project has its active version number changed
+ *
+ * @param {int} oldVersionNumber - Project's last version
+ * @param {Sketch} sketchProject - Project's object with the version changed
+ */
 GraphicController.prototype.onActiveVersionChanged = function( oldVersionNumber, sketchProject )
 {
 	this.renderScreen( sketchProject );
 }
-  			
+ 
+/**
+ * Sent when a project is closed 
+ *
+ */ 			
 GraphicController.prototype.onProjectClosed = function( )
 {
 	this.stage.clear();
@@ -769,28 +861,36 @@ GraphicController.prototype.onProjectClosed = function( )
 	this.stage.draw();
 	this.stage.remove();
 }
-GraphicController.prototype.onSaveProject = function( )
-{
-	//TODO: this.sketch.Serialize
-}
-GraphicController.prototype.onEditorStageChange = function( newState )
-{
-	//TODO: call this for the graphic part
-}
-  					
+
+/**
+ * EventKey: InterfaceResourceCreated
+ * Sent when a interface resource is created
+ *
+ * @param {InterfaceResource} interfaceResource - The object that contains the data from an interface resource.
+ */  					
 GraphicController.prototype.onInterfaceResourceCreated = function( interfaceResource )
 {
 	this.addInterfaceResource( interfaceResource );
 }
 
+ /**
+ * EventKey: ResourceHistoryDeleted
+ * Sent when an entire resource history is deleted
+ *
+ * @param {InterfaceResource} interfaceResourceHistory - The object that contains the data from an interface resource history.
+ */
 GraphicController.prototype.onResourceHistoryDeleted = function( interfaceResourceHistory )
 {
 	if( interfaceResourceHistory.getResources().length > 0 )
 		this.deleteInterfaceResource( interfaceResourceHistory.getResources()[0] ) ;
 }
 
-
-
+/**
+ * EventKey: ResourceDeleteTagChanged
+ * Sent when some resource have its delete tag changed, this tag can be true or false.
+ *
+ * @param {InterfaceResource} interfaceResource - The interface resource from the version where the deleted tag has been changed
+ */
 GraphicController.prototype.onResourceDeleteTagChanged = function( interfaceResource )
 {
 	if( interfaceResource.getDeleted() == true ) 
@@ -812,6 +912,14 @@ GraphicController.prototype.onResourceDeleteTagChanged = function( interfaceReso
 	}
 }
 
+/**
+ * EventKey: ResourceVersionAdded
+ * Sent when some resource have a version added
+ *
+ * @param {InterfaceResource} resourceTimeSlotObj - The added element in the resouce's history object.
+ * @param {ResourceHistory} resourceHistory - The resource's history without the removed element
+ * @param {int} sketchActiveVersion - A number indicating project's active version when this operation has been done
+ */
 GraphicController.prototype.onResourceVersionAdded = function( resourceTimeSlotObj, resourceHistory, sketchActiveVersion  )
 {
 	var actualResource = resourceHistory.getResourceBeforeVersion( sketchActiveVersion );
@@ -830,6 +938,14 @@ GraphicController.prototype.onResourceVersionAdded = function( resourceTimeSlotO
 	}
 }
 
+/**
+ * EventKey: ResourceVersionRemoved
+ * Sent when some resource have a version removed
+ *
+ * @param {InterfaceResource} removedResource - The removed element from the resouce's history object.
+ * @param {ResourceHistory} resourceHistory - The resource's history without the removed element
+ * @param {int} sketchActiveVersion - A number indicating project's active version when this operation has been done
+ */
 GraphicController.prototype.onResourceVersionRemoved = function( removedResource, resourceHistory, sketchActiveVersion )
 {
 	if( this.deleteInterfaceResource( removedResource ) != null )
@@ -852,6 +968,15 @@ GraphicController.prototype.onResourceVersionRemoved = function( removedResource
 	}
 }
 
+/**
+ * EventKey: ResourceVersionCloned
+ * Sent when some resource have a version cloned
+ *
+ * @param {InterfaceResource} clonedObj - The clone object from the new version.
+ * @param {int} baseVersion - A number indicating the base version from the clone.
+ * @param {ResourceHistory} resourceHistory - The resource's history with the new clone
+ * @param {int} sketchActiveVersion - A number indicating project's active version when this clone was made
+ */
 GraphicController.prototype.onResourceVersionCloned = function( clonedObj, baseVersion, resourceHistory, sketchActiveVersion )
 {
 	var actualResource = resourceHistory.getResourceBeforeVersion( sketchActiveVersion );
@@ -902,6 +1027,14 @@ GraphicController.prototype.onResourceVersionCloned = function( clonedObj, baseV
 	}*/
 }
 
+/**
+ * EventKey: InterfaceResourceMoved
+ * Sent when a interface resource is moved
+ *
+ * @param {InterfaceResource} interfaceResource - The object that contains the data from an interface resource.
+ * @param {int} oldX - The last X position from the resource.
+ * @param {int} oldY - The last Y position from the resource.
+ */
 GraphicController.prototype.onInterfaceResourceMoved = function( interfaceResource, oldX, oldY )
 {
 	var kineticObject = this.getKineticObjectById( interfaceResource );
@@ -919,6 +1052,16 @@ GraphicController.prototype.onInterfaceResourceMoved = function( interfaceResour
 	}
 }
 
+/**
+ * EventKey: InterfaceResourceResized
+ * Sent when a interface resource is resized
+ *
+ * @param {InterfaceResource} interfaceResource - The object that contains the data from an interface resource.
+ * @param {int} oldX - The old X position from the resource.
+ * @param {int} oldY - The old Y position from the resource.
+ * @param {int} oldWidth - old resource width.
+ * @param {int} oldHeight - old resource height.
+ */
 GraphicController.prototype.onInterfaceResourceResized = function( interfaceResource, oldX, oldY, oldWidth, oldHeight )
 {
 	var kineticObject = this.getKineticObjectById( interfaceResource );
@@ -935,6 +1078,12 @@ GraphicController.prototype.onInterfaceResourceResized = function( interfaceReso
 	}
 }
 
+ /**
+ * EventKey: ResourceFormatted
+ * Sent when an interface resource have its text formatted
+ *
+ * @param {InterfaceResource} interfaceResource - The object that contains the data from an interface resource.
+ */
 GraphicController.prototype.onResourceFormatted = function( interfaceResource )
 {
 	var kineticObject = this.getKineticObjectById( interfaceResource );
@@ -954,21 +1103,18 @@ GraphicController.prototype.onResourceFormatted = function( interfaceResource )
 			return; 
 		}
 		this.fixKineticTextOffset( interfaceResource, textElementArray[0] );
-		/*var textKineticObject = textElementArray[0];
-		textKineticObject.setFontFamily( interfaceResource.getExtraAttribute( iResGlobals.defaultKeys.FONTTYPE_KEY ) );
-		textKineticObject.setX( interfaceResource.getWidth()*interfaceResource.getIntExtraAttribute( iResGlobals.defaultKeys.FONT_X_PADDING_KEY )/100 );
-		textKineticObject.setY( interfaceResource.getHeight()*interfaceResource.getIntExtraAttribute( iResGlobals.defaultKeys.FONT_Y_PADDING_KEY )/100 );
-		textKineticObject.setFontSize( interfaceResource.getIntExtraAttribute( iResGlobals.defaultKeys.FONTSIZE_KEY ) );
-		
-		textKineticObject.setOffset({
-	        x: textKineticObject.getWidth() / 2,
-	        y: textKineticObject.getHeight() / 2
-	     });
-	     */
+
 		textElementArray[0].getLayer().draw();
 	}
 }
 
+/**
+ * EventKey: InterfaceResourceZChanged
+ * Sent when an interface resource have its Z-index changed.
+ *
+ * @param {InterfaceResource} interfaceResource - The object that contains the data from an interface resource.
+ * @param {int} oldZ - The last Z value.
+ */
 GraphicController.prototype.onInterfaceResourceZChanged = function( interfaceResource, oldZ )
 {
 	this.fixZIndexes();
@@ -984,6 +1130,13 @@ GraphicController.prototype.onInterfaceResourceZChanged = function( interfaceRes
 
 /******** Graphic Mediator functions **********/
 
+ /**
+ * EventKey: ResourceNameChanged
+ * Sent when a interface resource name's changed
+ *
+ * @param {InterfaceResource} interfaceResource - The data object from the shape which has been clicked
+ * @param {String} newNameStr - The new name's String
+ */
 GraphicController.prototype.onResourceNameChanged = function( interfaceResource, newNameStr )
 {
 	var kineticObject = this.getKineticObjectById( interfaceResource );

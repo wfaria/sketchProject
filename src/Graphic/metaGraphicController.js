@@ -7,6 +7,13 @@ metaGraphicGlobals.TL = 1;
 metaGraphicGlobals.BL = 2;
 metaGraphicGlobals.BR = 3;
 
+/**
+ * MetaGraphic Controller constructor. It is called "Meta graphic"
+ * because it is supposed to manipulate graphics that describe other graphics.
+ * @constructor
+ * 
+ * @param {Kinetic.Layer} l - A layer to render the meta graphic elements, it should be over the common layers.
+ */
 function MetaGraphicController( l )
 {
 	this.layer = l;
@@ -14,14 +21,23 @@ function MetaGraphicController( l )
 	this.selectionIndicatedResources = [];
 	this.anchorShapes = [];	
 }
-
 MetaGraphicController.prototype.constructor = MetaGraphicController;
 
-MetaGraphicController.prototype.generatePrefix = function( idNum )
+/**
+ * It generate a string with a prefix that indicate ids used by this class.
+ * 
+ * @param {string} str - Any string.
+ * @return {string} a name with this class's prefix.
+ */
+MetaGraphicController.prototype.generatePrefix = function( str )
 {
-	return metaGraphicGlobals.idPrefix+idNum;
+	return metaGraphicGlobals.idPrefix+str;
 }
 
+/**
+ * Remove all anchors that shows an indicated resource.
+ *  
+ */
 MetaGraphicController.prototype.removeAnchors = function()
 {
 	var i = 0;
@@ -33,6 +49,12 @@ MetaGraphicController.prototype.removeAnchors = function()
 	this.layer.draw();
 }
 
+/**
+ * Remove the rectangle that shows an indicated resource.
+ *  
+ * @param {InterfaceResource} interfaceResource - A selected resource.
+ * @return {Kinetic.Rect} A kinetic object that represents the removed rectangle or null if it doesn't exit.
+ */
 MetaGraphicController.prototype.removeSelectionKineticRect = function( interfaceResource ) 
 {
 	var kineticRectIndex = this.getSelectionKineticRectIndex( interfaceResource );
@@ -50,6 +72,12 @@ MetaGraphicController.prototype.removeSelectionKineticRect = function( interface
 	return kineticRect;
 }
 
+/**
+ * Get the index that indicates a selected resource. Inside this object
+ *  
+ * @param {InterfaceResource} interfaceResource - A interface resource.
+ * @return {int} A number greater than 0 that indicates the index of a resource or -1 if it doesn't exist.
+ */
 MetaGraphicController.prototype.getSelectionKineticRectIndex = function( interfaceResource ) 
 {
 	var idStr = this.generatePrefix(interfaceResource.getId());
@@ -58,7 +86,7 @@ MetaGraphicController.prototype.getSelectionKineticRectIndex = function( interfa
 	
 	for( i = 0; i < length; i++ )
 	{
-		if( this.selectionKineticShapes[i].getId() == this.generatePrefix(interfaceResource.getId()) )
+		if( this.selectionKineticShapes[i].getId() == this.generatePrefix(interfaceResource.getId()+"") )
 		{
 			return i;
 		}
@@ -67,6 +95,12 @@ MetaGraphicController.prototype.getSelectionKineticRectIndex = function( interfa
 	return -1;
 }
 
+/**
+ * Create a selection contour for a passed resource.
+ * Also it stores this object as a selected element inside this object.
+ *   
+ * @param {InterfaceResource} interfaceResource - A interface resource.
+ */
 MetaGraphicController.prototype.createSelectionCountour = function( interfaceResource ) 
 {
 
@@ -80,7 +114,7 @@ MetaGraphicController.prototype.createSelectionCountour = function( interfaceRes
 		dashArray: [5, 2, 0.001, 5],
 		draggable: false,
 		dragOnTop: false,
-		id : this.generatePrefix(interfaceResource.getId()),
+		id : this.generatePrefix(interfaceResource.getId()+""),
 		strokeWidth : 4
 	});
 	
@@ -93,6 +127,10 @@ MetaGraphicController.prototype.createSelectionCountour = function( interfaceRes
 	this.layer.draw();
 }
 
+/**
+ * Apply the changes made on the selection anchors to the model object (the resource)
+ * using mediators. 
+ */
 MetaGraphicController.prototype.saveAnchorModification = function()
 {
 	//This function only works with one element
@@ -131,6 +169,14 @@ MetaGraphicController.prototype.saveAnchorModification = function()
 			 newX, newY, newWidth, newHeight ]);
 }
 
+/**
+ * Create an anchor in a specific position.
+ * Also it attach events to this anchor.
+ *  
+ * @param {int} x - X position.
+ * @param {int} y - Y position.
+ * @param {int} index - This number indicates which anchor should be created (top-left, bottom-right, etc...).
+ */
 MetaGraphicController.prototype.createAnchor = function(x, y, index) 
 {
 	var anchor = new Kinetic.Circle({
@@ -174,9 +220,12 @@ MetaGraphicController.prototype.createAnchor = function(x, y, index)
 
 }
 
-
-
-MetaGraphicController.prototype.createSelectionAnchors = function(interfaceResource) 
+/**
+ * This function creation 4 anchors to a given resource.
+ * 
+ * @param {InterfaceResource} interfaceResource - A interface resource.
+ */
+MetaGraphicController.prototype.createSelectionAnchors = function( interfaceResource ) 
 {
 	if (this.selectionKineticShapes.length != 1) {
 		console.error("Only one object can have an active selection");
@@ -194,7 +243,11 @@ MetaGraphicController.prototype.createSelectionAnchors = function(interfaceResou
 	this.layer.draw();
 }
 
-
+/**
+ * Fix all anchor's positions to keep the selection rectangle consistent.
+ *  
+ * @param {int} anchorIndex - A number that indicates which anchor will be used as base.
+ */
 MetaGraphicController.prototype.updateAnchors = function( anchorIndex  )
 {
 	var activeAnchor = this.anchorShapes[ anchorIndex ];
@@ -259,6 +312,11 @@ MetaGraphicController.prototype.updateAnchors = function( anchorIndex  )
 	this.layer.draw();
 }
 
+/**
+ * Make the selection graphic consistent with changes on the given resource.
+ * 
+ * @param {InterfaceResource} interfaceResource - A resource with some change, it must be a selected element.
+ */
 MetaGraphicController.prototype.fixSelectionKineticShape = function( interfaceResource )
 {
 	if( this.selectionKineticShapes.length != 1 )
@@ -276,6 +334,12 @@ MetaGraphicController.prototype.fixSelectionKineticShape = function( interfaceRe
 
 /******** Internal Mediator functions **********/
 
+/**
+ * EventKey: ResourceSelected.
+ * Sent when a group of resources are selected on the canvas.
+ *
+ * @param {Array} resourceArray - An array with the selected elements
+ */
 MetaGraphicController.prototype.onResourceSelected = function( resourceArray )
 {
 	if( resourceArray.length == 1 )
@@ -289,6 +353,12 @@ MetaGraphicController.prototype.onResourceSelected = function( resourceArray )
 	}
 }
 
+/**
+ * EventKey: ResourceSelectCanceled.
+ * Sent when a group of selected resources are unselected.
+ *
+ * @param {Array} resourceArray - An array with the unselected elements
+ */
 MetaGraphicController.prototype.onResourceSelectCanceled = function( resourceArray )
 {
 	var i;
@@ -299,7 +369,14 @@ MetaGraphicController.prototype.onResourceSelectCanceled = function( resourceArr
 	this.removeAnchors();
 }
 
-
+/**
+ * EventKey: InterfaceResourceMoved.
+ * Sent when a interface resource is moved
+ *
+ * @param {InterfaceResource} interfaceResource - The object that contains the data from an interface resource.
+ * @param {int} oldX - The last X position from the resource.
+ * @param {int} oldY - The last Y position from the resource.
+ */
 MetaGraphicController.prototype.onInterfaceResourceMoved = function( interfaceResource, oldX, oldY )
 {
 	var kineticShapeIndex = this.getSelectionKineticRectIndex( interfaceResource );
@@ -309,7 +386,16 @@ MetaGraphicController.prototype.onInterfaceResourceMoved = function( interfaceRe
 	}
 }
 
-
+/**
+ * EventKey: InterfaceResourceResized.
+ * Sent when a interface resource is resized
+ *
+ * @param {InterfaceResource} interfaceResource - The object that contains the data from an interface resource.
+ * @param {int} oldX - The old X position from the resource.
+ * @param {int} oldY - The old Y position from the resource.
+ * @param {int} oldWidth - old resource width.
+ * @param {int} oldHeight - old resource height.
+ */
 MetaGraphicController.prototype.onInterfaceResourceResized = function( interfaceResource, oldX, oldY, oldWidth, oldHeight )
 {
 	var kineticShapeIndex = this.getSelectionKineticRectIndex( interfaceResource );

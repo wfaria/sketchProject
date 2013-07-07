@@ -1,10 +1,19 @@
+/**
+ * Selection manager constructor. This object defines which elements are selected.
+ * @constructor
+ */
 function SelectionManager()
 {
 	this.selectedElements = new Array();
 }
-
 SelectionManager.prototype.constructor = SelectionManager;
 
+/**
+ * Set the given resources as selected ones.
+ * 
+ * @param {Array.<InterfaceResource>} interfaceResourceArray - An array with resources to be selected.
+ * @param {boolean} isAdditiveSelection - If this one is false, then all selection must be canceled before doing this selection.
+ */
 SelectionManager.prototype.addElement = function( interfaceResourceArray, isAdditiveSelection )
 {
 	var length = interfaceResourceArray.length;
@@ -23,6 +32,12 @@ SelectionManager.prototype.addElement = function( interfaceResourceArray, isAddi
 	}
 }
 
+/**
+ * Checks if a given resource is selected.
+ * 
+ * @param {InterfaceResource} interfaceResource -  Any interface resource.
+ * @return {boolean} True if the resource has been selected, otherwise false.
+ */
 SelectionManager.prototype.isSelected = function( interfaceResource )
 {
 	for (var j = 0; j < this.selectedElements.length; j++) 
@@ -35,6 +50,12 @@ SelectionManager.prototype.isSelected = function( interfaceResource )
     return false;
 }
 
+/**
+ * Cancel a selection from a set of passed resources.
+ * 
+ * @param {Array.<InterfaceResource>} interfaceResourceArray - An array with resources to be unselected.
+ * @return {int} The number of unselected elements. 
+ */
 SelectionManager.prototype.removeElement = function( interfaceResourceArray )
 {
 	var length = interfaceResourceArray.length;
@@ -56,6 +77,9 @@ SelectionManager.prototype.removeElement = function( interfaceResourceArray )
 	return remNum;
 }
 
+/**
+ * Set all resources as unselected. 
+ */
 SelectionManager.prototype.eraseSelection = function()
 {
 	this.selectedElements = new Array();
