@@ -306,9 +306,9 @@ sideMenu.createProjectSection = function( sketchObj )
 	var projectSectionPartDom = sideMenu.createSectionPart( "project_info" );
 	
 	projectSectionPartDom.innerHTML += htmlGen.createTextButton( "aaa", "Project Name:", sideMenu.currentSketchProject.getName(), 
-		"alert('aaaaa')" );
+		"alert('This function is not implemented yet.')" );
 	projectSectionPartDom.innerHTML += htmlGen.createTextButton( "ccc", "Screen:", sideMenu.currentSketchProject.getCurrentScreenName(),
-		 "alert('aaaaa')" );
+		 "alert('This function is not implemented yet. You can have only one screen per project for while.')" );
 	projectSectionPartDom.innerHTML += htmlGen.createTextButton( DOMglobals.PROJECT_VERSION_ID, "Version:", sideMenu.currentSketchProject.getActiveVersionNumber(),
 		 "sideMenu.changeVersionAction( sideMenu.currentSketchProject )" );
 			
